@@ -27,11 +27,8 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => (
       <span className="app-header__brand-icon">
         <BrandIcon size={20} />
       </span>
-      <span>
-        <small>Kabulengwa Seventh-Day
-          Adventists Church</small>
-       
-      </span>
+
+      <small>Kabulengwa Seventh-Day Adventists Church</small>
     </Link>
 
     <div className="app-header__search" role="search">

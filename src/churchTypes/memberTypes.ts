@@ -174,3 +174,152 @@ export interface SortState {
   field: SortField;
   dir: SortDir;
 }
+
+
+export interface MiniAssignmentDraft {
+  ministry: Ministry;
+  role: MinistryRole;
+}
+
+export type Step = 0 | 1 | 2 ;
+
+export const STEP_LABELS = [
+  "Personal Info",
+  "Church Details",
+  "Ministry and Roles"
+]
+
+export interface MemberModalProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (member: Member) => void | Promise<void>;
+  existingIds: string[];
+  isSubmitting?: boolean;
+}
+
+export type MemberFormValues = Pick<
+  Member,
+  | "firstName"
+  | "lastName"
+  | "gender"
+  | "age"
+  | "maritalStatus"
+  | "phone"
+  | "email"
+  | "status"
+  | "baptized"
+  | "joinedAt"
+  | "cellGroup"
+  >;
+
+
+
+// ─── Sub-models ───────────────────────────────────────────────────────────────
+ 
+export interface MinistryAssignment {
+  ministry: Ministry;
+  role: MinistryRole;
+  joinedAt: string;
+  active: boolean;
+}
+ 
+export interface FamilyLink {
+  memberId: string | null;
+  name: string;
+  relation: "Spouse" | "Son" | "Daughter" | "Parent" | "Guardian";
+  phone?: string;
+  isEmergencyContact: boolean;
+}
+ 
+export interface AttendanceRecord {
+  date: string;
+  serviceType: "Sunday" | "Midweek" | "Special";
+  present: boolean;
+}
+ 
+export interface GivingRecord {
+  month: string; // e.g. "2025-01"
+  amount: number; // UGX
+  type: "Tithe" | "Offering" | "Donation";
+}
+ 
+export interface FollowUpTask {
+  id: string;
+  task: string;
+  status: FollowUpStatus;
+  assignedTo: string;
+  dueDate: string;
+  completedAt?: string;
+}
+ 
+ 
+export interface TimelineEvent {
+  id: string;
+  type:
+    | "joined"
+    | "baptized"
+    | "ministry"
+    | "followup"
+    | "note"
+    | "attendance"
+    | "giving";
+  description: string;
+  date: string;
+}
+ 
+// ─── Core Member model ────────────────────────────────────────────────────────
+ 
+export interface Member {
+  id: string;
+  firstName: string;
+  lastName: string;
+  gender: Gender;
+  age: number;
+  maritalStatus: MaritalStatus;
+  phone: string;
+  email: string;
+  photo?: string;
+  status: MemberStatus;
+  baptized: boolean;
+  joinedAt: string;
+  cellGroup: string;
+  ministries: MinistryAssignment[];
+  family: FamilyLink[];
+  attendance: AttendanceRecord[];
+  giving: GivingRecord[];
+  followUps: FollowUpTask[];
+  notes: StaffNote[];
+  timeline: TimelineEvent[];
+  _computed?: MemberComputed;
+}
+ 
+// ─── Computed fields ──────────────────────────────────────────────────────────
+ 
+export interface MemberComputed {
+  fullName: string;
+  initials: string;
+  attendanceRate: number;
+  consecutiveMisses: number;
+  lastAttended: string | null;
+  totalGiving: number;
+  monthlyAvgGiving: number;
+}
+ 
+// ─── Filter + Sort state ──────────────────────────────────────────────────────
+ 
+ 
+export interface MemberFilters {
+  search: string;
+  status: MemberStatus | "";
+  ministry: Ministry | "";
+  gender: Gender | "";
+  baptized: "yes" | "no" | "";
+  attendance: AttendanceFilter;
+  cellGroup: string;
+}
+ 
+
+export interface SortState {
+  field: SortField;
+  dir: SortDir;
+}

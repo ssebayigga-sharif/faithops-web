@@ -1,6 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./layouts/AppLayout";
-import Dashboard from "./Pages/dashboard/Dashboard";  
+import MembersPage from "./Pages/members/Members";
+import Dashboard from "./Pages/dashboard/Dashboard";
+import EventsPage from "./Pages/events/Events";
 
 type SectionPageProps = {
   title: string;
@@ -21,15 +23,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Navigate replace to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route
-          path="/members"
-          element={
-            <SectionPage
-              title="Members"
-              description="Manage member records, households, pastoral care notes, and ministry involvement."
-            />
-          }
-        />
+        <Route path="/members" element={<MembersPage />} />
         <Route
           path="/attendance"
           element={
@@ -39,15 +33,7 @@ const App = () => (
             />
           }
         />
-        <Route
-          path="/events"
-          element={
-            <SectionPage
-              title="Events"
-              description="Plan services, ministry events, volunteer schedules, and church calendar activity."
-            />
-          }
-        />
+        <Route path="/events" element={<EventsPage />} />
         <Route
           path="/giving"
           element={
