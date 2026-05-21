@@ -1,10 +1,15 @@
-import { Button, Column, Grid, ProgressBar, Stack, Tag, Tile } from "@carbon/react";
+import {
+  Button,
+  Column,
+  Grid,
+  ProgressBar,
+  Stack,
+  Tag,
+  Tile,
+} from "@carbon/react";
 import { Group, UserFollow } from "@carbon/icons-react";
 import type { MinistryCoordinationPanelProps } from "@/churchTypes/eventTypes";
-import {
-  formatEventDate,
-  getVolunteerParticipationRate,
-} from "../eventUtils";
+import { formatEventDate, getVolunteerParticipationRate } from "../eventUtils";
 
 export function MinistryCoordinationPanel({
   events,
@@ -12,16 +17,26 @@ export function MinistryCoordinationPanel({
 }: MinistryCoordinationPanelProps) {
   const coordinationEvents = events
     .filter((event) => event.volunteers.length > 0)
-    .sort((a, b) => getVolunteerParticipationRate(a) - getVolunteerParticipationRate(b))
+    .sort(
+      (a, b) =>
+        getVolunteerParticipationRate(a) - getVolunteerParticipationRate(b),
+    )
     .slice(0, 4);
 
   return (
     <Tile className="ministry-coordination">
       <Stack gap={5}>
-        <Stack className="event-section__header" orientation="horizontal" gap={5}>
+        <Stack
+          className="event-section__header"
+          orientation="horizontal"
+          gap={5}
+        >
           <Stack gap={2}>
             <h2>Ministry Coordination Panel</h2>
-            <p>Volunteer assignments, duty rosters, department responsibilities, and service teams.</p>
+            <p>
+              Volunteer assignments, duty rosters, department responsibilities,
+              and service teams.
+            </p>
           </Stack>
           <Tag type="magenta" size="sm">
             Rosters
@@ -40,10 +55,14 @@ export function MinistryCoordinationPanel({
                 <Tile className="ministry-roster-card">
                   <Stack gap={4}>
                     <Stack orientation="horizontal" gap={4}>
-                      <span className={`event-type-dot event-type-dot--${event.colorKey}`} />
+                      <span
+                        className={`event-type-dot event-type-dot--${event.colorKey}`}
+                      />
                       <Stack gap={1}>
                         <h3>{event.title}</h3>
-                        <p>{formatEventDate(event.start)} · {event.department}</p>
+                        <p>
+                          {formatEventDate(event.start)} · {event.department}
+                        </p>
                       </Stack>
                       <Tag type={needed > 0 ? "red" : "green"} size="sm">
                         {needed > 0 ? `${needed} gaps` : "Covered"}
@@ -70,10 +89,14 @@ export function MinistryCoordinationPanel({
                           <UserFollow size={16} />
                           <Stack gap={1}>
                             <strong>{volunteer.role}</strong>
-                            <span>{volunteer.assignee} · {volunteer.callTime}</span>
+                            <span>
+                              {volunteer.assignee} · {volunteer.callTime}
+                            </span>
                           </Stack>
                           <Tag
-                            type={volunteer.status === "Needed" ? "red" : "blue"}
+                            type={
+                              volunteer.status === "Needed" ? "red" : "blue"
+                            }
                             size="sm"
                           >
                             {volunteer.status}

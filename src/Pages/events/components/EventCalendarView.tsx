@@ -206,9 +206,14 @@ function DayView({
               </Stack>
               <Stack gap={2}>
                 <h3>{event.title}</h3>
-                <p>{event.venue} · {event.department}</p>
+                <p>
+                  {event.venue} · {event.department}
+                </p>
               </Stack>
-              <Tag type={event.status === "Needs volunteers" ? "magenta" : "blue"} size="sm">
+              <Tag
+                type={event.status === "Needs volunteers" ? "magenta" : "blue"}
+                size="sm"
+              >
                 {event.status}
               </Tag>
             </Stack>
@@ -219,7 +224,11 @@ function DayView({
           <p className="event-muted-copy">No events scheduled for this day.</p>
         </Tile>
       )}
-      {selectedEventId && <span className="event-screen-reader">Selected event loaded in details drawer.</span>}
+      {selectedEventId && (
+        <span className="event-screen-reader">
+          Selected event loaded in details drawer.
+        </span>
+      )}
     </Stack>
   );
 }
@@ -251,7 +260,10 @@ function AgendaView({
             <Calendar size={20} />
             <Stack gap={1}>
               <h3>{event.title}</h3>
-              <p>{formatEventDate(event.start)} · {formatEventTime(event.start)} · {event.venue}</p>
+              <p>
+                {formatEventDate(event.start)} · {formatEventTime(event.start)}{" "}
+                · {event.venue}
+              </p>
             </Stack>
             <Tag type="cyan" size="sm">
               {event.category}
@@ -272,7 +284,10 @@ export function EventCalendarView({
   const [anchor, setAnchor] = useState(() => new Date("2026-05-01T00:00:00"));
   const selectedIndex = EVENT_CALENDAR_VIEWS.indexOf(view);
 
-  const upcoming = useMemo(() => getUpcomingEvents(events).slice(0, 4), [events]);
+  const upcoming = useMemo(
+    () => getUpcomingEvents(events).slice(0, 4),
+    [events],
+  );
 
   return (
     <Tile className="event-calendar">
@@ -284,14 +299,20 @@ export function EventCalendarView({
         >
           <Stack gap={2}>
             <h2>Event Calendar View</h2>
-            <p>Month, week, day, and agenda views with SDA ministry color coding.</p>
+            <p>
+              Month, week, day, and agenda views with SDA ministry color coding.
+            </p>
           </Stack>
           <Tag type="blue" size="sm">
             {getCalendarTitle(view, anchor)}
           </Tag>
         </Stack>
 
-        <Stack className="event-calendar__toolbar" orientation="horizontal" gap={4}>
+        <Stack
+          className="event-calendar__toolbar"
+          orientation="horizontal"
+          gap={4}
+        >
           <ContentSwitcher
             selectedIndex={selectedIndex}
             size="sm"
@@ -308,11 +329,17 @@ export function EventCalendarView({
             ))}
           </ContentSwitcher>
 
-          <Stack className="event-calendar__nav" orientation="horizontal" gap={2}>
+          <Stack
+            className="event-calendar__nav"
+            orientation="horizontal"
+            gap={2}
+          >
             <Button
               kind="ghost"
               size="sm"
-              onClick={() => setAnchor((current) => moveCalendarAnchor(view, current, -1))}
+              onClick={() =>
+                setAnchor((current) => moveCalendarAnchor(view, current, -1))
+              }
             >
               Previous
             </Button>
@@ -327,7 +354,9 @@ export function EventCalendarView({
             <Button
               kind="ghost"
               size="sm"
-              onClick={() => setAnchor((current) => moveCalendarAnchor(view, current, 1))}
+              onClick={() =>
+                setAnchor((current) => moveCalendarAnchor(view, current, 1))
+              }
             >
               Next
             </Button>

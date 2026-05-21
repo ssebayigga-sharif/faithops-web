@@ -10,7 +10,10 @@ import {
 } from "@carbon/icons-react";
 import { Grid, Column, Stack } from "@carbon/react";
 import type { DashboardSnapshot } from "@/churchTypes/dashboardTypes";
-import type { ChurchEvent, EventAnalyticsSnapshot } from "@/churchTypes/eventTypes";
+import type {
+  ChurchEvent,
+  EventAnalyticsSnapshot,
+} from "@/churchTypes/eventTypes";
 import { formatDate, formatUGX } from "@/utils/memberUtils";
 import {
   formatEventDateTime,
@@ -438,7 +441,9 @@ export function EventIntelligencePanel({
           <Stack className="dashboard-summary-tile" gap={1}>
             <span>Volunteer shortages</span>
             <strong>{volunteerShortages.length.toLocaleString()}</strong>
-            <small>{eventSnapshot.volunteerParticipationRate}% roster coverage</small>
+            <small>
+              {eventSnapshot.volunteerParticipationRate}% roster coverage
+            </small>
           </Stack>
         </Column>
       </Grid>
@@ -447,15 +452,17 @@ export function EventIntelligencePanel({
         <Column sm={4} md={8} lg={8}>
           <Stack className="ops-list" gap={4}>
             {volunteerShortages.length > 0 ? (
-              volunteerShortages.slice(0, 3).map((event) => (
-                <OperationsRow
-                  key={event.id}
-                  title={event.title}
-                  description={`${getVolunteerParticipationRate(event)}% volunteer coverage · ${event.department}`}
-                  tag="Roster"
-                  tagType="magenta"
-                />
-              ))
+              volunteerShortages
+                .slice(0, 3)
+                .map((event) => (
+                  <OperationsRow
+                    key={event.id}
+                    title={event.title}
+                    description={`${getVolunteerParticipationRate(event)}% volunteer coverage · ${event.department}`}
+                    tag="Roster"
+                    tagType="magenta"
+                  />
+                ))
             ) : (
               <OperationsRow
                 title="No volunteer shortages"
@@ -479,7 +486,9 @@ export function EventIntelligencePanel({
                   percent={percentage(
                     point.value,
                     Math.max(
-                      ...eventSnapshot.attendanceGrowth.map((item) => item.value),
+                      ...eventSnapshot.attendanceGrowth.map(
+                        (item) => item.value,
+                      ),
                       1,
                     ),
                   )}

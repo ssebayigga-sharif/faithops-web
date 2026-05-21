@@ -1,0 +1,5 @@
+// Vite does not support webpack's `~` prefix in $font-path.
+// See: https://github.com/carbon-design-system/carbon/blob/main/docs/guides/ibm-plex.md
+@use "@carbon/styles" with (
+  $font-path: "@ibm/plex"
+);

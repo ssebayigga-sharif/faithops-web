@@ -652,6 +652,20 @@ p {
     display: none;
   }
 
+  .app-sidebar.cds--side-nav,
+  .app-sidebar.cds--side-nav--expanded {
+    width: 40%;
+    max-width: 40vw;
+  }
+
+  .cds--side-nav__overlay {
+    z-index: 7999;
+  }
+
+  .app-sidebar.cds--side-nav {
+    z-index: 8000;
+  }
+
   .app-shell__content,
   .app-shell__content--expanded {
     margin-left: 0;

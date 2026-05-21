@@ -1,4 +1,4 @@
-import "@carbon/react/index.scss";
+import "./styles/carbon.scss";
 import "./styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 

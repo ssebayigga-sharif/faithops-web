@@ -7,56 +7,69 @@ import {
 
 type SidebarProps = {
   isExpanded: boolean;
+  isMobileNav: boolean;
+  onRequestClose: () => void;
 };
 
-const Sidebar = ({ isExpanded }: SidebarProps) => (
-  <SideNav
-    aria-label="Primary navigation"
-    className="app-sidebar"
-    expanded={isExpanded}
-    isChildOfHeader={false}
-    isFixedNav
-  >
-    <SideNavItems>
-      <div className="app-sidebar__section-label">Workspace</div>
-      {primaryNavigationItems.map((item) => {
-        const Icon = item.icon;
+const Sidebar = ({ isExpanded, isMobileNav, onRequestClose }: SidebarProps) => {
+  const handleNavClick = () => {
+    if (isMobileNav) {
+      onRequestClose();
+    }
+  };
 
-        return (
-          <NavLink
-            className={({ isActive }) =>
-              isActive ? "app-sidebar__link is-active" : "app-sidebar__link"
-            }
-            key={item.path}
-            title={item.description}
-            to={item.path}
-          >
-            <Icon size={20} />
-            <span>{item.label}</span>
-          </NavLink>
-        );
-      })}
-      <SideNavDivider />
-      <div className="app-sidebar__section-label">Administration</div>
-      {administrationNavigationItems.map((item) => {
-        const Icon = item.icon;
+  return (
+    <SideNav
+      aria-label="Primary navigation"
+      className="app-sidebar"
+      expanded={isExpanded}
+      isChildOfHeader
+      isFixedNav={!isMobileNav}
+      onOverlayClick={onRequestClose}
+    >
+      <SideNavItems>
+        <div className="app-sidebar__section-label">Workspace</div>
+        {primaryNavigationItems.map((item) => {
+          const Icon = item.icon;
 
-        return (
-          <NavLink
-            className={({ isActive }) =>
-              isActive ? "app-sidebar__link is-active" : "app-sidebar__link"
-            }
-            key={item.path}
-            title={item.description}
-            to={item.path}
-          >
-            <Icon size={20} />
-            <span>{item.label}</span>
-          </NavLink>
-        );
-      })}
-    </SideNavItems>
-  </SideNav>
-);
+          return (
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "app-sidebar__link is-active" : "app-sidebar__link"
+              }
+              key={item.path}
+              title={item.description}
+              to={item.path}
+              onClick={handleNavClick}
+            >
+              <Icon size={20} />
+              <span>{item.label}</span>
+            </NavLink>
+          );
+        })}
+        <SideNavDivider />
+        <div className="app-sidebar__section-label">Administration</div>
+        {administrationNavigationItems.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "app-sidebar__link is-active" : "app-sidebar__link"
+              }
+              key={item.path}
+              title={item.description}
+              to={item.path}
+              onClick={handleNavClick}
+            >
+              <Icon size={20} />
+              <span>{item.label}</span>
+            </NavLink>
+          );
+        })}
+      </SideNavItems>
+    </SideNav>
+  );
+};
 
 export default Sidebar;

@@ -16,7 +16,10 @@ import {
   Tag,
   Tile,
 } from "@carbon/react";
-import type { ChurchEvent, EventManagementTableProps } from "@/churchTypes/eventTypes";
+import type {
+  ChurchEvent,
+  EventManagementTableProps,
+} from "@/churchTypes/eventTypes";
 import {
   formatEventDate,
   formatEventTime,
@@ -65,10 +68,17 @@ export function EventManagementTable({
   return (
     <Tile className="event-management-table">
       <Stack gap={5}>
-        <Stack className="event-section__header" orientation="horizontal" gap={5}>
+        <Stack
+          className="event-section__header"
+          orientation="horizontal"
+          gap={5}
+        >
           <Stack gap={2}>
             <h2>Event Management Table</h2>
-            <p>Operational controls for approvals, attendance, volunteers, and reporting.</p>
+            <p>
+              Operational controls for approvals, attendance, volunteers, and
+              reporting.
+            </p>
           </Stack>
           <Tag type="blue" size="sm">
             {events.length} events
@@ -92,7 +102,10 @@ export function EventManagementTable({
                 <TableHead>
                   <TableRow>
                     {headers.map((header) => (
-                      <TableHeader {...getHeaderProps({ header })} key={header.key}>
+                      <TableHeader
+                        {...getHeaderProps({ header })}
+                        key={header.key}
+                      >
                         {header.header}
                       </TableHeader>
                     ))}
@@ -139,7 +152,9 @@ export function EventManagementTable({
                             return (
                               <TableCell key={cell.id}>
                                 <Stack gap={1}>
-                                  <span>{formatEventDate(cell.value as string)}</span>
+                                  <span>
+                                    {formatEventDate(cell.value as string)}
+                                  </span>
                                   <span className="event-table__meta">
                                     {formatEventTime(cell.value as string)}
                                   </span>
@@ -184,7 +199,9 @@ export function EventManagementTable({
                             return (
                               <TableCell key={cell.id}>
                                 <Tag
-                                  type={getStatusTagType(cell.value as ChurchEvent["status"])}
+                                  type={getStatusTagType(
+                                    cell.value as ChurchEvent["status"],
+                                  )}
                                   size="sm"
                                 >
                                   {cell.value as string}
@@ -208,13 +225,20 @@ export function EventManagementTable({
                                   <OverflowMenuItem itemText="Volunteer check-in" />
                                   <OverflowMenuItem itemText="Send announcement" />
                                   <OverflowMenuItem itemText="Approve event" />
-                                  <OverflowMenuItem itemText="Archive report" hasDivider />
+                                  <OverflowMenuItem
+                                    itemText="Archive report"
+                                    hasDivider
+                                  />
                                 </OverflowMenu>
                               </TableCell>
                             );
                           }
 
-                          return <TableCell key={cell.id}>{cell.value as string}</TableCell>;
+                          return (
+                            <TableCell key={cell.id}>
+                              {cell.value as string}
+                            </TableCell>
+                          );
                         })}
                       </TableRow>
                     );

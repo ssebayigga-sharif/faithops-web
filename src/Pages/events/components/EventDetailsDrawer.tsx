@@ -114,11 +114,17 @@ export function EventDetailsDrawer({
                   <Stack gap={4}>
                     <h3>Program overview</h3>
                     <p>{event.description}</p>
-                    <Stack className="event-detail-tags" orientation="horizontal" gap={3}>
+                    <Stack
+                      className="event-detail-tags"
+                      orientation="horizontal"
+                      gap={3}
+                    >
                       <Tag type="blue">{event.status}</Tag>
                       <Tag type="cyan">{event.recurrence.frequency}</Tag>
                       <Tag type="purple">{getEventDurationLabel(event)}</Tag>
-                      {event.registrationRequired && <Tag type="green">RSVP tracking</Tag>}
+                      {event.registrationRequired && (
+                        <Tag type="green">RSVP tracking</Tag>
+                      )}
                     </Stack>
                   </Stack>
                 </Tile>
@@ -131,7 +137,8 @@ export function EventDetailsDrawer({
                         <p>{event.recurrence.rule}</p>
                         <small>
                           Designed to avoid recreating weekly Sabbath services,
-                          monthly communion, quarterly camp meetings, and annual conventions.
+                          monthly communion, quarterly camp meetings, and annual
+                          conventions.
                         </small>
                       </Stack>
                     </Tile>
@@ -141,9 +148,17 @@ export function EventDetailsDrawer({
                       <Stack gap={3}>
                         <h3>Permission model</h3>
                         {event.permissions.map((permission) => (
-                          <Stack orientation="horizontal" gap={3} key={`${permission.role}-${permission.scope}`}>
-                            <Tag type="gray" size="sm">{permission.level}</Tag>
-                            <span>{permission.role} · {permission.scope}</span>
+                          <Stack
+                            orientation="horizontal"
+                            gap={3}
+                            key={`${permission.role}-${permission.scope}`}
+                          >
+                            <Tag type="gray" size="sm">
+                              {permission.level}
+                            </Tag>
+                            <span>
+                              {permission.role} · {permission.scope}
+                            </span>
                           </Stack>
                         ))}
                       </Stack>
@@ -170,10 +185,22 @@ export function EventDetailsDrawer({
                 />
                 <Grid fullWidth withRowGap>
                   {[
-                    ["Visitors vs members", `${event.attendance.visitors} visitors · ${event.attendance.members} members`],
-                    ["Follow-up required", `${event.attendance.followUpRequired} people`],
-                    ["Conversion tracking", `${event.attendance.conversions} decisions`],
-                    ["Baptisms from events", `${event.attendance.baptisms} baptisms`],
+                    [
+                      "Visitors vs members",
+                      `${event.attendance.visitors} visitors · ${event.attendance.members} members`,
+                    ],
+                    [
+                      "Follow-up required",
+                      `${event.attendance.followUpRequired} people`,
+                    ],
+                    [
+                      "Conversion tracking",
+                      `${event.attendance.conversions} decisions`,
+                    ],
+                    [
+                      "Baptisms from events",
+                      `${event.attendance.baptisms} baptisms`,
+                    ],
                   ].map(([label, value]) => (
                     <Column key={label} sm={4} md={4} lg={4}>
                       <Tile className="event-detail-stat">
@@ -189,12 +216,18 @@ export function EventDetailsDrawer({
             <TabPanel>
               <Stack className="event-detail-tab" gap={4}>
                 {event.volunteers.map((volunteer) => (
-                  <Tile className="event-volunteer-row" key={`${volunteer.role}-${volunteer.assignee}`}>
+                  <Tile
+                    className="event-volunteer-row"
+                    key={`${volunteer.role}-${volunteer.assignee}`}
+                  >
                     <Stack orientation="horizontal" gap={4}>
                       <UserFollow size={18} />
                       <Stack gap={1}>
                         <strong>{volunteer.role}</strong>
-                        <span>{volunteer.assignee} · {volunteer.department} · {volunteer.callTime}</span>
+                        <span>
+                          {volunteer.assignee} · {volunteer.department} ·{" "}
+                          {volunteer.callTime}
+                        </span>
                       </Stack>
                       <Tag
                         type={volunteer.status === "Needed" ? "red" : "blue"}
@@ -241,14 +274,22 @@ export function EventDetailsDrawer({
             <TabPanel>
               <Stack className="event-detail-tab" gap={4}>
                 {event.attachments.map((attachment) => (
-                  <Tile className="event-media-row" key={`${attachment.type}-${attachment.name}`}>
+                  <Tile
+                    className="event-media-row"
+                    key={`${attachment.type}-${attachment.name}`}
+                  >
                     <Stack orientation="horizontal" gap={4}>
                       <Download size={18} />
                       <Stack gap={1}>
                         <strong>{attachment.name}</strong>
-                        <span>{attachment.type} · {attachment.owner}</span>
+                        <span>
+                          {attachment.type} · {attachment.owner}
+                        </span>
                       </Stack>
-                      <Tag type={attachment.status === "Ready" ? "green" : "gray"} size="sm">
+                      <Tag
+                        type={attachment.status === "Ready" ? "green" : "gray"}
+                        size="sm"
+                      >
                         {attachment.status}
                       </Tag>
                     </Stack>
@@ -269,7 +310,9 @@ export function EventDetailsDrawer({
                     <h3>Communication system</h3>
                     <p>{event.communications.channels.join(", ")}</p>
                     {event.communications.automations.map((automation) => (
-                      <Tag type="blue" key={automation}>{automation}</Tag>
+                      <Tag type="blue" key={automation}>
+                        {automation}
+                      </Tag>
                     ))}
                   </Stack>
                 </Tile>
@@ -287,8 +330,15 @@ export function EventDetailsDrawer({
                   <Stack gap={3}>
                     <h3>Future enterprise readiness</h3>
                     {event.enterpriseReadiness.map((feature) => (
-                      <Stack orientation="horizontal" gap={3} key={feature.label}>
-                        <Tag type={feature.status === "Ready" ? "green" : "cyan"} size="sm">
+                      <Stack
+                        orientation="horizontal"
+                        gap={3}
+                        key={feature.label}
+                      >
+                        <Tag
+                          type={feature.status === "Ready" ? "green" : "cyan"}
+                          size="sm"
+                        >
                           {feature.status}
                         </Tag>
                         <span>{feature.label}</span>

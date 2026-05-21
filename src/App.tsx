@@ -3,6 +3,7 @@ import AppLayout from "./layouts/AppLayout";
 import MembersPage from "./Pages/members/Members";
 import Dashboard from "./Pages/dashboard/Dashboard";
 import EventsPage from "./Pages/events/Events";
+import GivingPage from "./Pages/giving/GivingPage";
 
 type SectionPageProps = {
   title: string;
@@ -34,15 +35,7 @@ const App = () => (
           }
         />
         <Route path="/events" element={<EventsPage />} />
-        <Route
-          path="/giving"
-          element={
-            <SectionPage
-              title="Giving"
-              description="Review contributions, pledges, fund allocation, and finance reporting workflows."
-            />
-          }
-        />
+        <Route path="/giving" element={<GivingPage />} />
         <Route
           path="/reports"
           element={

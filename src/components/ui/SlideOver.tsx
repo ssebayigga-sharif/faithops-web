@@ -29,13 +29,16 @@ export function SlideOver({
   width = "md",
   closeOnOverlayClick = true,
 }: SlideOverProps) {
+  // Carbon: modals with a footer must not dismiss on outside click.
+  const preventCloseOnClickOutside = footer ? true : !closeOnOverlayClick;
+
   return (
     <ComposedModal
       className="slide-over-modal"
       containerClassName={`slide-over-modal__container slide-over-modal__container--${width}`}
       open={open}
       onClose={onClose}
-      preventCloseOnClickOutside={!closeOnOverlayClick}
+      preventCloseOnClickOutside={preventCloseOnClickOutside}
       size={width}
     >
       <ModalHeader title={title} label={eyebrow} />

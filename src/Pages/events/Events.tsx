@@ -10,14 +10,8 @@ import {
   Tag,
 } from "@carbon/react";
 import { Add, Download, Renew } from "@carbon/icons-react";
-import type {
-  ChurchEvent,
-  EventFormDraft,
-} from "@/churchTypes/eventTypes";
-import {
-  DEFAULT_EVENT_DRAFT,
-  EVENT_CATEGORY_COLOR_KEY,
-} from "./eventData";
+import type { ChurchEvent, EventFormDraft } from "@/churchTypes/eventTypes";
+import { DEFAULT_EVENT_DRAFT, EVENT_CATEGORY_COLOR_KEY } from "./eventData";
 import { buildEventAnalyticsSnapshot, getUpcomingEvents } from "./eventUtils";
 import { useCreateEvent, useEvents } from "@/utils/useEvent";
 import { EventAnalyticsBar } from "./components/EventAnalyticsBar";
@@ -32,7 +26,9 @@ function toIsoDateTime(value: string): string {
   return value.length === 16 ? `${value}:00` : value;
 }
 
-function createEventFromDraft(draft: EventFormDraft): Omit<ChurchEvent, "_firebaseKey"> {
+function createEventFromDraft(
+  draft: EventFormDraft,
+): Omit<ChurchEvent, "_firebaseKey"> {
   const id =
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? `EVT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`

@@ -17,10 +17,17 @@ export function UpcomingEventsFeed({
   return (
     <Tile className="event-side-panel">
       <Stack gap={5}>
-        <Stack className="event-section__header" orientation="horizontal" gap={5}>
+        <Stack
+          className="event-section__header"
+          orientation="horizontal"
+          gap={5}
+        >
           <Stack gap={2}>
             <h2>Upcoming Events Feed</h2>
-            <p>Near-term programs, reminders, RSVP state, and volunteer readiness.</p>
+            <p>
+              Near-term programs, reminders, RSVP state, and volunteer
+              readiness.
+            </p>
           </Stack>
           <Tag type="cyan" size="sm">
             Live
@@ -43,7 +50,9 @@ export function UpcomingEventsFeed({
                     <UserFollow size={20} />
                     <Stack gap={1}>
                       <h3>{event.title}</h3>
-                      <p>{formatEventDateTime(event.start)} · {event.venue}</p>
+                      <p>
+                        {formatEventDateTime(event.start)} · {event.venue}
+                      </p>
                     </Stack>
                     <Tag
                       type={
@@ -79,7 +88,11 @@ export function UpcomingEventsFeed({
                   </Stack>
 
                   <Stack orientation="horizontal" gap={3}>
-                    <Button kind="ghost" size="sm" onClick={() => onSelectEvent(event)}>
+                    <Button
+                      kind="ghost"
+                      size="sm"
+                      onClick={() => onSelectEvent(event)}
+                    >
                       Open workspace
                     </Button>
                     <Button kind="tertiary" size="sm">
