@@ -1,9 +1,6 @@
 import { useMemo } from "react";
-import type { DashboardSnapshot } from "@/churchTypes/dashboardTypes";
-import type {
-  ChurchEvent,
-  EventAnalyticsSnapshot,
-} from "@/churchTypes/eventTypes";
+import type { DashboardSnapshot } from "@/churchTypes/dashboard";
+import type { ChurchEvent, EventAnalyticsSnapshot } from "@/churchTypes/events";
 import { useMembers } from "@/utils/useMember";
 import { useEvents } from "@/utils/useEvent";
 import {

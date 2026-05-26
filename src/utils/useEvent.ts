@@ -4,7 +4,7 @@ import {
   useQueryClient,
   type UseQueryResult,
 } from "@tanstack/react-query";
-import type { ChurchEvent } from "@/churchTypes/eventTypes";
+import type { ChurchEvent } from "@/churchTypes/events";
 import { EventService } from "@/services/event.services";
 import { isFirebaseApiError } from "@/services/firebase.client";
 
@@ -48,7 +48,9 @@ export function useEvents(): UseEventsResult {
 }
 
 export interface UseCreateEventResult {
-  createEvent: (event: Omit<ChurchEvent, "_firebaseKey">) => Promise<ChurchEvent>;
+  createEvent: (
+    event: Omit<ChurchEvent, "_firebaseKey">,
+  ) => Promise<ChurchEvent>;
   isCreating: boolean;
   createError: string | null;
 }

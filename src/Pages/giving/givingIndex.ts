@@ -17,14 +17,14 @@ export type {
   GivingMethod,
   GivingRecord,
   MonthlySummary,
-} from "../../churchTypes/givingTypes";
+} from "../../churchTypes/giving";
 
 // Constants
 export {
   GIVING_CATEGORIES,
   GIVING_FREQUENCIES,
   GIVING_METHODS,
-} from "../../churchTypes/givingTypes";
+} from "../../churchTypes/giving";
 
 // Utils
 export {

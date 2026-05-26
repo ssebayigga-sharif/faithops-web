@@ -4,14 +4,14 @@ import type {
   FollowUpWithMember,
   MinistryEngagement,
   ServiceAttendance,
-} from "@/churchTypes/dashboardTypes";
+} from "@/churchTypes/dashboard";
 import type {
   AttendanceRecord,
   FollowUpTask,
   GivingRecord,
   Member,
   MinistryAssignment,
-} from "@/churchTypes/memberTypes";
+} from "@/churchTypes/members";
 import { CELL_GROUPS, MINISTRIES_LIST, formatDate } from "@/utils/memberUtils";
 
 // ─── Constants ───────────────────────────────────────────────────────────────

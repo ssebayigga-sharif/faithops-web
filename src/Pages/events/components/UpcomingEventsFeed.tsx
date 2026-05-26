@@ -1,6 +1,6 @@
 import { Button, ProgressBar, Stack, Tag, Tile } from "@carbon/react";
 import { UserFollow } from "@carbon/icons-react";
-import type { UpcomingEventsFeedProps } from "@/churchTypes/eventTypes";
+import type { UpcomingEventsFeedProps } from "@/churchTypes/events";
 import {
   daysUntilEvent,
   formatEventDateTime,

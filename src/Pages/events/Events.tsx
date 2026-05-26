@@ -10,7 +10,7 @@ import {
   Tag,
 } from "@carbon/react";
 import { Add, Download, Renew } from "@carbon/icons-react";
-import type { ChurchEvent, EventFormDraft } from "@/churchTypes/eventTypes";
+import type { ChurchEvent, EventFormDraft } from "@/churchTypes/events";
 import { DEFAULT_EVENT_DRAFT, EVENT_CATEGORY_COLOR_KEY } from "./eventData";
 import { buildEventAnalyticsSnapshot, getUpcomingEvents } from "./eventUtils";
 import { useCreateEvent, useEvents } from "@/utils/useEvent";

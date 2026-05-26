@@ -9,11 +9,8 @@ import {
   WarningAlt,
 } from "@carbon/icons-react";
 import { Grid, Column, Stack } from "@carbon/react";
-import type { DashboardSnapshot } from "@/churchTypes/dashboardTypes";
-import type {
-  ChurchEvent,
-  EventAnalyticsSnapshot,
-} from "@/churchTypes/eventTypes";
+import type { DashboardSnapshot } from "@/churchTypes/dashboard";
+import type { ChurchEvent, EventAnalyticsSnapshot } from "@/churchTypes/events";
 import { formatDate, formatUGX } from "@/utils/memberUtils";
 import {
   formatEventDateTime,

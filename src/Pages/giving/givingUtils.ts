@@ -3,8 +3,8 @@ import type {
   GivingFrequency,
   GivingRecord,
   MonthlySummary,
-} from "../../churchTypes/givingTypes";
-import { GIVING_CATEGORIES } from "../../churchTypes/givingTypes";
+} from "../../churchTypes/giving";
+import { GIVING_CATEGORIES } from "../../churchTypes/giving";
 
 // ─── Formatting ───────────────────────────────────────────────────────────────
 

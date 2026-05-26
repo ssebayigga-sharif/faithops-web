@@ -26,6 +26,18 @@ export const primaryNavigationItems: NavigationItem[] = [
     icon: Dashboard,
   },
   {
+    path: "/home",
+    label: "Home",
+    description: "Overview, insights, and quick actions",
+    icon: Dashboard,
+  },
+  {
+    path: "/about",
+    label: "About",
+    description: "Overview, insights, and quick actions",
+    icon: Dashboard,
+  },
+  {
     path: "/members",
     label: "Members",
     description: "Member records, profiles, and groups",
@@ -72,9 +84,10 @@ export const administrationNavigationItems: NavigationItem[] = [
   },
 ];
 
-export const headerNavigationItems = primaryNavigationItems.slice(0, 4);
+export const headerNavigationItems = primaryNavigationItems.slice(0, 6);
 
-export const footerNavigationItems = primaryNavigationItems.slice(0, 7).reverse();
-
+export const footerNavigationItems = primaryNavigationItems
+  .slice(0, 7)
+  .reverse();
 
 export const brandIcon = Building;

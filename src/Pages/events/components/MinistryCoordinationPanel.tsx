@@ -8,7 +8,7 @@ import {
   Tile,
 } from "@carbon/react";
 import { Group, UserFollow } from "@carbon/icons-react";
-import type { MinistryCoordinationPanelProps } from "@/churchTypes/eventTypes";
+import type { MinistryCoordinationPanelProps } from "@/churchTypes/events";
 import { formatEventDate, getVolunteerParticipationRate } from "../eventUtils";
 
 export function MinistryCoordinationPanel({

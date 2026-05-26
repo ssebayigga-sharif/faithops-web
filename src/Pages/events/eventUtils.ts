@@ -4,7 +4,7 @@ import type {
   EventAnalyticsSnapshot,
   EventCalendarView,
   EventTrendPoint,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -187,11 +187,13 @@ export function getEventsThisMonth(
 export function getMostActiveDepartment(
   activity: DepartmentActivity[],
 ): DepartmentActivity {
-  return activity[0] ?? {
-    department: "Pastoral",
-    count: 0,
-    percent: 0,
-  };
+  return (
+    activity[0] ?? {
+      department: "Pastoral",
+      count: 0,
+      percent: 0,
+    }
+  );
 }
 
 function buildDepartmentActivity(events: ChurchEvent[]): DepartmentActivity[] {

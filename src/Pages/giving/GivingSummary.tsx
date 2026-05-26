@@ -1,6 +1,6 @@
 import { Column, Grid, ProgressBar, Stack, Tile } from "@carbon/react";
-import type { GivingRecord } from "../../churchTypes/givingTypes";
-import { GIVING_CATEGORIES } from "../../churchTypes/givingTypes";
+import type { GivingRecord } from "../../churchTypes/giving";
+import { GIVING_CATEGORIES } from "../../churchTypes/giving";
 import { buildMonthlySummary, formatUGX } from "./givingUtils";
 
 interface GivingSummaryProps {

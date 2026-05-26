@@ -14,7 +14,7 @@ import {
 } from "@carbon/react";
 import { Download, Email, UserFollow } from "@carbon/icons-react";
 import { SlideOver } from "@/components/ui/SlideOver";
-import type { EventDetailsDrawerProps } from "@/churchTypes/eventTypes";
+import type { EventDetailsDrawerProps } from "@/churchTypes/events";
 import {
   formatEventDateTime,
   formatUGX,

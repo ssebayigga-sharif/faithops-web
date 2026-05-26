@@ -5,7 +5,7 @@ import type {
   GivingFrequency,
   GivingMethod,
   GivingRecord,
-} from "../../churchTypes/givingTypes";
+} from "../../churchTypes/giving";
 import {
   generateReceiptNumber,
   getOfferingsFromEntries,

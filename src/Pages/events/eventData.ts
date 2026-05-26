@@ -7,7 +7,7 @@ import type {
   EventDepartment,
   EventFormDraft,
   EventRecurrenceFrequency,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 
 export const EVENT_CALENDAR_VIEWS: EventCalendarView[] = [
   "month",
@@ -1001,8 +1001,6 @@ export const SDA_EVENTS: ChurchEvent[] = [
     ],
     notes: ["Prepare communion hymn set for June 6."],
     reports: ["Choir attendance stable at 84% participation."],
-    enterpriseReadiness: [
-      { label: "Media library", status: "Designed" },
-    ],
+    enterpriseReadiness: [{ label: "Media library", status: "Designed" }],
   },
 ];

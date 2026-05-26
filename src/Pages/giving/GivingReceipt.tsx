@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Button, Stack, Tag, Tile } from "@carbon/react";
 import { CheckmarkFilled, Download, Renew } from "@carbon/icons-react";
-import type { GivingRecord } from "../../churchTypes/givingTypes";
+import type { GivingRecord } from "../../churchTypes/giving";
 import {
   formatUGX,
   formatShortDate,
@@ -10,7 +10,7 @@ import {
   getTitheFromEntries,
   getOfferingsFromEntries,
 } from "./givingUtils";
-import { GIVING_CATEGORIES } from "../../churchTypes/givingTypes";
+import { GIVING_CATEGORIES } from "../../churchTypes/giving";
 
 interface GivingReceiptProps {
   record: GivingRecord;

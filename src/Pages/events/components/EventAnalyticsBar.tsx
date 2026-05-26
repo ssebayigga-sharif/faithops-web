@@ -1,10 +1,16 @@
-import { Calendar, Group, Report, UserFollow, UserMultiple } from "@carbon/icons-react";
+import {
+  Calendar,
+  Group,
+  Report,
+  UserFollow,
+  UserMultiple,
+} from "@carbon/icons-react";
 import { Column, Grid, ProgressBar, Stack, Tile } from "@carbon/react";
 import type {
   EventAnalyticsBarProps,
   EventMetric,
   EventTrendPoint,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 
 function TrendBars({
   title,
@@ -20,7 +26,11 @@ function TrendBars({
       <h3>{title}</h3>
       {points.map((point) => (
         <Stack className="events-chart__row" gap={2} key={point.label}>
-          <Stack className="events-chart__meta" orientation="horizontal" gap={4}>
+          <Stack
+            className="events-chart__meta"
+            orientation="horizontal"
+            gap={4}
+          >
             <span>{point.label}</span>
             <strong>{point.value.toLocaleString()}</strong>
           </Stack>
@@ -109,7 +119,10 @@ export function EventAnalyticsBar({ snapshot }: EventAnalyticsBarProps) {
               <Stack orientation="horizontal" gap={4}>
                 <span
                   className="event-metric-card__icon"
-                  style={{ color: metric.accent, backgroundColor: `${metric.accent}1a` }}
+                  style={{
+                    color: metric.accent,
+                    backgroundColor: `${metric.accent}1a`,
+                  }}
                 >
                   <Icon size={20} />
                 </span>
@@ -148,8 +161,16 @@ export function EventAnalyticsBar({ snapshot }: EventAnalyticsBarProps) {
             <Stack className="events-chart" gap={4}>
               <h3>Department activity comparison</h3>
               {snapshot.departmentActivity.slice(0, 5).map((department) => (
-                <Stack className="events-chart__row" gap={2} key={department.department}>
-                  <Stack className="events-chart__meta" orientation="horizontal" gap={4}>
+                <Stack
+                  className="events-chart__row"
+                  gap={2}
+                  key={department.department}
+                >
+                  <Stack
+                    className="events-chart__meta"
+                    orientation="horizontal"
+                    gap={4}
+                  >
                     <span>{department.department}</span>
                     <strong>{department.count}</strong>
                   </Stack>

@@ -11,7 +11,7 @@ import type {
   EventRecurrence,
   EventStatus,
   EventVolunteerAssignment,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 
 const EVENTS_PATH = "/events";
 
@@ -42,7 +42,10 @@ function asList<T>(value: T[] | null | undefined): T[] {
   return Array.isArray(value) ? value : [];
 }
 
-function normaliseEvent(raw: Partial<ChurchEvent>, firebaseKey?: string): ChurchEvent {
+function normaliseEvent(
+  raw: Partial<ChurchEvent>,
+  firebaseKey?: string,
+): ChurchEvent {
   const category = raw.category ?? DEFAULT_CATEGORY;
   const department = raw.department ?? DEFAULT_DEPARTMENT;
   const now = new Date().toISOString();
@@ -109,21 +112,21 @@ function mapToEvents(data: FirebaseEventMap | null): ChurchEvent[] {
     .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 }
 
-function removeFirebaseKey(event: ChurchEvent): Omit<ChurchEvent, "_firebaseKey"> {
+function removeFirebaseKey(
+  event: ChurchEvent,
+): Omit<ChurchEvent, "_firebaseKey"> {
   const { _firebaseKey, ...payload } = event;
   return payload;
 }
 
 export const EventService = {
   async getAll(): Promise<ChurchEvent[]> {
-    const res: AxiosResponse<FirebaseEventMap | null> = await firebaseClient.get(
-      `${EVENTS_PATH}.json`,
-      {
+    const res: AxiosResponse<FirebaseEventMap | null> =
+      await firebaseClient.get(`${EVENTS_PATH}.json`, {
         params: {
           orderBy: '"start"',
         },
-      },
-    );
+      });
 
     return mapToEvents(res.data);
   },

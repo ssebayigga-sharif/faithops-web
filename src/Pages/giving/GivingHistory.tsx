@@ -13,7 +13,7 @@ import {
   Tag,
   Stack,
 } from "@carbon/react";
-import type { GivingRecord } from "../../churchTypes/givingTypes";
+import type { GivingRecord } from "../../churchTypes/giving";
 import {
   formatShortDate,
   formatUGX,

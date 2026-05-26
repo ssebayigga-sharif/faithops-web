@@ -16,7 +16,7 @@ import type {
   OperationsRowProps,
   ProgressRowProps,
   DashboardTagType,
-} from "@/churchTypes/dashboardTypes";
+} from "@/churchTypes/dashboard";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

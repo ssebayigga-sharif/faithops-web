@@ -16,12 +16,12 @@ import type {
   GivingCategoryId,
   GivingFrequency,
   GivingMethod,
-} from "../../churchTypes/givingTypes";
+} from "../../churchTypes/giving";
 import {
   GIVING_CATEGORIES,
   GIVING_FREQUENCIES,
   GIVING_METHODS,
-} from "../../churchTypes/givingTypes";
+} from "../../churchTypes/giving";
 import type { GivingFormState } from "./useGiving";
 import { formatUGX, getRecentSabbaths } from "./givingUtils";
 import {
@@ -165,11 +165,18 @@ export function GivingForm({
             </Tooltip>
           </Stack>
 
-          <Tile style={{ background: "#f4f4f4", border: `1px solid ${colors.border}` }}>
+          <Tile
+            style={{
+              background: "#f4f4f4",
+              border: `1px solid ${colors.border}`,
+            }}
+          >
             <Stack gap={3}>
               <Stack orientation="horizontal" gap={2}>
                 <Calculator size={16} />
-                <span style={{ fontSize: "13px", fontWeight: 600 }}>Tithe calculator</span>
+                <span style={{ fontSize: "13px", fontWeight: 600 }}>
+                  Tithe calculator
+                </span>
               </Stack>
               <Grid fullWidth condensed>
                 <Column sm={4} md={4} lg={8}>
@@ -186,7 +193,13 @@ export function GivingForm({
                   />
                 </Column>
                 <Column sm={4} md={4} lg={8}>
-                  <div style={{ ...flexBetween, alignItems: "flex-end", height: "100%" }}>
+                  <div
+                    style={{
+                      ...flexBetween,
+                      alignItems: "flex-end",
+                      height: "100%",
+                    }}
+                  >
                     <Stack gap={1}>
                       <span style={labelCaps}>10% suggested tithe</span>
                       <strong style={{ fontSize: "18px", color: colors.text }}>
@@ -234,9 +247,9 @@ export function GivingForm({
           <Stack gap={1}>
             <h3 style={sectionTitle}>Offerings</h3>
             <p style={sectionDesc}>
-              &ldquo;Each of you should give what you have decided in your heart to
-              give, not reluctantly or under compulsion, for God loves a cheerful
-              giver.&rdquo; — 2 Corinthians 9:7
+              &ldquo;Each of you should give what you have decided in your heart
+              to give, not reluctantly or under compulsion, for God loves a
+              cheerful giver.&rdquo; — 2 Corinthians 9:7
             </p>
           </Stack>
 
@@ -273,7 +286,13 @@ export function GivingForm({
                     min={0}
                     hideSteppers
                   />
-                  <p style={{ margin: 0, fontSize: "12px", color: colors.textMuted }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "12px",
+                      color: colors.textMuted,
+                    }}
+                  >
                     {category.subtitle}
                   </p>
                 </Stack>

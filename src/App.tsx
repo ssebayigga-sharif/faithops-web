@@ -4,7 +4,10 @@ import MembersPage from "./Pages/members/Members";
 import Dashboard from "./Pages/dashboard/Dashboard";
 import EventsPage from "./Pages/events/Events";
 import GivingPage from "./Pages/giving/GivingPage";
-
+import ProfilePage from "./Pages/profile/ProfilePage";
+import AttendancePage from "./Pages/Attendance/AttendancePage";
+import HomePage from "./Pages/home/Home";
+//import AboutPage from "./Pages/home/About";
 type SectionPageProps = {
   title: string;
   description: string;
@@ -24,18 +27,14 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Navigate replace to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/home" element={<HomePage />} />
+        {/* <Route path="/about" element={<AboutPage />} /> */}
+
         <Route path="/members" element={<MembersPage />} />
-        <Route
-          path="/attendance"
-          element={
-            <SectionPage
-              title="Attendance"
-              description="Track service attendance, event check-ins, and participation trends."
-            />
-          }
-        />
+        <Route path="/attendance" element={<AttendancePage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/giving" element={<GivingPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route
           path="/reports"
           element={

@@ -1,7 +1,7 @@
 import { Button, Stack, Tag, Tile } from "@carbon/react";
 import { ArrowLeft, Checkmark } from "@carbon/icons-react";
-import type { GivingEntry } from "../../churchTypes/givingTypes";
-import { GIVING_CATEGORIES } from "../../churchTypes/givingTypes";
+import type { GivingEntry } from "../../churchTypes/giving";
+import { GIVING_CATEGORIES } from "../../churchTypes/giving";
 import type { GivingFormState } from "./useGiving";
 import {
   formatShortDate,

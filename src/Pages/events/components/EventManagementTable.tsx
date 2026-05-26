@@ -19,7 +19,7 @@ import {
 import type {
   ChurchEvent,
   EventManagementTableProps,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 import {
   formatEventDate,
   formatEventTime,

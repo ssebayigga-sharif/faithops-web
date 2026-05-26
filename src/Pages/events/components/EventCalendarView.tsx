@@ -12,7 +12,7 @@ import type {
   ChurchEvent,
   EventCalendarView as CalendarView,
   EventCalendarViewProps,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 import { EVENT_CALENDAR_VIEWS } from "../eventData";
 import {
   formatEventDate,

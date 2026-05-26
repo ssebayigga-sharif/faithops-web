@@ -1,0 +1,727 @@
+@use '@carbon/react/scss/reset';
+@use '@carbon/react/scss/grid';
+@use '@carbon/react/scss/type';
+@use '@carbon/react/scss/spacing' as space;
+@use '@carbon/react/scss/breakpoint' as bp;
+
+/* ── Brand tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --church-navy:      #0a1628;
+  --church-navy-mid:  #162035;
+  --church-gold:      #c8a84b;
+  --church-gold-pale: #fdf8ee;
+  --church-muted:     #6b7280;
+  --church-text:      #1c2430;
+  --church-divider:   #e5e7eb;
+  --font-display:     'Playfair Display', Georgia, serif;
+  --font-verse:       'EB Garamond', Georgia, serif;
+}
+
+/* ── Page enter animation ──────────────────────────────────────────────────── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pageEnter { animation: pageEnter 0.5s ease both; }
+
+/* ── Intersection-observer driven fade ─────────────────────────────────────── */
+.fadeUp {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+
+  &[data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Shared section layout ─────────────────────────────────────────────────── */
+.churchSection {
+  padding: 5rem 0;
+}
+
+.churchSectionWhite { background: #ffffff; }
+.churchSectionCream { background: var(--church-gold-pale); }
+.churchSectionNavy  { background: var(--church-navy); }
+
+.churchSectionHeader {
+  margin-bottom: 3rem;
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    color: var(--church-text);
+    margin: 0.25rem 0 0.5rem;
+    font-weight: 700;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    color: var(--church-text);
+    margin: 0.25rem 0 0.5rem;
+    font-weight: 700;
+  }
+}
+
+.churchSectionHeaderCenter { text-align: center; }
+
+.churchSectionSubhead {
+  color: var(--church-muted);
+  font-size: 1rem;
+  max-width: 480px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.churchSectionSubheadCenter { margin-inline: auto; }
+
+/* ── Gold decorative rules ─────────────────────────────────────────────────── */
+.churchGoldRule,
+.churchGoldRuleCenter {
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, var(--church-gold), transparent);
+  margin-bottom: 1.25rem;
+  width: 48px;
+}
+
+.churchGoldRuleCenter {
+  margin-inline: auto;
+  background: linear-gradient(90deg, transparent, var(--church-gold), transparent);
+}
+
+/* ── Shared button overrides ───────────────────────────────────────────────── */
+.churchBtnNavy {
+  background-color: var(--church-navy) !important;
+  border-color: var(--church-navy) !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+
+  &:hover {
+    background-color: var(--church-navy-mid) !important;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 3px var(--church-gold) !important;
+  }
+}
+
+.churchBtnOutline {
+  color: var(--church-navy) !important;
+  border: 1.5px solid var(--church-navy) !important;
+  transition: background 0.2s ease, border-color 0.2s ease !important;
+
+  &:hover {
+    background: rgba(10, 22, 40, 0.06) !important;
+  }
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.churchHero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(200, 168, 75, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(200, 168, 75, 0.05) 0%, transparent 50%),
+    var(--church-navy);
+  overflow: hidden;
+
+  &__cross {
+    position: absolute;
+    right: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 680px;
+    height: 680px;
+    color: var(--church-gold);
+    opacity: 0.04;
+    pointer-events: none;
+    animation: heroFloat 20s ease-in-out infinite;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(10, 22, 40, 0.6) 0%,
+      rgba(10, 22, 40, 0.2) 50%,
+      rgba(10, 22, 40, 0.5) 100
+    );
+    pointer-events: none;
+  }
+
+  &__grid {
+    width: 100%;
+    padding-block: 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.75rem;
+    animation: pageEnter 0.6s 0.1s both;
+  }
+
+  &__rule {
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: var(--church-gold);
+    flex-shrink: 0;
+  }
+
+  &__eyebrowText {
+    color: var(--church-gold);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  &__heading {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    color: #f0ece4;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
+    animation: pageEnter 0.6s 0.2s both;
+  }
+
+  &__headingAccent {
+    color: var(--church-gold);
+    text-shadow: 0 0 40px rgba(200, 168, 75, 0.2);
+  }
+
+  &__body {
+    font-size: 1.1rem;
+    color: #9aa0ac;
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    max-width: 520px;
+    animation: pageEnter 0.6s 0.3s both;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    animation: pageEnter 0.6s 0.4s both;
+  }
+
+  &__verse {
+    margin-top: 3rem;
+    border-left: 3px solid var(--church-gold);
+    padding-left: 1.25rem;
+    animation: pageEnter 0.6s 0.5s both;
+
+    p {
+      font-family: var(--font-verse);
+      font-style: italic;
+      color: #c8c8d0;
+      font-size: 1rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    cite {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      font-style: normal;
+      color: var(--church-gold);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+  }
+
+  &__goldStrip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(
+      90deg,
+      var(--church-gold) 0%,
+      rgba(200, 168, 75, 0.4) 50%,
+      var(--church-gold) 100%
+    );
+  }
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(-50%) rotate(0deg); }
+  50%      { transform: translateY(-48%) rotate(1.5deg); }
+}
+
+/* ── Service Tiles ─────────────────────────────────────────────────────────── */
+.churchServiceTile {
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid var(--church-gold);
+  height: 100%;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 24px rgba(10, 22, 40, 0.06),
+      inset 0 0 0 1px rgba(200, 168, 75, 0.15);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -4px;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--church-gold), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before { opacity: 1; }
+
+  &__day {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--church-gold);
+    margin-bottom: 0.5rem;
+  }
+}
+
+.churchServiceTileTime {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--church-navy);
+  font-weight: 700;
+  line-height: 1;
+  margin: 0 0 0.5rem;
+}
+
+.churchServiceTileName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--church-text);
+  margin: 0 0 0.5rem;
+}
+
+.churchServiceTileDesc {
+  font-size: 0.875rem;
+  color: var(--church-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Stats Banner ──────────────────────────────────────────────────────────── */
+.churchStats {
+  border-top: 1px solid rgba(200, 168, 75, 0.2);
+  border-bottom: 1px solid rgba(200, 168, 75, 0.2);
+  background:
+    linear-gradient(135deg, rgba(200, 168, 75, 0.03) 0%, transparent 50%),
+    var(--church-navy);
+}
+
+.churchStat {
+  text-align: center;
+  padding-block: 0.75rem;
+  position: relative;
+
+  &__value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--church-gold);
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(200, 168, 75, 0.15);
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #c8c8d0;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__detail {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b6b8a;
+    margin-top: 0.25rem;
+  }
+}
+
+/* ── Sermon Cards ──────────────────────────────────────────────────────────── */
+.churchSermons {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  @include bp.breakpoint-down(md) {
+    justify-content: flex-start;
+  }
+
+  &__switcher {
+    margin-bottom: 2rem;
+    max-width: 520px;
+  }
+}
+
+.churchSermonTile {
+  padding: 0 !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 6px;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 16px 40px rgba(10, 22, 40, 0.14),
+      0 2px 8px rgba(10, 22, 40, 0.08);
+  }
+
+  &__thumb {
+    position: relative;
+    background:
+      radial-gradient(ellipse at center, rgba(200, 168, 75, 0.08), transparent 70%),
+      var(--church-navy);
+  }
+
+  &__play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > * {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(200, 168, 75, 0.12);
+      border: 2px solid rgba(200, 168, 75, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--church-gold);
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    }
+  }
+
+  &:hover &__play > * {
+    background: rgba(200, 168, 75, 0.25);
+    border-color: var(--church-gold);
+    transform: scale(1.08);
+  }
+
+  &__overlayTop {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+  }
+
+  &__duration {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    font-size: 0.7rem;
+    color: #c8c8d0;
+    background: rgba(10, 22, 40, 0.75);
+    padding: 2px 10px;
+    border-radius: 3px;
+    backdrop-filter: blur(4px);
+    letter-spacing: 0.04em;
+  }
+
+  &__body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__scripture {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--church-gold);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--church-text);
+    line-height: 1.3;
+    font-weight: 700;
+    flex: 1;
+    margin: 0 0 0.75rem;
+  }
+
+  &__meta {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--church-divider);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--church-muted);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+/* ── Ministry Tiles ────────────────────────────────────────────────────────── */
+.churchMinistries {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.churchMinistryTile {
+  height: 100%;
+  border-top: 3px solid var(--church-gold) !important;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    background: var(--church-gold-pale);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(10, 22, 40, 0.06);
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--church-navy), var(--church-navy-mid));
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  &__name {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--church-navy);
+    margin: 0 0 0.35rem;
+  }
+
+  &__leader {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--church-gold);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  &__desc {
+    font-size: 0.875rem;
+    color: var(--church-muted);
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+/* ── Event Cards ───────────────────────────────────────────────────────────── */
+.churchEvents {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  @include bp.breakpoint-down(md) {
+    justify-content: flex-start;
+  }
+
+  &__switcher {
+    margin-bottom: 2rem;
+  }
+}
+
+.churchEventTile {
+  padding: 0 !important;
+  overflow: hidden;
+  display: flex;
+  height: 100%;
+  border-radius: 6px;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 12px 32px rgba(10, 22, 40, 0.15),
+      0 2px 6px rgba(10, 22, 40, 0.06);
+  }
+
+  &__date {
+    background: linear-gradient(180deg, var(--church-navy) 0%, var(--church-navy-mid) 100%);
+    color: #fff;
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 74px;
+  }
+
+  &__day {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--church-gold);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(200, 168, 75, 0.2);
+  }
+
+  &__month {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #9aa0ac;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  &__body {
+    padding: 1.25rem;
+    flex: 1;
+  }
+
+  &__tag { margin-bottom: 0.5rem; }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--church-text);
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+  }
+
+  &__meta {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--church-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+/* ── CTA Banner ────────────────────────────────────────────────────────────── */
+.churchCta {
+  background: var(--church-gold);
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+
+  &__pattern {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 20px,
+        rgba(255, 255, 255, 0.04) 20px,
+        rgba(255, 255, 255, 0.04) 40px
+      );
+    pointer-events: none;
+  }
+
+  &__grid {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__content {
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__heading {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    color: var(--church-navy);
+    margin-bottom: 1rem;
+  }
+
+  &__body {
+    font-size: 1rem;
+    color: rgba(10, 22, 40, 0.75);
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__btnPrimary {
+    background: var(--church-navy) !important;
+    border-color: var(--church-navy) !important;
+    transition: background 0.2s ease !important;
+
+    &:hover { background: var(--church-navy-mid) !important; }
+  }
+
+  &__btnSecondary {
+    color: var(--church-navy) !important;
+    border-color: var(--church-navy) !important;
+    transition: background 0.2s ease !important;
+
+    &:hover { background: rgba(10, 22, 40, 0.08) !important; }
+  }
+}

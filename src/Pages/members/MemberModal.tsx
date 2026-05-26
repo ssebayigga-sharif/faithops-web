@@ -1,29 +1,41 @@
 import { useState } from "react";
-import { Member, MemberFormValues, MemberModalProps, MiniAssignmentDraft, Step, STEP_LABELS } from "@/churchTypes/memberTypes";
-import { CELL_GROUPS, generateMemberId, MINISTRIES_LIST, MINISTRY_ROLES } from "@/utils/memberUtils";
+import {
+  Member,
+  MemberFormValues,
+  MemberModalProps,
+  MiniAssignmentDraft,
+  Step,
+  STEP_LABELS,
+} from "@/churchTypes/members";
+import {
+  CELL_GROUPS,
+  generateMemberId,
+  MINISTRIES_LIST,
+  MINISTRY_ROLES,
+} from "@/utils/memberUtils";
 import { Add, TrashCan } from "@carbon/icons-react";
 import {
-    Button,
-    RadioButton,
-    DatePicker,
-    DatePickerInput,
-    FormGroup,
-    InlineNotification,
-    NumberInput,
-    ProgressIndicator,
-    ProgressStep,
-    RadioButtonGroup,
-    Select,
-    SelectItem,
-    Tag,
-    TextInput,
-    Toggle
+  Button,
+  RadioButton,
+  DatePicker,
+  DatePickerInput,
+  FormGroup,
+  InlineNotification,
+  NumberInput,
+  ProgressIndicator,
+  ProgressStep,
+  RadioButtonGroup,
+  Select,
+  SelectItem,
+  Tag,
+  TextInput,
+  Toggle,
 } from "@carbon/react";
 import { SlideOver } from "@/components/ui/SlideOver";
-    //validation shema
-function validateStep0(form: Partial<MemberFormValues>): string[]{
-    const errs: string[] = [];
-     if (!form.firstName?.trim()) errs.push("First name is required.");
+//validation shema
+function validateStep0(form: Partial<MemberFormValues>): string[] {
+  const errs: string[] = [];
+  if (!form.firstName?.trim()) errs.push("First name is required.");
   if (!form.lastName?.trim()) errs.push("Last name is required.");
   if (!form.phone?.trim()) errs.push("Phone number is required.");
   if (!form.gender) errs.push("Gender is required.");
@@ -39,22 +51,18 @@ function validateStep1(form: Partial<MemberFormValues>): string[] {
   return errs;
 }
 
-const MemberModal = (
+const MemberModal = ({
+  open,
+  onClose,
+  onSubmit,
+  existingIds,
+  isSubmitting = false,
+}: MemberModalProps) => {
+  const [step, setStep] = useState<Step>(0);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [ministries, setMinistries] = useState<MiniAssignmentDraft[]>([]);
 
-    {
-        open,
-        onClose,
-        onSubmit,
-        existingIds,
-        isSubmitting = false,
-
-    }:MemberModalProps
-) => { 
-    const [step, setStep] = useState<Step>(0)
-    const [errors, setErrors] = useState<string[]>([])
-    const [ministries, setMinistries] = useState<MiniAssignmentDraft[]>([]);
-    
-    const [form, setForm] = useState<Partial<MemberFormValues>>({
+  const [form, setForm] = useState<Partial<MemberFormValues>>({
     firstName: "",
     lastName: "",
     phone: "",
@@ -66,21 +74,16 @@ const MemberModal = (
     baptized: false,
     joinedAt: new Date().toISOString().split("T")[0],
     cellGroup: "",
-    });
-    
-     const set = <K extends keyof MemberFormValues>(
-    key: K,
-    value: MemberFormValues[K]
-    ) => setForm((prev) => ({ ...prev, [key]: value }));
-    
+  });
 
-     const handleNext = () => {
+  const set = <K extends keyof MemberFormValues>(
+    key: K,
+    value: MemberFormValues[K],
+  ) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleNext = () => {
     const errs =
-      step === 0
-        ? validateStep0(form)
-        : step === 1
-        ? validateStep1(form)
-        : [];
+      step === 0 ? validateStep0(form) : step === 1 ? validateStep1(form) : [];
     if (errs.length) {
       setErrors(errs);
       return;
@@ -88,44 +91,49 @@ const MemberModal = (
     setErrors([]);
     setStep((s) => (s < 2 ? ((s + 1) as Step) : s));
   };
- 
+
   const handleBack = () => {
     setErrors([]);
     setStep((s) => (s > 0 ? ((s - 1) as Step) : s));
-    };
-   
-    const addMinistry = () => {
-    setMinistries((prev) => [
-      ...prev,
-      { ministry: "Choir", role: "Member" },
-    ]);
   };
- 
+
+  const addMinistry = () => {
+    setMinistries((prev) => [...prev, { ministry: "Choir", role: "Member" }]);
+  };
+
   const removeMinistry = (i: number) =>
     setMinistries((prev) => prev.filter((_, idx) => idx !== i));
- 
+
   const updateMinistry = (
     i: number,
     key: keyof MiniAssignmentDraft,
-    value: string
+    value: string,
   ) =>
     setMinistries((prev) =>
-      prev.map((m, idx) =>
-        idx === i ? { ...m, [key]: value } : m
-      )
+      prev.map((m, idx) => (idx === i ? { ...m, [key]: value } : m)),
     );
- 
-     const handleSubmit = async () => {
+
+  const handleSubmit = async () => {
     const errs = [...validateStep0(form), ...validateStep1(form)];
     if (errs.length) {
       setErrors(errs);
-      setStep(errs.some((err) => err.includes("name") || err.includes("Phone") || err.includes("Gender") || err.includes("age")) ? 0 : 1);
+      setStep(
+        errs.some(
+          (err) =>
+            err.includes("name") ||
+            err.includes("Phone") ||
+            err.includes("Gender") ||
+            err.includes("age"),
+        )
+          ? 0
+          : 1,
+      );
       return;
     }
 
     const newId = generateMemberId(existingIds);
     const now = new Date().toISOString();
- 
+
     const member: Member = {
       id: newId,
       firstName: form.firstName!,
@@ -144,7 +152,8 @@ const MemberModal = (
         role: m.role,
         joinedAt: now,
         active: true,
-      })), family: [],
+      })),
+      family: [],
       attendance: [],
       giving: [],
       followUps: [],
@@ -158,11 +167,11 @@ const MemberModal = (
         },
       ],
     };
- 
+
     await onSubmit(member);
     handleClose();
-    };
-    const handleClose = () => {
+  };
+  const handleClose = () => {
     setStep(0);
     setErrors([]);
     setMinistries([]);
@@ -180,9 +189,9 @@ const MemberModal = (
       cellGroup: "",
     });
     onClose();
-    };
-    
-     return (
+  };
+
+  return (
     <SlideOver
       open={open}
       onClose={handleClose}
@@ -192,11 +201,22 @@ const MemberModal = (
       width="lg"
       footer={
         <>
-          <Button kind="secondary" onClick={step > 0 ? handleBack : handleClose} disabled={isSubmitting}>
+          <Button
+            kind="secondary"
+            onClick={step > 0 ? handleBack : handleClose}
+            disabled={isSubmitting}
+          >
             {step > 0 ? "Back" : "Cancel"}
           </Button>
-          <Button onClick={step < 2 ? handleNext : handleSubmit} disabled={isSubmitting}>
-            {step < 2 ? "Continue" : isSubmitting ? "Creating..." : "Create Member"}
+          <Button
+            onClick={step < 2 ? handleNext : handleSubmit}
+            disabled={isSubmitting}
+          >
+            {step < 2
+              ? "Continue"
+              : isSubmitting
+                ? "Creating..."
+                : "Create Member"}
           </Button>
         </>
       }
@@ -209,7 +229,7 @@ const MemberModal = (
           ))}
         </ProgressIndicator>
       </div>
- 
+
       {/* Errors */}
       {errors.length > 0 && (
         <InlineNotification
@@ -220,11 +240,17 @@ const MemberModal = (
           style={{ marginBottom: "1rem" }}
         />
       )}
- 
+
       {/* ── Step 0: Personal Info ── */}
       {step === 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "1rem",
+            }}
+          >
             <TextInput
               id="firstName"
               labelText="First Name *"
@@ -240,8 +266,14 @@ const MemberModal = (
               placeholder="e.g. Nakato"
             />
           </div>
- 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "1rem",
+            }}
+          >
             <TextInput
               id="phone"
               labelText="Phone Number *"
@@ -258,20 +290,32 @@ const MemberModal = (
               placeholder="email@example.com"
             />
           </div>
- 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "1rem",
+            }}
+          >
             <FormGroup legendText="Gender *">
               <RadioButtonGroup
                 name="gender"
                 valueSelected={form.gender}
-                onChange={(val) => set("gender", val as MemberFormValues["gender"])}
+                onChange={(val) =>
+                  set("gender", val as MemberFormValues["gender"])
+                }
                 orientation="horizontal"
               >
                 <RadioButton labelText="Male" value="male" id="gender-male" />
-                <RadioButton labelText="Female" value="Female" id="gender-female" />
+                <RadioButton
+                  labelText="Female"
+                  value="Female"
+                  id="gender-female"
+                />
               </RadioButtonGroup>
             </FormGroup>
- 
+
             <NumberInput
               id="age"
               label="Age *"
@@ -281,13 +325,16 @@ const MemberModal = (
               onChange={(_e, { value }) => set("age", Number(value))}
             />
           </div>
- 
+
           <Select
             id="maritalStatus"
             labelText="Marital Status"
             value={form.maritalStatus}
             onChange={(e) =>
-              set("maritalStatus", e.target.value as MemberFormValues["maritalStatus"])
+              set(
+                "maritalStatus",
+                e.target.value as MemberFormValues["maritalStatus"],
+              )
             }
           >
             <SelectItem value="Single" text="Single" />
@@ -295,7 +342,7 @@ const MemberModal = (
           </Select>
         </div>
       )}
- 
+
       {/* ── Step 1: Church Details ── */}
       {step === 1 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -321,7 +368,7 @@ const MemberModal = (
               <SelectItem key={s} value={s} text={s} />
             ))}
           </Select>
- 
+
           <Select
             id="cellGroup"
             labelText="Cell Group *"
@@ -333,7 +380,7 @@ const MemberModal = (
               <SelectItem key={g} value={g} text={g} />
             ))}
           </Select>
- 
+
           <DatePicker
             datePickerType="single"
             value={form.joinedAt}
@@ -347,7 +394,7 @@ const MemberModal = (
               placeholder="mm/dd/yyyy"
             />
           </DatePicker>
- 
+
           <Toggle
             id="baptized"
             labelText="Baptized (SDA)"
@@ -358,14 +405,21 @@ const MemberModal = (
           />
         </div>
       )}
- 
+
       {/* ── Step 2: Ministries ── */}
       {step === 2 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <p style={{ fontSize: "13px", color: "#6f6f6f", marginBottom: "0.5rem" }}>
-            Assign this member to one or more ministries (optional — can be updated later).
+          <p
+            style={{
+              fontSize: "13px",
+              color: "#6f6f6f",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Assign this member to one or more ministries (optional — can be
+            updated later).
           </p>
- 
+
           {ministries.map((m, i) => (
             <div
               key={i}
@@ -383,15 +437,13 @@ const MemberModal = (
                 id={`min-ministry-${i}`}
                 labelText="Ministry"
                 value={m.ministry}
-                onChange={(e) =>
-                  updateMinistry(i, "ministry", e.target.value)
-                }
+                onChange={(e) => updateMinistry(i, "ministry", e.target.value)}
               >
                 {MINISTRIES_LIST.map((min) => (
                   <SelectItem key={min} value={min} text={min} />
                 ))}
               </Select>
- 
+
               <Select
                 id={`min-role-${i}`}
                 labelText="Role"
@@ -402,7 +454,7 @@ const MemberModal = (
                   <SelectItem key={r} value={r} text={r} />
                 ))}
               </Select>
- 
+
               <Button
                 kind="ghost"
                 size="md"
@@ -414,7 +466,7 @@ const MemberModal = (
               />
             </div>
           ))}
- 
+
           <Button
             kind="tertiary"
             renderIcon={Add}
@@ -423,9 +475,16 @@ const MemberModal = (
           >
             Add Ministry Assignment
           </Button>
- 
+
           {ministries.length > 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.25rem" }}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+                marginTop: "0.25rem",
+              }}
+            >
               {ministries.map((m, i) => (
                 <Tag key={i} type="blue" size="md">
                   {m.ministry} · {m.role}
@@ -437,9 +496,6 @@ const MemberModal = (
       )}
     </SlideOver>
   );
-}
-
-
-
+};
 
 export default MemberModal;

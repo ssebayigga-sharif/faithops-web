@@ -19,7 +19,7 @@ import type {
   EventDepartment,
   EventFormDrawerProps,
   EventRecurrenceFrequency,
-} from "@/churchTypes/eventTypes";
+} from "@/churchTypes/events";
 import {
   COMMUNICATION_CHANNELS,
   EVENT_CATEGORIES,
@@ -83,7 +83,11 @@ export function EventFormDrawer({
               }
             >
               {EVENT_DEPARTMENTS.map((department) => (
-                <SelectItem key={department} value={department} text={department} />
+                <SelectItem
+                  key={department}
+                  value={department}
+                  text={department}
+                />
               ))}
             </Select>
           </Column>
@@ -173,7 +177,9 @@ export function EventFormDrawer({
               type="number"
               min={0}
               value={draft.capacity}
-              onChange={(event) => onChange("capacity", Number(event.target.value))}
+              onChange={(event) =>
+                onChange("capacity", Number(event.target.value))
+              }
             />
           </Column>
           <Column sm={4} md={4} lg={4}>
@@ -240,7 +246,15 @@ export function EventFormDrawer({
 
           <Column sm={4} md={8} lg={16}>
             <FileUploaderDropContainer
-              accept={[".pdf", ".png", ".jpg", ".jpeg", ".docx", ".xlsx", ".mp4"]}
+              accept={[
+                ".pdf",
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".docx",
+                ".xlsx",
+                ".mp4",
+              ]}
               id="event-media-upload"
               labelText="Drag files here or click to add event media"
               multiple
