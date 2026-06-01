@@ -1,0 +1,45 @@
+import type { ChurchProfile } from "@/features/profile/types";
+
+export type {
+  BaptismStatus,
+  Gender,
+  MaritalStatus,
+  MembershipStatus,
+} from "@/shared/types";
+export type { ChurchProfile, EmergencyContact } from "@/features/profile/types";
+
+export const DEFAULT_PROFILE: ChurchProfile = {
+  firstName: "",
+  lastName: "",
+  middleName: "",
+  dateOfBirth: "",
+  gender: "",
+  nationality: "",
+  nationalId: "",
+  profilePhotoUrl: "",
+  email: "",
+  phone: "",
+  alternatePhone: "",
+  address: "",
+  city: "",
+  country: "",
+  postalCode: "",
+  maritalStatus: "",
+  spouseName: "",
+  numberOfChildren: "",
+  emergencyContact: { name: "", relationship: "", phone: "" },
+  membershipStatus: "visitor",
+  membershipNumber: "",
+  dateJoined: "",
+  baptismStatus: "",
+  baptismDate: "",
+  department: "",
+  cellGroup: "",
+  serviceUnit: "",
+  ministryRoles: [],
+  spiritualGifts: [],
+  occupation: "",
+  employer: "",
+  createdAt: "",
+  updatedAt: "",
+};
