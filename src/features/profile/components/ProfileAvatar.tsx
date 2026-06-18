@@ -2,6 +2,7 @@ import React, { useRef, useCallback } from "react";
 import { Edit } from "@carbon/icons-react";
 
 interface Props {
+  readOnly: boolean;
   photoUrl: string;
   firstName: string;
   lastName: string;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const ProfileAvatar: React.FC<Props> = ({
+  readOnly,
   photoUrl,
   firstName,
   lastName,
@@ -16,7 +18,7 @@ export const ProfileAvatar: React.FC<Props> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const initials =
-    `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "?";
+    `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase() || "?";
 
   const handleFile = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,33 +44,38 @@ export const ProfileAvatar: React.FC<Props> = ({
       {photoUrl ? (
         <img
           src={photoUrl}
-          alt={`${firstName} ${lastName}`}
+          alt={`${firstName || ""} ${lastName || ""}`}
           className="profile-avatar__image"
         />
       ) : (
         <div
           className="profile-avatar__placeholder"
-          aria-label={`${firstName} ${lastName} initials`}
+          aria-label={`${firstName || ""} ${lastName || ""} initials`}
         >
-          {initials}
+          {initials || "?"}
         </div>
       )}
-      <button
-        type="button"
-        className="profile-avatar__upload-btn"
-        onClick={() => inputRef.current?.click()}
-        aria-label="Change profile photo"
-        title="Change photo"
-      >
-        <Edit size={14} />
-      </button>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="profile-avatar__file-input"
-        onChange={handleFile}
-      />
+      {!readOnly && (
+        <>
+          <button
+            type="button"
+            className="profile-avatar__upload-btn"
+            onClick={() => inputRef.current?.click()}
+            aria-label="Change profile photo"
+            title="Change photo"
+          >
+            <Edit size={14} />
+          </button>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="profile-avatar__file-input"
+            onChange={handleFile}
+          />
+        </>
+      )}
     </div>
   );
 };
+export default ProfileAvatar;

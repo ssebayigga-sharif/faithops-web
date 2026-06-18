@@ -86,8 +86,8 @@ function StatCard({ label, value, accent, loading }: StatCardProps) {
   return (
     <div
       style={{
-        background: "white",
-        border: "1px solid #e0e0e0",
+        background: "var(--cds-layer-01, white)",
+        border: "1px solid var(--cds-border-subtle-01, #e0e0e0)",
         borderLeft: `4px solid ${accent}`,
         padding: "0.85rem 1.1rem",
         flex: 1,
@@ -97,7 +97,7 @@ function StatCard({ label, value, accent, loading }: StatCardProps) {
       <p
         style={{
           fontSize: "11px",
-          color: "#6f6f6f",
+          color: "var(--cds-text-secondary, #6f6f6f)",
           textTransform: "uppercase",
           letterSpacing: "0.06em",
           marginBottom: 4,
@@ -108,7 +108,7 @@ function StatCard({ label, value, accent, loading }: StatCardProps) {
       {loading ? (
         <InlineLoading description="—" />
       ) : (
-        <p style={{ fontSize: "22px", fontWeight: 700, color: "#161616" }}>
+        <p style={{ fontSize: "22px", fontWeight: 700, color: "var(--cds-text-primary, #161616)" }}>
           {value}
         </p>
       )}
@@ -249,8 +249,9 @@ export default function MembersPage() {
     <div
       style={{
         fontFamily: "'IBM Plex Sans', sans-serif",
-        background: "#f4f4f4",
+        background: "var(--cds-background, #f4f4f4)",
         minHeight: "100vh",
+        color: "var(--cds-text-primary, #161616)",
       }}
     >
       {/* Toast */}
@@ -308,13 +309,13 @@ export default function MembersPage() {
               style={{
                 fontSize: "22px",
                 fontWeight: 700,
-                color: "#161616",
+                color: "var(--cds-text-primary, #161616)",
                 marginBottom: 4,
               }}
             >
               Church Membership Register
             </h1>
-            <p style={{ fontSize: "13px", color: "#6f6f6f" }}>
+            <p style={{ fontSize: "13px", color: "var(--cds-text-secondary, #6f6f6f)" }}>
               Kampala SDA Church ·{" "}
               {isLoading
                 ? "Loading…"
@@ -412,8 +413,8 @@ export default function MembersPage() {
         {/* Filters */}
         <div
           style={{
-            background: "white",
-            border: "1px solid #e0e0e0",
+            background: "var(--cds-layer-01, white)",
+            border: "1px solid var(--cds-border-subtle-01, #e0e0e0)",
             padding: "0.75rem 1rem",
             marginBottom: "0.5rem",
           }}
@@ -430,7 +431,7 @@ export default function MembersPage() {
           <p
             style={{
               fontSize: "12.5px",
-              color: "#6f6f6f",
+              color: "var(--cds-text-secondary, #6f6f6f)",
               marginBottom: "0.5rem",
             }}
           >
@@ -443,8 +444,8 @@ export default function MembersPage() {
         {isLoading && (
           <div
             style={{
-              background: "white",
-              border: "1px solid #e0e0e0",
+              background: "var(--cds-layer-01, white)",
+              border: "1px solid var(--cds-border-subtle-01, #e0e0e0)",
               padding: "3rem",
               display: "flex",
               justifyContent: "center",
@@ -461,8 +462,8 @@ export default function MembersPage() {
         {!isLoading && !isError && members.length === 0 && (
           <div
             style={{
-              background: "white",
-              border: "1px solid #e0e0e0",
+              background: "var(--cds-layer-01, white)",
+              border: "1px solid var(--cds-border-subtle-01, #e0e0e0)",
               padding: "4rem",
               textAlign: "center",
             }}
@@ -473,7 +474,7 @@ export default function MembersPage() {
             <p
               style={{
                 fontSize: "13px",
-                color: "#6f6f6f",
+                color: "var(--cds-text-secondary, #6f6f6f)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -709,7 +710,7 @@ export default function MembersPage() {
                               return (
                                 <TableCell
                                   key={cell.id}
-                                  style={{ fontSize: "13px", color: "#525252" }}
+                                  style={{ fontSize: "13px", color: "var(--cds-text-helper, #525252)" }}
                                 >
                                   {formatDate(cell.value as string)}
                                 </TableCell>

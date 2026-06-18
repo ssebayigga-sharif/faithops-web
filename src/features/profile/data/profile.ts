@@ -1,13 +1,10 @@
 import type { ChurchProfile } from "@/features/profile/types";
 
-export type {
-  BaptismStatus,
-  Gender,
-  MaritalStatus,
-  MembershipStatus,
-} from "@/shared/types";
-export type { ChurchProfile, EmergencyContact } from "@/features/profile/types";
-
+/**
+ * Default empty profile.
+ * All fields included even if not shown in the UI form,
+ * because they are stored in Firebase and may be used by admin features.
+ */
 export const DEFAULT_PROFILE: ChurchProfile = {
   firstName: "",
   lastName: "",

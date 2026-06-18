@@ -1,106 +1,89 @@
-import { useState, useCallback, useRef } from "react";
-import type { ChurchProfile, SaveStatus, UseProfileReturn } from "@/features/profile/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ProfileService, generateUid } from "@/features/profile/services/profile.services";
+import type { ChurchProfile } from "@/features/profile/types";
 import { DEFAULT_PROFILE } from "@/features/profile/data/profile";
-import {
-  fetchProfile as apiFetchProfile,
-  saveProfile as apiSaveProfile,
-  generateUid,
-} from "../services/profile.services";
+import { useCallback } from "react";
 
-export function useProfile(initial?: Partial<ChurchProfile>): UseProfileReturn {
-  const [profile, setProfile] = useState<ChurchProfile>({
-    ...DEFAULT_PROFILE,
-    ...initial,
+export const profileKeys = {
+  one: (uid: string) => ["profile", uid] as const,
+};
+
+// Key to store profile UID in localStorage
+const LOCAL_STORAGE_KEY = "faithops_profile_uid";
+
+/**
+ * Helper to get the saved profile UID from local storage
+ */
+export function getSavedProfileUid(): string | null {
+  return localStorage.getItem(LOCAL_STORAGE_KEY);
+}
+
+/**
+ * Helper to set/save the profile UID in local storage
+ */
+export function setSavedProfileUid(uid: string): void {
+  localStorage.setItem(LOCAL_STORAGE_KEY, uid);
+}
+
+export function useProfile(uidInput?: string) {
+  const queryClient = useQueryClient();
+
+  // Determine actual UID: input prop -> localStorage -> fallback to empty/null
+  const activeUid = uidInput || getSavedProfileUid() || "";
+
+  // Query to fetch profile from Firebase
+  const { data, isLoading, isError, error } = useQuery<ChurchProfile | null, Error>({
+    queryKey: profileKeys.one(activeUid),
+    queryFn: () => {
+      if (!activeUid) return null;
+      return ProfileService.getOne(activeUid);
+    },
+    enabled: !!activeUid,
+    staleTime: 1000 * 60 * 5, // 5 minutes stale time
   });
-  const [isDirty, setIsDirty] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const updateField = useCallback(
-    <K extends keyof ChurchProfile>(field: K, value: ChurchProfile[K]) => {
-      setProfile((prev) => ({ ...prev, [field]: value }));
-      setIsDirty(true);
-      setSaveStatus("idle");
-    },
-    [],
-  );
-
-  const updateNestedField = useCallback(
-    (parent: "emergencyContact", field: string, value: string) => {
-      setProfile((prev) => ({
-        ...prev,
-        [parent]: { ...prev[parent], [field]: value },
-      }));
-      setIsDirty(true);
-      setSaveStatus("idle");
-    },
-    [],
-  );
-
-  const updatePhoto = useCallback((dataUrl: string) => {
-    setProfile((prev) => ({ ...prev, profilePhotoUrl: dataUrl }));
-    setIsDirty(true);
-  }, []);
-
-  const saveProfile = useCallback(async () => {
-    if (!profile.email && !profile.firstName) {
-      setErrorMessage("Please enter at least a name or email before saving.");
-      setSaveStatus("error");
-      return;
-    }
-    setSaveStatus("saving");
-    setErrorMessage("");
-    try {
-      const uid =
-        profile.uid || generateUid(profile.email || profile.firstName);
-      const saved = await apiSaveProfile(uid, { ...profile, uid });
-      setProfile(saved);
-      setIsDirty(false);
-      setSaveStatus("saved");
-      if (savedTimer.current) clearTimeout(savedTimer.current);
-      savedTimer.current = setTimeout(() => setSaveStatus("idle"), 3000);
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Unknown error");
-      setSaveStatus("error");
-    }
-  }, [profile]);
-
-  const loadProfile = useCallback(async (uid: string) => {
-    setIsLoading(true);
-    setErrorMessage("");
-    try {
-      const data = await apiFetchProfile(uid);
-      if (data) {
-        setProfile(data);
-        setIsDirty(false);
+  // Mutation to save/update the profile
+  const saveMutation = useMutation<ChurchProfile, Error, ChurchProfile>({
+    mutationFn: async (updatedProfile) => {
+      const emailOrName = updatedProfile.email || updatedProfile.firstName;
+      if (!emailOrName) {
+        throw new Error("First name or email is required to save a profile.");
       }
-    } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Failed to load");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
-  const resetProfile = useCallback(() => {
-    setProfile({ ...DEFAULT_PROFILE });
-    setIsDirty(false);
-    setSaveStatus("idle");
-    setErrorMessage("");
-  }, []);
+      // Generate a stable UID if we don't have one
+      const targetUid = updatedProfile.uid || activeUid || generateUid(emailOrName);
+      
+      const saved = await ProfileService.save(targetUid, {
+        ...updatedProfile,
+        uid: targetUid,
+      });
+
+      // Persist the UID in localStorage so the user can revisit it next time
+      setSavedProfileUid(targetUid);
+
+      return saved;
+    },
+    onSuccess: (savedData) => {
+      if (savedData.uid) {
+        queryClient.setQueryData(profileKeys.one(savedData.uid), savedData);
+        queryClient.invalidateQueries({ queryKey: profileKeys.one(savedData.uid) });
+      }
+    },
+  });
+
+  const clearProfileCache = useCallback((uid: string) => {
+    queryClient.invalidateQueries({ queryKey: profileKeys.one(uid) });
+  }, [queryClient]);
 
   return {
-    profile,
-    isDirty,
-    saveStatus,
-    errorMessage,
-    isLoading,
-    updateField,
-    updateNestedField,
-    saveProfile,
-    loadProfile,
-    resetProfile,
-    updatePhoto,
+    profile: data || { ...DEFAULT_PROFILE, uid: activeUid },
+    isLoading: isLoading && !!activeUid,
+    isError,
+    error: error?.message || null,
+    saveProfile: saveMutation.mutateAsync,
+    isSaving: saveMutation.isPending,
+    saveError: saveMutation.error?.message || null,
+    activeUid,
+    clearProfileCache,
   };
 }

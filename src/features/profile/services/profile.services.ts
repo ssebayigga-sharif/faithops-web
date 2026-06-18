@@ -1,59 +1,78 @@
+/**
+ * profile.services.ts
+ *
+ * Firebase Realtime Database service for user profiles.
+ * Uses the shared firebaseClient (Axios) — same pattern as MemberService.
+ *
+ * Firebase RTDB path: /profiles/{uid}.json
+ */
+
+import type { AxiosResponse } from "axios";
+import { firebaseClient } from "@/shared/services/firebase.client";
 import type { ChurchProfile } from "@/features/profile/types";
 
-const BASE_URL = "https://my-church-9abc5-default-rtdb.firebaseio.com";
+const PROFILES_PATH = "/profiles";
 
-export async function fetchProfile(uid: string): Promise<ChurchProfile | null> {
-  const res = await fetch(`${BASE_URL}/profiles/${uid}.json`);
-  if (!res.ok) throw new Error(`Fetch failed: ${res.statusText}`);
-  return res.json() as Promise<ChurchProfile | null>;
-}
+export const ProfileService = {
+  /**
+   * GET /profiles/{uid}.json
+   * Fetch a single profile by UID.
+   */
+  async getOne(uid: string): Promise<ChurchProfile | null> {
+    const res: AxiosResponse<ChurchProfile | null> =
+      await firebaseClient.get(`${PROFILES_PATH}/${uid}.json`);
+    return res.data ?? null;
+  },
 
-export async function saveProfile(
-  uid: string,
-  profile: ChurchProfile,
-): Promise<ChurchProfile> {
-  const now = new Date().toISOString();
-  const payload: ChurchProfile = {
-    ...profile,
-    uid,
-    updatedAt: now,
-    createdAt: profile.createdAt || now,
-  };
+  /**
+   * PUT /profiles/{uid}.json
+   * Create or fully overwrite a profile.
+   */
+  async save(uid: string, profile: ChurchProfile): Promise<ChurchProfile> {
+    const now = new Date().toISOString();
+    const payload: ChurchProfile = {
+      ...profile,
+      uid,
+      updatedAt: now,
+      createdAt: profile.createdAt || now,
+    };
 
-  const res = await fetch(`${BASE_URL}/profiles/${uid}.json`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+    const res: AxiosResponse<ChurchProfile> = await firebaseClient.put(
+      `${PROFILES_PATH}/${uid}.json`,
+      payload,
+    );
 
-  if (!res.ok) throw new Error(`Save failed: ${res.statusText}`);
-  return res.json() as Promise<ChurchProfile>;
-}
+    return res.data;
+  },
 
-export async function patchProfile(
-  uid: string,
-  partial: Partial<ChurchProfile>,
-): Promise<Partial<ChurchProfile>> {
-  const payload = { ...partial, updatedAt: new Date().toISOString() };
-  const res = await fetch(`${BASE_URL}/profiles/${uid}.json`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(`Patch failed: ${res.statusText}`);
-  return res.json();
-}
+  /**
+   * PATCH /profiles/{uid}.json
+   * Shallow-merge partial updates into an existing profile.
+   */
+  async patch(
+    uid: string,
+    partial: Partial<ChurchProfile>,
+  ): Promise<Partial<ChurchProfile>> {
+    const payload = { ...partial, updatedAt: new Date().toISOString() };
+    const res: AxiosResponse<Partial<ChurchProfile>> =
+      await firebaseClient.patch(`${PROFILES_PATH}/${uid}.json`, payload);
+    return res.data;
+  },
 
-export async function deleteProfile(uid: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/profiles/${uid}.json`, {
-    method: "DELETE",
-  });
-  if (!res.ok) throw new Error(`Delete failed: ${res.statusText}`);
-}
+  /**
+   * DELETE /profiles/{uid}.json
+   */
+  async remove(uid: string): Promise<void> {
+    await firebaseClient.delete(`${PROFILES_PATH}/${uid}.json`);
+  },
+} as const;
 
-/** Derives a stable key from email — replace with Firebase Auth UID in prod */
-export function generateUid(email: string): string {
-  return email
+/**
+ * Derives a stable key from an email or name string.
+ * Replace with Firebase Auth UID once authentication is added.
+ */
+export function generateUid(seed: string): string {
+  return seed
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "_")
     .slice(0, 28);

@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./sidebar";
 import { useIsMobileNav } from "@/shared/hooks/useIsMobileNav";
+import { useAppTheme } from "@/shared/hooks/useTheme";
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -12,6 +13,7 @@ type AppLayoutProps = {
 const AppLayout = ({ children }: AppLayoutProps) => {
   const isMobileNav = useIsMobileNav();
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(!isMobileNav);
+  const { theme } = useAppTheme();
 
   // Desktop: keep rail open. Mobile: start closed, overlay on menu.
   useEffect(() => {
@@ -31,7 +33,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const contentExpanded = isMobileNav ? false : isSideNavExpanded;
 
   return (
-    <Theme theme="g10">
+    <Theme theme={theme}>
       <div className="app-shell">
         <Header
           isSideNavExpanded={isSideNavExpanded}

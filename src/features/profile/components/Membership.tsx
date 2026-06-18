@@ -8,112 +8,173 @@ import {
   Tile,
 } from "@carbon/react";
 import { Certificate } from "@carbon/icons-react";
-import type { ChurchProfile } from "@/features/profile/types";
-import type { MembershipStatus, BaptismStatus } from "@/shared/types";
+import { Controller } from "react-hook-form";
+import type { Control, UseFormRegister, FieldErrors } from "react-hook-form";
+import type { ProfileFormValues } from "../types";
 
 interface Props {
-  profile: ChurchProfile;
-  onChange: <K extends keyof ChurchProfile>(
-    field: K,
-    value: ChurchProfile[K],
-  ) => void;
+  readOnly: boolean;
+  profile: Partial<ProfileFormValues>;
+  register?: UseFormRegister<ProfileFormValues>;
+  errors?: FieldErrors<ProfileFormValues>;
+  control?: Control<ProfileFormValues>;
 }
 
-const toIso = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export const MembershipSection: React.FC<Props> = ({
+  readOnly,
+  profile,
+  register,
+  errors,
+  control,
+}) => {
+  const toIso = (d: Date) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-export const MembershipSection: React.FC<Props> = ({ profile, onChange }) => (
-  <Tile className="profile-section">
-    <h2 className="profile-section__heading">
-      <Certificate size={20} aria-hidden /> Church Membership
-    </h2>
+  const formatStatus = (s?: string) => {
+    if (!s) return "—";
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  };
 
-    <div className="profile-field-grid">
-      <Select
-        id="m-status"
-        labelText="Membership Status"
-        value={profile.membershipStatus}
-        onChange={(e) =>
-          onChange("membershipStatus", e.target.value as MembershipStatus)
-        }
-      >
-        <SelectItem value="active" text="Active Member" />
-        <SelectItem value="inactive" text="Inactive Member" />
-        <SelectItem value="visitor" text="Visitor" />
-        <SelectItem value="transferred" text="Transferred" />
-      </Select>
+  const formatBaptism = (b?: string) => {
+    if (!b) return "—";
+    if (b === "baptised") return "Baptised";
+    if (b === "not_baptised") return "Not Baptised";
+    if (b === "pending") return "Pending / Scheduled";
+    return b;
+  };
 
-      <TextInput
-        id="m-number"
-        labelText="Membership Number"
-        placeholder="e.g. MCM-2024-00123"
-        helperText="Assigned by administrator"
-        value={profile.membershipNumber}
-        onChange={(e) => onChange("membershipNumber", e.target.value)}
-      />
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "—";
+    try {
+      return new Date(dateStr).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
-      <DatePicker
-        datePickerType="single"
-        value={profile.dateJoined}
-        onChange={([d]) => d && onChange("dateJoined", toIso(d))}
-        maxDate={new Date().toLocaleDateString("en-US")}
-      >
-        <DatePickerInput
-          id="m-joined"
-          labelText="Date Joined"
-          placeholder="mm/dd/yyyy"
+  if (readOnly) {
+    return (
+      <Tile className="profile-section">
+        <h2 className="profile-section__heading">
+          <Certificate size={20} aria-hidden /> Church Membership
+        </h2>
+        <div className="profile-view-grid">
+          <div className="profile-view-item">
+            <span className="profile-view-label">Membership Status</span>
+            <span className="profile-view-value">{formatStatus(profile.membershipStatus)}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Date Joined</span>
+            <span className="profile-view-value">{formatDate(profile.dateJoined)}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Baptism Status</span>
+            <span className="profile-view-value">{formatBaptism(profile.baptismStatus)}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Department</span>
+            <span className="profile-view-value">{profile.department || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Cell Group / Life Group</span>
+            <span className="profile-view-value">{profile.cellGroup || "—"}</span>
+          </div>
+        </div>
+      </Tile>
+    );
+  }
+
+  // Edit Mode
+  if (!register || !errors || !control) return null;
+
+  return (
+    <Tile className="profile-section">
+      <h2 className="profile-section__heading">
+        <Certificate size={20} aria-hidden /> Church Membership
+      </h2>
+
+      <div className="profile-field-grid">
+        <Controller
+          name="membershipStatus"
+          control={control}
+          render={({ field }) => (
+            <Select
+              id="m-status"
+              labelText="Membership Status"
+              invalid={!!errors.membershipStatus}
+              invalidText={errors.membershipStatus?.message}
+              {...field}
+            >
+              <SelectItem value="active" text="Active Member" />
+              <SelectItem value="inactive" text="Inactive Member" />
+              <SelectItem value="visitor" text="Visitor" />
+              <SelectItem value="transferred" text="Transferred" />
+            </Select>
+          )}
         />
-      </DatePicker>
 
-      <Select
-        id="m-baptism"
-        labelText="Baptism Status"
-        value={profile.baptismStatus}
-        onChange={(e) =>
-          onChange("baptismStatus", e.target.value as BaptismStatus)
-        }
-      >
-        <SelectItem value="" text="Select status" />
-        <SelectItem value="baptised" text="Baptised" />
-        <SelectItem value="not_baptised" text="Not Baptised" />
-        <SelectItem value="pending" text="Pending / Scheduled" />
-      </Select>
+        <Controller
+          name="dateJoined"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DatePicker
+              datePickerType="single"
+              value={value}
+              onChange={([d]) => d && onChange(toIso(d))}
+              maxDate={new Date().toLocaleDateString("en-US")}
+            >
+              <DatePickerInput
+                id="m-joined"
+                labelText="Date Joined"
+                placeholder="mm/dd/yyyy"
+                invalid={!!errors.dateJoined}
+                invalidText={errors.dateJoined?.message}
+              />
+            </DatePicker>
+          )}
+        />
 
-      {profile.baptismStatus === "baptised" && (
-        <DatePicker
-          datePickerType="single"
-          value={profile.baptismDate}
-          onChange={([d]) => d && onChange("baptismDate", toIso(d))}
-        >
-          <DatePickerInput
-            id="m-baptismDate"
-            labelText="Baptism Date"
-            placeholder="mm/dd/yyyy"
-          />
-        </DatePicker>
-      )}
+        <Controller
+          name="baptismStatus"
+          control={control}
+          render={({ field }) => (
+            <Select
+              id="m-baptism"
+              labelText="Baptism Status"
+              invalid={!!errors.baptismStatus}
+              invalidText={errors.baptismStatus?.message}
+              {...field}
+            >
+              <SelectItem value="" text="Select status" />
+              <SelectItem value="baptised" text="Baptised" />
+              <SelectItem value="not_baptised" text="Not Baptised" />
+              <SelectItem value="pending" text="Pending / Scheduled" />
+            </Select>
+          )}
+        />
 
-      <TextInput
-        id="m-dept"
-        labelText="Department"
-        placeholder="e.g. Worship, Youth, Ushering"
-        value={profile.department}
-        onChange={(e) => onChange("department", e.target.value)}
-      />
-      <TextInput
-        id="m-cell"
-        labelText="Cell Group / Life Group"
-        placeholder="e.g. Nakasero Zone A"
-        value={profile.cellGroup}
-        onChange={(e) => onChange("cellGroup", e.target.value)}
-      />
-      <TextInput
-        id="m-service"
-        labelText="Service Unit"
-        placeholder="e.g. Sunday First Service"
-        value={profile.serviceUnit}
-        onChange={(e) => onChange("serviceUnit", e.target.value)}
-      />
-    </div>
-  </Tile>
-);
+        <TextInput
+          id="m-dept"
+          labelText="Department"
+          placeholder="e.g. Worship, Youth, Ushering"
+          invalid={!!errors.department}
+          invalidText={errors.department?.message}
+          {...register("department")}
+        />
+        <TextInput
+          id="m-cell"
+          labelText="Cell Group / Life Group"
+          placeholder="e.g. Nakasero Zone A"
+          invalid={!!errors.cellGroup}
+          invalidText={errors.cellGroup?.message}
+          {...register("cellGroup")}
+        />
+      </div>
+    </Tile>
+  );
+};
+export default MembershipSection;

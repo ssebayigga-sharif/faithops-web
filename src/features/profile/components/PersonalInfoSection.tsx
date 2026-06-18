@@ -8,20 +8,77 @@ import {
   Tile,
 } from "@carbon/react";
 import { User } from "@carbon/icons-react";
-import type { ChurchProfile } from "@/features/profile/types";
-import type { Gender } from "@/shared/types";
+import { Controller } from "react-hook-form";
+import type { Control, UseFormRegister, FieldErrors } from "react-hook-form";
+import type { ProfileFormValues } from "../types";
 
 interface Props {
-  profile: ChurchProfile;
-  onChange: <K extends keyof ChurchProfile>(
-    field: K,
-    value: ChurchProfile[K],
-  ) => void;
+  readOnly: boolean;
+  profile: Partial<ProfileFormValues>;
+  register?: UseFormRegister<ProfileFormValues>;
+  errors?: FieldErrors<ProfileFormValues>;
+  control?: Control<ProfileFormValues>;
 }
 
-export const PersonalInfoSection: React.FC<Props> = ({ profile, onChange }) => {
+export const PersonalInfoSection: React.FC<Props> = ({
+  readOnly,
+  profile,
+  register,
+  errors,
+  control,
+}) => {
   const toIso = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const formatGender = (g?: string) => {
+    if (!g) return "—";
+    if (g === "prefer_not_to_say") return "Prefer not to say";
+    return g.charAt(0).toUpperCase() + g.slice(1);
+  };
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "—";
+    try {
+      return new Date(dateStr).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  if (readOnly) {
+    return (
+      <Tile className="profile-section">
+        <h2 className="profile-section__heading">
+          <User size={20} aria-hidden /> Personal Information
+        </h2>
+        <div className="profile-view-grid">
+          <div className="profile-view-item">
+            <span className="profile-view-label">First Name</span>
+            <span className="profile-view-value">{profile.firstName || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Last Name</span>
+            <span className="profile-view-value">{profile.lastName || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Gender</span>
+            <span className="profile-view-value">{formatGender(profile.gender)}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Date of Birth</span>
+            <span className="profile-view-value">{formatDate(profile.dateOfBirth)}</span>
+          </div>
+        </div>
+      </Tile>
+    );
+  }
+
+  // Edit Mode
+  if (!register || !errors || !control) return null;
 
   return (
     <Tile className="profile-section">
@@ -32,64 +89,59 @@ export const PersonalInfoSection: React.FC<Props> = ({ profile, onChange }) => {
       <div className="profile-field-grid">
         <TextInput
           id="p-firstName"
-          labelText="First Name"
+          labelText="First Name *"
           placeholder="Enter first name"
-          value={profile.firstName}
-          onChange={(e) => onChange("firstName", e.target.value)}
-          required
-        />
-        <TextInput
-          id="p-middleName"
-          labelText="Middle Name"
-          placeholder="Optional"
-          value={profile.middleName}
-          onChange={(e) => onChange("middleName", e.target.value)}
+          invalid={!!errors.firstName}
+          invalidText={errors.firstName?.message}
+          {...register("firstName")}
         />
         <TextInput
           id="p-lastName"
-          labelText="Last Name"
+          labelText="Last Name *"
           placeholder="Enter last name"
-          value={profile.lastName}
-          onChange={(e) => onChange("lastName", e.target.value)}
-          required
+          invalid={!!errors.lastName}
+          invalidText={errors.lastName?.message}
+          {...register("lastName")}
         />
-        <DatePicker
-          datePickerType="single"
-          value={profile.dateOfBirth}
-          onChange={([d]) => d && onChange("dateOfBirth", toIso(d))}
-          maxDate={new Date().toLocaleDateString("en-US")}
-        >
-          <DatePickerInput
-            id="p-dob"
-            labelText="Date of Birth"
-            placeholder="mm/dd/yyyy"
-          />
-        </DatePicker>
 
-        <Select
-          id="p-gender"
-          labelText="Gender"
-          value={profile.gender}
-          onChange={(e) => onChange("gender", e.target.value as Gender)}
-        >
-          <SelectItem value="" text="Select gender" />
-          <SelectItem value="male" text="Male" />
-          <SelectItem value="female" text="Female" />
-          <SelectItem value="prefer_not_to_say" text="Prefer not to say" />
-        </Select>
-        <TextInput
-          id="p-nationality"
-          labelText="Nationality"
-          placeholder="e.g. Ugandan"
-          value={profile.nationality}
-          onChange={(e) => onChange("nationality", e.target.value)}
+        <Controller
+          name="gender"
+          control={control}
+          render={({ field }) => (
+            <Select
+              id="p-gender"
+              labelText="Gender"
+              invalid={!!errors.gender}
+              invalidText={errors.gender?.message}
+              {...field}
+            >
+              <SelectItem value="" text="Select gender" />
+              <SelectItem value="male" text="Male" />
+              <SelectItem value="female" text="Female" />
+              <SelectItem value="prefer_not_to_say" text="Prefer not to say" />
+            </Select>
+          )}
         />
-        <TextInput
-          id="p-nationalId"
-          labelText="National ID / Passport No."
-          placeholder="Enter ID number"
-          value={profile.nationalId}
-          onChange={(e) => onChange("nationalId", e.target.value)}
+
+        <Controller
+          name="dateOfBirth"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <DatePicker
+              datePickerType="single"
+              value={value}
+              onChange={([d]) => d && onChange(toIso(d))}
+              maxDate={new Date().toLocaleDateString("en-US")}
+            >
+              <DatePickerInput
+                id="p-dob"
+                labelText="Date of Birth"
+                placeholder="mm/dd/yyyy"
+                invalid={!!errors.dateOfBirth}
+                invalidText={errors.dateOfBirth?.message}
+              />
+            </DatePicker>
+          )}
         />
       </div>
     </Tile>

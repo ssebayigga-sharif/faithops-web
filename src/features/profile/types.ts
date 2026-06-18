@@ -6,6 +6,10 @@ export interface EmergencyContact {
   phone: string;
 }
 
+/**
+ * Full profile stored in Firebase at /profiles/{uid}.json
+ * All fields retained for backward compatibility and admin use.
+ */
 export interface ChurchProfile {
   uid?: string;
   firstName: string;
@@ -43,25 +47,27 @@ export interface ChurchProfile {
   updatedAt: string;
 }
 
-export type SaveStatus = "idle" | "saving" | "saved" | "error";
-
-export interface UseProfileReturn {
-  profile: ChurchProfile;
-  isDirty: boolean;
-  saveStatus: SaveStatus;
-  errorMessage: string;
-  isLoading: boolean;
-  updateField: <K extends keyof ChurchProfile>(
-    field: K,
-    value: ChurchProfile[K],
-  ) => void;
-  updateNestedField: (
-    parent: "emergencyContact",
-    field: string,
-    value: string,
-  ) => void;
-  saveProfile: () => Promise<void>;
-  loadProfile: (uid: string) => Promise<void>;
-  resetProfile: () => void;
-  updatePhoto: (dataUrl: string) => void;
+/**
+ * Subset of ChurchProfile fields shown on the user-facing profile form.
+ * Used with react-hook-form for validation.
+ */
+export interface ProfileFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  gender: Gender;
+  dateOfBirth: string;
+  maritalStatus: MaritalStatus;
+  spouseName: string;
+  address: string;
+  city: string;
+  country: string;
+  department: string;
+  cellGroup: string;
+  membershipStatus: MembershipStatus;
+  baptismStatus: BaptismStatus;
+  dateJoined: string;
+  emergencyContact: EmergencyContact;
+  profilePhotoUrl: string;
 }

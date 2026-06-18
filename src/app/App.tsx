@@ -8,6 +8,7 @@ import ProfilePage from "@/features/profile/pages/ProfilePage";
 import AttendancePage from "@/features/attendance/pages/AttendancePage";
 import HomePage from "@/features/home/pages/HomePage";
 import AboutPage from "@/features/about/pages/AboutPage";
+import SettingsPage from "@/features/settings/pages/SettingsPage";
 import { SectionPage } from "@/shared/components/SectionPage";
 
 const App = () => (
@@ -33,15 +34,7 @@ const App = () => (
             />
           }
         />
-        <Route
-          path="/settings"
-          element={
-            <SectionPage
-              title="Settings"
-              description="Configure users, roles, permissions, ministry teams, and organization preferences."
-            />
-          }
-        />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route
           path="/help"
           element={

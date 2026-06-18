@@ -1,25 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Column,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Button,
-  Tag,
   InlineNotification,
-  SkeletonText,
-  SkeletonPlaceholder,
   Loading,
 } from "@carbon/react";
 import {
   Save,
-  Reset,
-  CheckmarkFilled,
-  WarningAltFilled,
-  ErrorFilled,
+  Edit,
+  Close,
 } from "@carbon/icons-react";
 
 import { ProfileAvatar } from "../components/ProfileAvatar";
@@ -27,46 +17,98 @@ import { PersonalInfoSection } from "../components/PersonalInfoSection";
 import { ContactInfoSection } from "../components/ContactInfoSection";
 import { FamilySection } from "../components/FamilySection";
 import { MembershipSection } from "../components/Membership";
-import { MinistrySection } from "../components/Ministry";
 import { useProfile } from "../hooks/useProfile";
-import type { MembershipStatus } from "@/shared/types";
+import { useProfileForm } from "../hooks/useProfileForm";
+import type { ProfileFormValues } from "../types";
 
 import styles from "../profile.module.scss";
 
-interface Props {
-  /** Firebase Auth UID of the logged-in user */
-  uid?: string;
-}
-
-type MembershipBadgeType = "green" | "gray" | "teal" | "purple";
-
-const BADGE_TYPES: Record<MembershipStatus, MembershipBadgeType> = {
-  active: "green",
-  inactive: "gray",
-  visitor: "teal",
-  transferred: "purple",
-};
-
-export const ProfilePage: React.FC<Props> = ({ uid }) => {
+export const ProfilePage: React.FC = () => {
   const {
     profile,
-    isDirty,
-    saveStatus,
-    errorMessage,
     isLoading,
-    updateField,
-    updateNestedField,
+    isSaving,
+    error: loadError,
     saveProfile,
-    loadProfile,
-    resetProfile,
-    updatePhoto,
+    saveError,
+    activeUid,
   } = useProfile();
 
-  const topRef = useRef<HTMLDivElement>(null);
+  // Mode: "view" (default if profile exists) or "edit"
+  const [mode, setMode] = useState<"view" | "edit">("view");
 
+  // If no profile exists yet (no activeUid), default to edit mode
   useEffect(() => {
-    if (uid) loadProfile(uid);
-  }, [uid, loadProfile]);
+    if (!isLoading && !activeUid) {
+      setMode("edit");
+    } else if (!isLoading && activeUid) {
+      setMode("view");
+    }
+  }, [isLoading, activeUid]);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    setValue,
+    formState: { errors, isDirty },
+  } = useProfileForm(profile);
+
+  // Sync profile data to form once loaded
+  useEffect(() => {
+    if (profile) {
+      reset(profile);
+    }
+  }, [profile, reset]);
+
+  const maritalStatusValue = watch("maritalStatus");
+  const formPhotoUrl = watch("profilePhotoUrl") || "";
+  const formFirstName = watch("firstName") || "";
+  const formLastName = watch("lastName") || "";
+
+  // Switch to edit mode and populate form with current profile data
+  const handleStartEdit = () => {
+    reset(profile);
+    setMode("edit");
+  };
+
+  // Cancel edit mode and reset form to original profile data
+  const handleCancel = () => {
+    reset(profile);
+    if (!activeUid) {
+      // If new profile and cancelled, stay in edit but reset
+    } else {
+      setMode("view");
+    }
+  };
+
+  const handlePhotoChange = (dataUrl: string) => {
+    setValue("profilePhotoUrl", dataUrl, { shouldDirty: true });
+  };
+
+  const onSubmit = async (data: ProfileFormValues) => {
+    try {
+      const fullProfile = {
+        ...profile,
+        ...data,
+      };
+      await saveProfile(fullProfile);
+      setMode("view");
+    } catch (err) {
+      // Error handled by useProfile hook
+    }
+  };
+
+  // ── Loading state ───────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <div className={styles.profilePageLoading}>
+        <Loading description="Loading profile..." withOverlay />
+      </div>
+    );
+  }
 
   const fullName =
     [profile.firstName, profile.middleName, profile.lastName]
@@ -77,224 +119,126 @@ export const ProfilePage: React.FC<Props> = ({ uid }) => {
     ? new Date(profile.dateJoined).getFullYear()
     : null;
 
-  const handleSave = async () => {
-    await saveProfile();
-    if (saveStatus === "error")
-      topRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // ── Loading skeleton ────────────────────────────────────────
-  if (isLoading) {
-    return (
-      <div className={styles.profilePage}>
-        <div className={styles.profileHeader}>
-          <Grid>
-            <Column lg={16} md={8} sm={4}>
-              <div className={styles.profileHeaderInner}>
-                <SkeletonPlaceholder
-                  style={{ width: 96, height: 96, borderRadius: "50%" }}
-                />
-                <div style={{ flex: 1 }}>
-                  <SkeletonText heading width="40%" />
-                  <SkeletonText width="25%" />
-                </div>
-              </div>
-            </Column>
-          </Grid>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={styles.profilePage} ref={topRef}>
+    <div className={styles.profilePage}>
       {/* ── Header ─────────────────────────────────────────── */}
       <div className={styles.profileHeader}>
         <Grid>
           <Column lg={16} md={8} sm={4}>
-            <div className={styles.profileHeaderInner}>
+            <div className={styles.profileHeader__inner}>
               <ProfileAvatar
-                photoUrl={profile.profilePhotoUrl}
-                firstName={profile.firstName}
-                lastName={profile.lastName}
-                onPhotoChange={updatePhoto}
+                readOnly={mode === "view"}
+                photoUrl={mode === "view" ? (profile.profilePhotoUrl || "") : formPhotoUrl}
+                firstName={mode === "view" ? (profile.firstName || "") : formFirstName}
+                lastName={mode === "view" ? (profile.lastName || "") : formLastName}
+                onPhotoChange={handlePhotoChange}
               />
 
-              <div className={styles.profileHeaderMeta}>
-                <h1 className={styles.profileHeaderName}>{fullName}</h1>
-                <p className={styles.profileHeaderSubtitle}>
+              <div className={styles.profileHeader__meta}>
+                <h1 className={styles.profileHeader__name}>
+                  {mode === "view" ? fullName : `${formFirstName} ${formLastName}`.trim() || "Create Profile"}
+                </h1>
+                <p className={styles.profileHeader__subtitle}>
                   {profile.department
                     ? `${profile.department} Department`
                     : "Church Member"}
                   {profile.cellGroup ? ` · ${profile.cellGroup}` : ""}
                   {memberSince ? ` · Member since ${memberSince}` : ""}
                 </p>
+              </div>
 
-                <div className={styles.profileHeaderBadges}>
-                  <Tag type={BADGE_TYPES[profile.membershipStatus] ?? "gray"}>
-                    {profile.membershipStatus.charAt(0).toUpperCase() +
-                      profile.membershipStatus.slice(1)}
-                  </Tag>
-                  {profile.baptismStatus === "baptised" && (
-                    <Tag type="blue">Baptised</Tag>
-                  )}
-                  {profile.membershipNumber && (
-                    <Tag type="outline">#{profile.membershipNumber}</Tag>
-                  )}
-                  {profile.ministryRoles.slice(0, 2).map((r) => (
-                    <Tag key={r} type="purple">
-                      {r}
-                    </Tag>
-                  ))}
-                  {profile.ministryRoles.length > 2 && (
-                    <Tag type="purple">
-                      +{profile.ministryRoles.length - 2} more
-                    </Tag>
-                  )}
-                </div>
+              <div className={styles.profileHeader__actions}>
+                {mode === "view" ? (
+                  <Button
+                    kind="primary"
+                    size="md"
+                    renderIcon={Edit}
+                    onClick={handleStartEdit}
+                  >
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <div className={styles.profileHeader__editActions}>
+                    <Button
+                      kind="secondary"
+                      size="md"
+                      renderIcon={Close}
+                      onClick={handleCancel}
+                      disabled={isSaving}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      kind="primary"
+                      size="md"
+                      renderIcon={Save}
+                      onClick={handleSubmit(onSubmit)}
+                      disabled={isSaving || !isDirty}
+                    >
+                      {isSaving ? "Saving..." : "Save Profile"}
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </Column>
         </Grid>
       </div>
 
-      {/* ── Error notification ──────────────────────────────── */}
-      {saveStatus === "error" && errorMessage && (
-        <Grid>
+      {/* ── Notifications ────────────────────────────────────── */}
+      {(loadError || saveError) && (
+        <Grid style={{ marginBottom: "1rem" }}>
           <Column lg={16} md={8} sm={4}>
             <InlineNotification
               kind="error"
               lowContrast
-              title="Save failed: "
-              subtitle={errorMessage}
-              style={{ marginBottom: "1rem" }}
+              title="Error:"
+              subtitle={saveError || loadError || undefined}
             />
           </Column>
         </Grid>
       )}
 
-      {/* ── Tabs ───────────────────────────────────────────── */}
-      <div className={styles.profileNav}>
-        <Grid>
-          <Column lg={16} md={8} sm={4}>
-            <Tabs>
-              <TabList aria-label="Profile sections" contained>
-                <Tab>Personal</Tab>
-                <Tab>Contact</Tab>
-                <Tab>Family</Tab>
-                <Tab>Membership</Tab>
-                <Tab>Ministry</Tab>
-              </TabList>
+      {/* ── Main Layout ──────────────────────────────────────── */}
+      <Grid className={styles.profileGrid}>
+        <Column lg={16} md={8} sm={4}>
+          <div className={styles.profileSections}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <PersonalInfoSection
+                readOnly={mode === "view"}
+                profile={mode === "view" ? profile : {}}
+                register={register}
+                errors={errors}
+                control={control}
+              />
 
-              <Grid style={{ marginTop: "1.5rem", paddingBottom: "5rem" }}>
-                <Column lg={16} md={8} sm={4}>
-                  <TabPanels>
-                    <TabPanel>
-                      <PersonalInfoSection
-                        profile={profile}
-                        onChange={updateField}
-                      />
-                    </TabPanel>
-                    <TabPanel>
-                      <ContactInfoSection
-                        profile={profile}
-                        onChange={updateField}
-                      />
-                    </TabPanel>
-                    <TabPanel>
-                      <FamilySection
-                        profile={profile}
-                        onChange={updateField}
-                        onNestedChange={updateNestedField}
-                      />
-                    </TabPanel>
-                    <TabPanel>
-                      <MembershipSection
-                        profile={profile}
-                        onChange={updateField}
-                      />
-                    </TabPanel>
-                    <TabPanel>
-                      <MinistrySection
-                        profile={profile}
-                        onChange={updateField}
-                      />
-                    </TabPanel>
-                  </TabPanels>
-                </Column>
-              </Grid>
-            </Tabs>
-          </Column>
-        </Grid>
-      </div>
+              <ContactInfoSection
+                readOnly={mode === "view"}
+                profile={mode === "view" ? profile : {}}
+                register={register}
+                errors={errors}
+              />
 
-      {/* ── Sticky save bar ─────────────────────────────────── */}
-      <div className={styles.saveBar}>
-        <Grid>
-          <Column lg={16} md={8} sm={4}>
-            <div className={styles.saveBarInner}>
-              <span
-                className={`save-bar__status ${
-                  isDirty && saveStatus === "idle"
-                    ? "save-bar__status--dirty"
-                    : saveStatus === "saved"
-                      ? "save-bar__status--saved"
-                      : saveStatus === "error"
-                        ? "save-bar__status--error"
-                        : ""
-                }`}
-              >
-                {saveStatus === "saving" && (
-                  <>
-                    <Loading withOverlay={false} small /> Saving to Firebase…
-                  </>
-                )}
-                {saveStatus === "saved" && (
-                  <>
-                    <CheckmarkFilled size={16} /> Saved successfully
-                  </>
-                )}
-                {saveStatus === "error" && (
-                  <>
-                    <ErrorFilled size={16} /> Save failed — check above
-                  </>
-                )}
-                {saveStatus === "idle" && isDirty && (
-                  <>
-                    <WarningAltFilled size={16} /> Unsaved changes
-                  </>
-                )}
-              </span>
+              <FamilySection
+                readOnly={mode === "view"}
+                profile={mode === "view" ? profile : {}}
+                register={register}
+                errors={errors}
+                control={control}
+                maritalStatusValue={maritalStatusValue}
+              />
 
-              <div className={styles.saveBarActions}>
-                <Button
-                  kind="ghost"
-                  size="md"
-                  renderIcon={Reset}
-                  iconDescription="Reset"
-                  onClick={resetProfile}
-                  disabled={saveStatus === "saving"}
-                >
-                  Reset
-                </Button>
-                <Button
-                  kind="primary"
-                  size="md"
-                  renderIcon={Save}
-                  iconDescription="Save profile"
-                  onClick={handleSave}
-                  disabled={
-                    saveStatus === "saving" ||
-                    (!isDirty && saveStatus !== "error")
-                  }
-                >
-                  {saveStatus === "saving" ? "Saving…" : "Save Profile"}
-                </Button>
-              </div>
-            </div>
-          </Column>
-        </Grid>
-      </div>
+              <MembershipSection
+                readOnly={mode === "view"}
+                profile={mode === "view" ? profile : {}}
+                register={register}
+                errors={errors}
+                control={control}
+              />
+            </form>
+          </div>
+        </Column>
+      </Grid>
     </div>
   );
 };

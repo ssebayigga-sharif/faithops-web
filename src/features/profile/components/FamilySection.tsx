@@ -1,107 +1,143 @@
 import React from "react";
-import {
-  TextInput,
-  Select,
-  SelectItem,
-  NumberInput,
-  Tile,
-} from "@carbon/react";
+import { TextInput, Select, SelectItem, Tile } from "@carbon/react";
 import { Events } from "@carbon/icons-react";
-import type { ChurchProfile } from "@/features/profile/types";
-import type { MaritalStatus } from "@/shared/types";
+import { Controller } from "react-hook-form";
+import type { Control, UseFormRegister, FieldErrors } from "react-hook-form";
+import type { ProfileFormValues } from "../types";
 
 interface Props {
-  profile: ChurchProfile;
-  onChange: <K extends keyof ChurchProfile>(
-    field: K,
-    value: ChurchProfile[K],
-  ) => void;
-  onNestedChange: (
-    parent: "emergencyContact",
-    field: string,
-    value: string,
-  ) => void;
+  readOnly: boolean;
+  profile: Partial<ProfileFormValues>;
+  register?: UseFormRegister<ProfileFormValues>;
+  errors?: FieldErrors<ProfileFormValues>;
+  control?: Control<ProfileFormValues>;
+  maritalStatusValue?: string;
 }
 
 export const FamilySection: React.FC<Props> = ({
+  readOnly,
   profile,
-  onChange,
-  onNestedChange,
-}) => (
-  <Tile className="profile-section">
-    <h2 className="profile-section__heading">
-      <Events size={20} aria-hidden /> Family &amp; Emergency Contact
-    </h2>
+  register,
+  errors,
+  control,
+  maritalStatusValue,
+}) => {
+  const formatMaritalStatus = (status?: string) => {
+    if (!status) return "—";
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
 
-    <div className="profile-field-grid">
-      <Select
-        id="f-marital"
-        labelText="Marital Status"
-        value={profile.maritalStatus}
-        onChange={(e) =>
-          onChange("maritalStatus", e.target.value as MaritalStatus)
-        }
-      >
-        <SelectItem value="" text="Select status" />
-        <SelectItem value="single" text="Single" />
-        <SelectItem value="married" text="Married" />
-        <SelectItem value="widowed" text="Widowed" />
-        <SelectItem value="divorced" text="Divorced" />
-      </Select>
+  const isMarried = (maritalStatusValue || profile.maritalStatus)?.toLowerCase() === "married";
 
-      {profile.maritalStatus === "married" && (
-        <TextInput
-          id="f-spouse"
-          labelText="Spouse's Full Name"
-          placeholder="Enter spouse's name"
-          value={profile.spouseName}
-          onChange={(e) => onChange("spouseName", e.target.value)}
+  if (readOnly) {
+    return (
+      <Tile className="profile-section">
+        <h2 className="profile-section__heading">
+          <Events size={20} aria-hidden /> Family &amp; Emergency Contact
+        </h2>
+        <div className="profile-view-grid">
+          <div className="profile-view-item">
+            <span className="profile-view-label">Marital Status</span>
+            <span className="profile-view-value">{formatMaritalStatus(profile.maritalStatus)}</span>
+          </div>
+          {isMarried && (
+            <div className="profile-view-item">
+              <span className="profile-view-label">Spouse Name</span>
+              <span className="profile-view-value">{profile.spouseName || "—"}</span>
+            </div>
+          )}
+        </div>
+
+        <h3 className="profile-subsection-heading">Emergency Contact</h3>
+        <div className="profile-view-grid">
+          <div className="profile-view-item">
+            <span className="profile-view-label">Contact Name</span>
+            <span className="profile-view-value">{profile.emergencyContact?.name || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Relationship</span>
+            <span className="profile-view-value">{profile.emergencyContact?.relationship || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Phone Number</span>
+            <span className="profile-view-value">{profile.emergencyContact?.phone || "—"}</span>
+          </div>
+        </div>
+      </Tile>
+    );
+  }
+
+  // Edit Mode
+  if (!register || !errors || !control) return null;
+
+  return (
+    <Tile className="profile-section">
+      <h2 className="profile-section__heading">
+        <Events size={20} aria-hidden /> Family &amp; Emergency Contact
+      </h2>
+
+      <div className="profile-field-grid">
+        <Controller
+          name="maritalStatus"
+          control={control}
+          render={({ field }) => (
+            <Select
+              id="f-marital"
+              labelText="Marital Status"
+              invalid={!!errors.maritalStatus}
+              invalidText={errors.maritalStatus?.message}
+              {...field}
+            >
+              <SelectItem value="" text="Select status" />
+              <SelectItem value="single" text="Single" />
+              <SelectItem value="married" text="Married" />
+              <SelectItem value="widowed" text="Widowed" />
+              <SelectItem value="divorced" text="Divorced" />
+            </Select>
+          )}
         />
-      )}
 
-      <NumberInput
-        id="f-children"
-        label="Number of Children"
-        min={0}
-        max={50}
-        value={profile.numberOfChildren === "" ? 0 : profile.numberOfChildren}
-        onChange={(_e, { value }) =>
-          onChange("numberOfChildren", value === "" ? "" : Number(value))
-        }
-      />
-    </div>
+        {isMarried && (
+          <TextInput
+            id="f-spouse"
+            labelText="Spouse's Full Name"
+            placeholder="Enter spouse's name"
+            invalid={!!errors.spouseName}
+            invalidText={errors.spouseName?.message}
+            {...register("spouseName")}
+          />
+        )}
+      </div>
 
-    <p className="ec-heading">Emergency Contact</p>
+      <h3 className="profile-subsection-heading">Emergency Contact</h3>
 
-    <div className="profile-field-grid">
-      <TextInput
-        id="ec-name"
-        labelText="Full Name"
-        placeholder="Contact's full name"
-        value={profile.emergencyContact.name}
-        onChange={(e) =>
-          onNestedChange("emergencyContact", "name", e.target.value)
-        }
-      />
-      <TextInput
-        id="ec-relationship"
-        labelText="Relationship"
-        placeholder="e.g. Spouse, Parent"
-        value={profile.emergencyContact.relationship}
-        onChange={(e) =>
-          onNestedChange("emergencyContact", "relationship", e.target.value)
-        }
-      />
-      <TextInput
-        id="ec-phone"
-        labelText="Phone Number"
-        type="tel"
-        placeholder="+256 700 000 000"
-        value={profile.emergencyContact.phone}
-        onChange={(e) =>
-          onNestedChange("emergencyContact", "phone", e.target.value)
-        }
-      />
-    </div>
-  </Tile>
-);
+      <div className="profile-field-grid">
+        <TextInput
+          id="ec-name"
+          labelText="Full Name"
+          placeholder="Contact's full name"
+          invalid={!!errors.emergencyContact?.name}
+          invalidText={errors.emergencyContact?.name?.message}
+          {...register("emergencyContact.name")}
+        />
+        <TextInput
+          id="ec-relationship"
+          labelText="Relationship"
+          placeholder="e.g. Spouse, Parent"
+          invalid={!!errors.emergencyContact?.relationship}
+          invalidText={errors.emergencyContact?.relationship?.message}
+          {...register("emergencyContact.relationship")}
+        />
+        <TextInput
+          id="ec-phone"
+          labelText="Phone Number"
+          type="tel"
+          placeholder="+256 700 000 000"
+          invalid={!!errors.emergencyContact?.phone}
+          invalidText={errors.emergencyContact?.phone?.message}
+          {...register("emergencyContact.phone")}
+        />
+      </div>
+    </Tile>
+  );
+};

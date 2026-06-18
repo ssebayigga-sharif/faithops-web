@@ -1,81 +1,110 @@
 import React from "react";
-import { TextInput, TextArea, Tile } from "@carbon/react";
+import { TextInput, Tile } from "@carbon/react";
 import { Location } from "@carbon/icons-react";
-import type { ChurchProfile } from "@/features/profile/types";
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
+import type { ProfileFormValues } from "../types";
 
 interface Props {
-  profile: ChurchProfile;
-  onChange: <K extends keyof ChurchProfile>(
-    field: K,
-    value: ChurchProfile[K],
-  ) => void;
+  readOnly: boolean;
+  profile: Partial<ProfileFormValues>;
+  register?: UseFormRegister<ProfileFormValues>;
+  errors?: FieldErrors<ProfileFormValues>;
 }
 
-export const ContactInfoSection: React.FC<Props> = ({ profile, onChange }) => (
-  <Tile className="profile-section">
-    <h2 className="profile-section__heading">
-      <Location size={20} aria-hidden /> Contact &amp; Address
-    </h2>
+export const ContactInfoSection: React.FC<Props> = ({
+  readOnly,
+  profile,
+  register,
+  errors,
+}) => {
+  if (readOnly) {
+    return (
+      <Tile className="profile-section">
+        <h2 className="profile-section__heading">
+          <Location size={20} aria-hidden /> Contact &amp; Address
+        </h2>
+        <div className="profile-view-grid">
+          <div className="profile-view-item">
+            <span className="profile-view-label">Email Address</span>
+            <span className="profile-view-value">{profile.email || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Primary Phone</span>
+            <span className="profile-view-value">{profile.phone || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">City / Town</span>
+            <span className="profile-view-value">{profile.city || "—"}</span>
+          </div>
+          <div className="profile-view-item">
+            <span className="profile-view-label">Country</span>
+            <span className="profile-view-value">{profile.country || "—"}</span>
+          </div>
+          <div className="profile-view-item" style={{ gridColumn: "span 2" }}>
+            <span className="profile-view-label">Physical Address</span>
+            <span className="profile-view-value">{profile.address || "—"}</span>
+          </div>
+        </div>
+      </Tile>
+    );
+  }
 
-    <div className="profile-field-grid">
-      <TextInput
-        id="c-email"
-        labelText="Email Address"
-        type="email"
-        placeholder="member@example.com"
-        value={profile.email}
-        onChange={(e) => onChange("email", e.target.value)}
-        required
-      />
-      <TextInput
-        id="c-phone"
-        labelText="Primary Phone"
-        type="tel"
-        placeholder="+256 700 000 000"
-        value={profile.phone}
-        onChange={(e) => onChange("phone", e.target.value)}
-        required
-      />
-      <TextInput
-        id="c-altPhone"
-        labelText="Alternate Phone"
-        type="tel"
-        placeholder="Optional"
-        value={profile.alternatePhone}
-        onChange={(e) => onChange("alternatePhone", e.target.value)}
-      />
-      <TextInput
-        id="c-city"
-        labelText="City / Town"
-        placeholder="e.g. Kampala"
-        value={profile.city}
-        onChange={(e) => onChange("city", e.target.value)}
-      />
-      <TextInput
-        id="c-country"
-        labelText="Country"
-        placeholder="e.g. Uganda"
-        value={profile.country}
-        onChange={(e) => onChange("country", e.target.value)}
-      />
-      <TextInput
-        id="c-postal"
-        labelText="Postal Code"
-        placeholder="e.g. 10101"
-        value={profile.postalCode}
-        onChange={(e) => onChange("postalCode", e.target.value)}
-      />
-    </div>
+  // Edit Mode
+  if (!register || !errors) return null;
 
-    <div style={{ marginTop: "1rem" }}>
-      <TextArea
-        id="c-address"
-        labelText="Physical Address"
-        placeholder="Street, building, plot number…"
-        value={profile.address}
-        onChange={(e) => onChange("address", e.target.value)}
-        rows={3}
-      />
-    </div>
-  </Tile>
-);
+  return (
+    <Tile className="profile-section">
+      <h2 className="profile-section__heading">
+        <Location size={20} aria-hidden /> Contact &amp; Address
+      </h2>
+
+      <div className="profile-field-grid">
+        <TextInput
+          id="c-email"
+          labelText="Email Address *"
+          type="email"
+          placeholder="member@example.com"
+          invalid={!!errors.email}
+          invalidText={errors.email?.message}
+          {...register("email")}
+        />
+        <TextInput
+          id="c-phone"
+          labelText="Primary Phone *"
+          type="tel"
+          placeholder="+256 700 000 000"
+          invalid={!!errors.phone}
+          invalidText={errors.phone?.message}
+          {...register("phone")}
+        />
+        <TextInput
+          id="c-city"
+          labelText="City / Town"
+          placeholder="e.g. Kampala"
+          invalid={!!errors.city}
+          invalidText={errors.city?.message}
+          {...register("city")}
+        />
+        <TextInput
+          id="c-country"
+          labelText="Country"
+          placeholder="e.g. Uganda"
+          invalid={!!errors.country}
+          invalidText={errors.country?.message}
+          {...register("country")}
+        />
+      </div>
+
+      <div style={{ marginTop: "1rem" }}>
+        <TextInput
+          id="c-address"
+          labelText="Physical Address"
+          placeholder="Street, building, plot number…"
+          invalid={!!errors.address}
+          invalidText={errors.address?.message}
+          {...register("address")}
+        />
+      </div>
+    </Tile>
+  );
+};
