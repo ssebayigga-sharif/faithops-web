@@ -6,6 +6,7 @@ import EventsPage from "@/features/events/pages/EventsPage";
 import GivingPage from "@/features/giving/pages/GivingPage";
 import ProfilePage from "@/features/profile/pages/ProfilePage";
 import AttendancePage from "@/features/attendance/pages/AttendancePage";
+import ReportsPage from "@/features/reports/pages/ReportsPage";
 import HomePage from "@/features/home/pages/HomePage";
 import AboutPage from "@/features/about/pages/AboutPage";
 import SettingsPage from "@/features/settings/pages/SettingsPage";
@@ -25,15 +26,7 @@ const App = () => (
         <Route path="/events" element={<EventsPage />} />
         <Route path="/giving" element={<GivingPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route
-          path="/reports"
-          element={
-            <SectionPage
-              title="Reports"
-              description="Create operational reports for leaders, ministries, membership, and attendance."
-            />
-          }
-        />
+        <Route path="/reports" element={<ReportsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route
           path="/help"

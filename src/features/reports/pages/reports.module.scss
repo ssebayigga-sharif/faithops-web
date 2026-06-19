@@ -1,0 +1,109 @@
+.reportspage {
+  min-height: 100vh;
+  background: var(--cds-background);
+  padding-block-end: 4rem;
+
+  &__kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    min-height: 130px;
+  }
+
+  &__kpiValue {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cds-text-primary);
+    line-height: 1;
+  }
+
+  &__kpiLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cds-text-secondary);
+  }
+
+  &__sectionTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--cds-text-primary);
+    margin: 0 0 1rem;
+  }
+
+  &__summary {
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--cds-text-primary);
+      margin: 0 0 1rem;
+    }
+  }
+
+  &__summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  &__summaryLabel {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--cds-text-secondary);
+    margin-block-end: 0.25rem;
+  }
+
+  &__summaryValue {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cds-text-primary);
+  }
+}
+
+.reportsheader {
+  background: var(--cds-layer-01);
+  border-block-end: 1px solid var(--cds-border-subtle-01);
+  padding: 1.5rem 0;
+  margin-block-end: 1.5rem;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--cds-text-primary);
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: var(--cds-text-secondary);
+    margin: 0;
+  }
+}
+
+@media (max-width: 671px) {
+  .reportsheader__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .reportspage__kpi {
+    min-height: auto;
+    padding: 1rem;
+  }
+}

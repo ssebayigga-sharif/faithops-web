@@ -1,11 +1,11 @@
-export type AttendanceStatus = "present" | "absent" | "late" | "excused";
+import type {
+  ServiceType as SharedServiceType,
+  AttendanceStatus as SharedAttendanceStatus,
+} from "@/shared/types";
 
-export type ServiceType =
-  | "Sabbath Programmes"
-  | "Wednesday Fellowship"
-  | "Friday Prayer"
-  | "Prayer and Fasting"
-  | "Special Event";
+// Re-export shared types for local convenience
+export type AttendanceStatus = SharedAttendanceStatus;
+export type ServiceType = SharedServiceType;
 
 export interface AttendanceRecord {
   id: string;
@@ -27,6 +27,8 @@ export interface AttendanceSession {
   totalAbsent: number;
   totalLate: number;
   totalExcused: number;
+  totalVisitors: number;
+  ministryCounts?: Record<string, number>;
   createdAt: string;
 }
 
@@ -47,6 +49,19 @@ export interface AttendanceRow {
   notes: string;
 }
 
+export interface VisitorRecord {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  date: string;
+  serviceType: ServiceType;
+  visitedBy: string;
+  notes: string;
+  followUpStatus: "pending" | "contacted" | "converted" | "no_interest";
+  createdAt: string;
+}
+
 export interface AttendanceStats {
   totalSessions: number;
   averageAttendance: number;
@@ -54,12 +69,22 @@ export interface AttendanceStats {
   lateRate: number;
   absentRate: number;
   excusedRate: number;
-  trend: { date: string; present: number; total: number }[];
+  totalVisitors: number;
+  trend: { date: string; present: number; total: number; visitors: number }[];
+  ministryBreakdown?: { ministry: string; count: number; percent: number }[];
 }
 
 export interface BulkSavePayload {
   date: string;
   serviceType: ServiceType;
   rows: AttendanceRow[];
+  visitors: VisitorRowPayload[];
   markedBy: string;
+}
+
+export interface VisitorRowPayload {
+  name: string;
+  phone: string;
+  email?: string;
+  notes: string;
 }

@@ -13,15 +13,17 @@ import {
   Button,
   Modal,
   Tag,
-  SkeletonText,
   DataTableSkeleton,
 } from "@carbon/react";
 import { TrashCan, View } from "@carbon/icons-react";
-import type { AttendanceSession } from "@/features/attendance/types";
-import { useSessionRecords, useDeleteSession } from "../useAttendance";
+import type { AttendanceSession as Session } from "@/features/attendance/types";
+import {
+  useSessionRecords,
+  useDeleteSession,
+} from "@/features/attendance/hooks/useAttendance";
 
 interface Props {
-  sessions: AttendanceSession[];
+  sessions: Session[];
   isLoading: boolean;
 }
 
@@ -45,8 +47,12 @@ export const SessionHistoryTable: React.FC<Props> = ({
 
   const handleDelete = async () => {
     if (!deleteId) return;
-    await deleteMutation.mutateAsync(deleteId);
-    setDeleteId(null);
+    try {
+      await deleteMutation.mutateAsync(deleteId);
+      setDeleteId(null);
+    } catch (error) {
+      console.error("Failed to delete session:", error);
+    }
   };
 
   if (isLoading) return <DataTableSkeleton columnCount={6} rowCount={5} />;
@@ -60,9 +66,9 @@ export const SessionHistoryTable: React.FC<Props> = ({
         <TableToolbar>
           <TableToolbarContent>
             <TableToolbarSearch
-              placeholder="Search by date or service…"
+              placeholder="Search by date or service..."
               value={search}
-              onChange={(_event, value = "") => setSearch(value)}
+              onChange={(_event, value?: string) => setSearch(value ?? "")}
               persistent
             />
           </TableToolbarContent>
@@ -76,6 +82,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
               <TableHeader>Present</TableHeader>
               <TableHeader>Late</TableHeader>
               <TableHeader>Absent</TableHeader>
+              <TableHeader>Excused</TableHeader>
               <TableHeader>Actions</TableHeader>
             </TableRow>
           </TableHead>
@@ -83,7 +90,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6}>
+                <TableCell colSpan={7}>
                   <div className="attendance-empty">
                     <p className="attendance-empty__title">
                       No sessions recorded yet
@@ -105,7 +112,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
                   ? Math.round((session.totalPresent / total) * 100)
                   : 0;
                 return (
-                  <TableRow key={session.id} className="session-list__row">
+                  <TableRow key={session.id}>
                     <TableCell>
                       {new Date(session.date).toLocaleDateString("en-UG", {
                         weekday: "short",
@@ -121,7 +128,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
                     </TableCell>
                     <TableCell>
                       <span className="status-badge status-badge--present">
-                        {session.totalPresent} · {rate}%
+                        {session.totalPresent} ({rate}%)
                       </span>
                     </TableCell>
                     <TableCell>
@@ -135,6 +142,11 @@ export const SessionHistoryTable: React.FC<Props> = ({
                       </span>
                     </TableCell>
                     <TableCell>
+                      <span className="status-badge status-badge--excused">
+                        {session.totalExcused}
+                      </span>
+                    </TableCell>
+                    <TableCell>
                       <div style={{ display: "flex", gap: "0.5rem" }}>
                         <Button
                           kind="ghost"
@@ -145,7 +157,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
                           onClick={() => setViewId(session.id)}
                         />
                         <Button
-                          kind="danger--ghost"
+                          kind="ghost"
                           size="sm"
                           hasIconOnly
                           renderIcon={TrashCan}
@@ -171,7 +183,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
         size="lg"
       >
         {recordsLoading ? (
-          <SkeletonText paragraph lineCount={6} />
+          <DataTableSkeleton columnCount={4} rowCount={3} />
         ) : (
           <Table size="sm" useZebraStyles>
             <TableHead>

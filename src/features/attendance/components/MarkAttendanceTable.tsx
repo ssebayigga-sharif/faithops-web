@@ -24,7 +24,10 @@ import {
   Misuse,
   Save,
 } from "@carbon/icons-react";
-import type { AttendanceRow, AttendanceStatus } from "@/features/attendance/types";
+import type {
+  AttendanceRow,
+  AttendanceStatus,
+} from "@/features/attendance/types";
 
 interface Props {
   rows: AttendanceRow[];
@@ -38,20 +41,14 @@ interface Props {
   onSave: () => void;
 }
 
-const STATUS_ICONS: Record<AttendanceStatus, React.ReactNode> = {
-  present: <CheckmarkFilled size={14} />,
-  late: <Time size={14} />,
-  absent: <ErrorFilled size={14} />,
-  excused: <Misuse size={14} />,
-};
-
-type AttendanceTagType = "green" | "warm-gray" | "red" | "blue";
-
-const STATUS_TAG_TYPES: Record<AttendanceStatus, AttendanceTagType> = {
-  present: "green",
-  late: "warm-gray",
-  absent: "red",
-  excused: "blue",
+const STATUS_TAG_MAP: Record<
+  AttendanceStatus,
+  { type: "green" | "warm-gray" | "red" | "blue"; icon: React.ReactNode }
+> = {
+  present: { type: "green", icon: <CheckmarkFilled size={14} /> },
+  late: { type: "warm-gray", icon: <Time size={14} /> },
+  absent: { type: "red", icon: <ErrorFilled size={14} /> },
+  excused: { type: "blue", icon: <Misuse size={14} /> },
 };
 
 export const MarkAttendanceTable: React.FC<Props> = ({
@@ -72,24 +69,24 @@ export const MarkAttendanceTable: React.FC<Props> = ({
   );
 
   const presentCount = rows.filter((r) => r.status === "present").length;
-  const isDirty = rows.some((r) => r.status !== "absent"); // default is absent
+  const totalCount = rows.length;
+  const hasRows = rows.length > 0;
 
   return (
     <TableContainer
       title="Mark Attendance"
-      description={`${presentCount} of ${rows.length} members marked present`}
+      description={`${presentCount} of ${totalCount} members present`}
     >
       <TableToolbar>
         <TableToolbarContent>
           <TableToolbarSearch
             className="attendance-table__toolbar-search"
-            placeholder="Search member…"
+            placeholder="Search member..."
             value={search}
-            onChange={(_event, value = "") => setSearch(value)}
+            onChange={(_event, value?: string) => setSearch(value ?? "")}
             persistent
           />
 
-          {/* Bulk action buttons */}
           <Button kind="ghost" size="sm" onClick={() => onBulkMark("present")}>
             All Present
           </Button>
@@ -102,10 +99,10 @@ export const MarkAttendanceTable: React.FC<Props> = ({
             size="sm"
             renderIcon={isSaving ? undefined : Save}
             onClick={onSave}
-            disabled={isSaving || !isDirty}
+            disabled={isSaving || !hasRows}
           >
             {isSaving ? (
-              <InlineLoading description="Saving…" />
+              <InlineLoading description="Saving..." />
             ) : (
               "Save Attendance"
             )}
@@ -116,6 +113,7 @@ export const MarkAttendanceTable: React.FC<Props> = ({
       <Table size="lg" useZebraStyles>
         <TableHead>
           <TableRow>
+            <TableHeader>#</TableHeader>
             <TableHeader>Member</TableHeader>
             <TableHeader>Department</TableHeader>
             <TableHeader>Status</TableHeader>
@@ -126,18 +124,20 @@ export const MarkAttendanceTable: React.FC<Props> = ({
         <TableBody>
           {filtered.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4}>
+              <TableCell colSpan={5}>
                 <div className="attendance-empty">
                   <p className="attendance-empty__title">No members found</p>
                   <p className="attendance-empty__body">
-                    Try a different search term.
+                    Try a different search term or seed members from the Members
+                    page.
                   </p>
                 </div>
               </TableCell>
             </TableRow>
           ) : (
-            filtered.map((row) => (
+            filtered.map((row, index) => (
               <TableRow key={row.memberId}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>{row.memberName}</TableCell>
                 <TableCell>{row.department || "—"}</TableCell>
                 <TableCell>
@@ -158,8 +158,8 @@ export const MarkAttendanceTable: React.FC<Props> = ({
                       <SelectItem value="absent" text="Absent" />
                       <SelectItem value="excused" text="Excused" />
                     </Select>
-                    <Tag type={STATUS_TAG_TYPES[row.status]} size="sm">
-                      {STATUS_ICONS[row.status]}
+                    <Tag type={STATUS_TAG_MAP[row.status].type} size="sm">
+                      {STATUS_TAG_MAP[row.status].icon} {row.status}
                     </Tag>
                   </div>
                 </TableCell>
@@ -169,7 +169,7 @@ export const MarkAttendanceTable: React.FC<Props> = ({
                     labelText=""
                     hideLabel
                     size="sm"
-                    placeholder="Optional note…"
+                    placeholder="Optional note..."
                     value={row.notes}
                     onChange={(e) =>
                       onRowChange(row.memberId, "notes", e.target.value)

@@ -1,12 +1,3 @@
-/**
- * profile.services.ts
- *
- * Firebase Realtime Database service for user profiles.
- * Uses the shared firebaseClient (Axios) — same pattern as MemberService.
- *
- * Firebase RTDB path: /profiles/{uid}.json
- */
-
 import type { AxiosResponse } from "axios";
 import { firebaseClient } from "@/shared/services/firebase.client";
 import type { ChurchProfile } from "@/features/profile/types";
@@ -14,13 +5,10 @@ import type { ChurchProfile } from "@/features/profile/types";
 const PROFILES_PATH = "/profiles";
 
 export const ProfileService = {
-  /**
-   * GET /profiles/{uid}.json
-   * Fetch a single profile by UID.
-   */
   async getOne(uid: string): Promise<ChurchProfile | null> {
-    const res: AxiosResponse<ChurchProfile | null> =
-      await firebaseClient.get(`${PROFILES_PATH}/${uid}.json`);
+    const res: AxiosResponse<ChurchProfile | null> = await firebaseClient.get(
+      `${PROFILES_PATH}/${uid}.json`,
+    );
     return res.data ?? null;
   },
 

@@ -58,19 +58,27 @@ export const PersonalInfoSection: React.FC<Props> = ({
         <div className="profile-view-grid">
           <div className="profile-view-item">
             <span className="profile-view-label">First Name</span>
-            <span className="profile-view-value">{profile.firstName || "—"}</span>
+            <span className="profile-view-value">
+              {profile.firstName || "—"}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Last Name</span>
-            <span className="profile-view-value">{profile.lastName || "—"}</span>
+            <span className="profile-view-value">
+              {profile.lastName || "—"}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Gender</span>
-            <span className="profile-view-value">{formatGender(profile.gender)}</span>
+            <span className="profile-view-value">
+              {formatGender(profile.gender)}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Date of Birth</span>
-            <span className="profile-view-value">{formatDate(profile.dateOfBirth)}</span>
+            <span className="profile-view-value">
+              {formatDate(profile.dateOfBirth)}
+            </span>
           </div>
         </div>
       </Tile>
@@ -126,22 +134,26 @@ export const PersonalInfoSection: React.FC<Props> = ({
         <Controller
           name="dateOfBirth"
           control={control}
-          render={({ field: { onChange, value } }) => (
-            <DatePicker
-              datePickerType="single"
-              value={value}
-              onChange={([d]) => d && onChange(toIso(d))}
-              maxDate={new Date().toLocaleDateString("en-US")}
-            >
-              <DatePickerInput
-                id="p-dob"
-                labelText="Date of Birth"
-                placeholder="mm/dd/yyyy"
-                invalid={!!errors.dateOfBirth}
-                invalidText={errors.dateOfBirth?.message}
-              />
-            </DatePicker>
-          )}
+          render={({ field: { onChange, value } }) => {
+            // Carbon DatePicker expects a Date object, not an ISO string
+            const dateValue = value ? new Date(value + "T00:00:00") : "";
+            return (
+              <DatePicker
+                datePickerType="single"
+                value={dateValue}
+                onChange={([d]) => d && onChange(toIso(d))}
+                maxDate={new Date().toLocaleDateString("en-US")}
+              >
+                <DatePickerInput
+                  id="p-dob"
+                  labelText="Date of Birth"
+                  placeholder="mm/dd/yyyy"
+                  invalid={!!errors.dateOfBirth}
+                  invalidText={errors.dateOfBirth?.message}
+                />
+              </DatePicker>
+            );
+          }}
         />
       </div>
     </Tile>

@@ -22,20 +22,24 @@ export function computeMember(member: Member): Member {
   const lastName = member.lastName ?? "";
 
   const total = attendance.length;
-  const present = attendance.filter((a) => a.present).length;
+  const present = attendance.filter(
+    (a) => a.status === "present" || a.status === "late",
+  ).length;
   const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 0;
 
   // Count consecutive misses from most recent backwards
   const sorted = [...attendance].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
   let consecutiveMisses = 0;
   for (const rec of sorted) {
-    if (!rec.present) consecutiveMisses++;
-    else break;
+    if (rec.status === "present" || rec.status === "late") break;
+    consecutiveMisses++;
   }
 
-  const lastPresent = sorted.find((a) => a.present);
+  const lastPresent = sorted.find(
+    (a) => a.status === "present" || a.status === "late",
+  );
   const lastAttended = lastPresent?.date ?? null;
 
   const totalGiving = giving.reduce((sum, g) => sum + g.amount, 0);
@@ -76,7 +80,7 @@ export function computeMembers(members: Member[]): Member[] {
 
 export function filterMembers(
   members: Member[],
-  filters: MemberFilters
+  filters: MemberFilters,
 ): Member[] {
   return members.filter((m) => {
     const fullName = m._computed?.fullName ?? `${m.firstName} ${m.lastName}`;
@@ -94,9 +98,7 @@ export function filterMembers(
 
     if (
       filters.ministry &&
-      !m.ministries.some(
-        (mn) => mn.ministry === filters.ministry && mn.active
-      )
+      !m.ministries.some((mn) => mn.ministry === filters.ministry && mn.active)
     ) {
       return false;
     }
@@ -173,9 +175,12 @@ export function formatDate(iso: string): string {
 }
 
 export function getStatusColor(
-  status: MemberStatus
+  status: MemberStatus,
 ): "green" | "blue" | "cyan" | "gray" | "red" | "purple" | "magenta" {
-  const map: Record<MemberStatus, "green" | "blue" | "cyan" | "gray" | "red" | "purple" | "magenta"> = {
+  const map: Record<
+    MemberStatus,
+    "green" | "blue" | "cyan" | "gray" | "red" | "purple" | "magenta"
+  > = {
     active: "green",
     visitor: "blue",
     "New convert": "cyan",
@@ -188,7 +193,7 @@ export function getStatusColor(
 }
 
 export function getAttendanceColor(
-  rate: number
+  rate: number,
 ): "green" | "teal" | "yellow" | "red" {
   if (rate >= 75) return "green";
   if (rate >= 40) return "teal";
@@ -216,7 +221,7 @@ export const CELL_GROUPS = [
   "Muyenga",
 ];
 
-export const MINISTRIES_LIST:  Ministry[] = [
+export const MINISTRIES_LIST: Ministry[] = [
   "Choir",
   "Media",
   "Ushering",

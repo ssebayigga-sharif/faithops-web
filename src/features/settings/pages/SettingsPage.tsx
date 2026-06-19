@@ -1,7 +1,5 @@
 import { useState } from "react";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
   Button,
   Column,
   Grid,
@@ -45,9 +43,6 @@ export default function SettingsPage() {
       <Stack className="admin-page__inner" gap={5}>
         {/* ── Page Header ── */}
         <Stack as="header" className="admin-page__header" gap={2}>
-          <Breadcrumb noTrailingSlash>
-            <BreadcrumbItem isCurrentPage>Settings</BreadcrumbItem>
-          </Breadcrumb>
           <Stack
             orientation="horizontal"
             gap={5}
@@ -97,26 +92,6 @@ export default function SettingsPage() {
           <Column sm={4} md={8} lg={8}>
             <Tile className="dashboard-section" style={{ height: "100%" }}>
               <Stack gap={5}>
-                <Stack
-                  className="dashboard-section__header"
-                  gap={2}
-                  style={{ padding: "0 0 1rem 0" }}
-                >
-                  <h2
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    <ColorPalette size={20} /> Built-in Carbon Theming
-                  </h2>
-                  <p>
-                    Customize the look and feel of the FaithOps dashboard using
-                    official IBM Carbon themes.
-                  </p>
-                </Stack>
-
                 <Stack
                   gap={5}
                   className="dashboard-section__body"

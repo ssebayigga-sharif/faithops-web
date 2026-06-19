@@ -65,23 +65,33 @@ export const MembershipSection: React.FC<Props> = ({
         <div className="profile-view-grid">
           <div className="profile-view-item">
             <span className="profile-view-label">Membership Status</span>
-            <span className="profile-view-value">{formatStatus(profile.membershipStatus)}</span>
+            <span className="profile-view-value">
+              {formatStatus(profile.membershipStatus)}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Date Joined</span>
-            <span className="profile-view-value">{formatDate(profile.dateJoined)}</span>
+            <span className="profile-view-value">
+              {formatDate(profile.dateJoined)}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Baptism Status</span>
-            <span className="profile-view-value">{formatBaptism(profile.baptismStatus)}</span>
+            <span className="profile-view-value">
+              {formatBaptism(profile.baptismStatus)}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Department</span>
-            <span className="profile-view-value">{profile.department || "—"}</span>
+            <span className="profile-view-value">
+              {profile.department || "—"}
+            </span>
           </div>
           <div className="profile-view-item">
             <span className="profile-view-label">Cell Group / Life Group</span>
-            <span className="profile-view-value">{profile.cellGroup || "—"}</span>
+            <span className="profile-view-value">
+              {profile.cellGroup || "—"}
+            </span>
           </div>
         </div>
       </Tile>
@@ -120,22 +130,26 @@ export const MembershipSection: React.FC<Props> = ({
         <Controller
           name="dateJoined"
           control={control}
-          render={({ field: { onChange, value } }) => (
-            <DatePicker
-              datePickerType="single"
-              value={value}
-              onChange={([d]) => d && onChange(toIso(d))}
-              maxDate={new Date().toLocaleDateString("en-US")}
-            >
-              <DatePickerInput
-                id="m-joined"
-                labelText="Date Joined"
-                placeholder="mm/dd/yyyy"
-                invalid={!!errors.dateJoined}
-                invalidText={errors.dateJoined?.message}
-              />
-            </DatePicker>
-          )}
+          render={({ field: { onChange, value } }) => {
+            // Carbon DatePicker expects a Date object, not an ISO string
+            const dateValue = value ? new Date(value + "T00:00:00") : "";
+            return (
+              <DatePicker
+                datePickerType="single"
+                value={dateValue}
+                onChange={([d]) => d && onChange(toIso(d))}
+                maxDate={new Date().toLocaleDateString("en-US")}
+              >
+                <DatePickerInput
+                  id="m-joined"
+                  labelText="Date Joined"
+                  placeholder="mm/dd/yyyy"
+                  invalid={!!errors.dateJoined}
+                  invalidText={errors.dateJoined?.message}
+                />
+              </DatePicker>
+            );
+          }}
         />
 
         <Controller

@@ -3,16 +3,13 @@ import {
   HeaderGlobalAction,
   HeaderGlobalBar,
   HeaderMenuButton,
+  Search,
 } from "@carbon/react";
 
-import { Notification, Search, UserAvatar } from "@carbon/icons-react";
-
+import { Notification, UserAvatar } from "@carbon/icons-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-
-import {
-  brandIcon as BrandIcon,
-  headerNavigationItems,
-} from "@/shared/data/navigation";
+import { headerNavigationItems } from "@/shared/data/navigation";
+import ChurchIcon from "./ChurchIcon";
 
 type HeaderProps = {
   isSideNavExpanded: boolean;
@@ -33,21 +30,27 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         onClick={onMenuClick}
       />
 
-      <Link className="app-header__brand" to="/dashboard">
-        <span className="app-header__brand-icon">
-          <BrandIcon size={20} />
-        </span>
-
-        <small>Kabulengwa Seventh-Day Adventists Church</small>
+      <Link
+        aria-label="Go to dashboard"
+        className="app-header__brand"
+        to="/dashboard"
+      >
+        <ChurchIcon size={40} />
+        <small>Kabulengwa SDA</small>
       </Link>
 
-      <div className="app-header__search" role="search">
-        <Search size={18} />
-        <input
-          aria-label="Search FaithOps"
-          placeholder="Search members, events..."
-        />
-      </div>
+      {/*
+        TODO: search is intentionally non-functional for now.
+        When ready, decide: navigate to a results route, or accept an
+        onSearch callback from the parent. Don't wire onChange until
+        that decision is made — see conversation notes.
+      */}
+      <Search
+        className="app-header__search"
+        labelText="Search FaithOps"
+        placeholder="Search members, events..."
+        size="lg"
+      />
 
       <nav className="app-header__nav" aria-label="Header navigation">
         {headerNavigationItems.map((item) => (
@@ -66,11 +69,12 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
       </nav>
 
       <HeaderGlobalBar>
-        <HeaderGlobalAction aria-label="Notifications">
+        <HeaderGlobalAction tooltipAlignment="end" aria-label="Notifications">
           <Notification size={20} />
         </HeaderGlobalAction>
 
         <HeaderGlobalAction
+          tooltipAlignment="end"
           aria-label="User profile"
           onClick={() => navigate("/profile")}
         >

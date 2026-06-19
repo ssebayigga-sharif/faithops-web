@@ -15,20 +15,45 @@ import {
   Tile,
   InlineNotification,
   DataTableSkeleton,
+  Button,
+  Modal,
+  Tag,
+  Table,
+  TableHead,
+  TableRow,
+  TableHeader,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableToolbar,
+  TableToolbarContent,
+  TableToolbarSearch,
 } from "@carbon/react";
-import { EventSchedule, List } from "@carbon/icons-react";
+import { EventSchedule, List, UserFollow, Police } from "@carbon/icons-react";
 
-import { StatCards } from "../components/statCards";
-import { MarkAttendanceTable } from "../components/MarkAttendanceTable";
-import { SessionHistoryTable } from "../components/sessionTableHistory";
+import { StatCards } from "@/features/attendance/components/StatCards";
+import { MarkAttendanceTable } from "@/features/attendance/components/MarkAttendanceTable";
+import { SessionHistoryTable } from "@/features/attendance/components/SessionHistoryTable";
 import {
   useMembers,
   useSessions,
   useBulkSaveAttendance,
-} from "../useAttendance";
-import type { AttendanceRow, AttendanceStatus, ServiceType } from "@/features/attendance/types";
+  useAttendanceRows,
+  useAttendanceStats,
+  useVisitors,
+  useFollowUpCandidates,
+  useCreateFollowUpTask,
+  useUpdateVisitorFollowUp,
+} from "@/features/attendance/hooks/useAttendance";
+import type {
+  AttendanceRow,
+  AttendanceStatus,
+  ServiceType,
+  VisitorRowPayload,
+  VisitorRecord,
+} from "@/features/attendance/types";
 
-import styles from "../attendance.module.scss";
+import styles from "@/features/attendance/attendance.module.scss";
 
 const SERVICE_TYPES: ServiceType[] = [
   "Sabbath Programmes",
@@ -38,41 +63,65 @@ const SERVICE_TYPES: ServiceType[] = [
   "Special Event",
 ];
 
-const toIso = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const toIsoDate = (d: Date): string => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
-const todayIso = toIso(new Date());
+const todayIso = toIsoDate(new Date());
 
 export const AttendancePage: React.FC = () => {
   // ── Session config ────────────────────────────────────────
-  const [date, setDate] = useState(todayIso);
+  const [date, setDate] = useState<Date>(new Date());
   const [serviceType, setServiceType] =
     useState<ServiceType>("Sabbath Programmes");
   const [markedBy, setMarkedBy] = useState("");
 
-  // ── Members → rows ────────────────────────────────────────
+  // ── Visitor state ─────────────────────────────────────────
+  const [visitorName, setVisitorName] = useState("");
+  const [visitorPhone, setVisitorPhone] = useState("");
+  const [visitorEmail, setVisitorEmail] = useState("");
+  const [visitorNotes, setVisitorNotes] = useState("");
+  const [visitors, setVisitors] = useState<VisitorRowPayload[]>([]);
+
+  // ── Data ──────────────────────────────────────────────────
   const { data: members = [], isLoading: membersLoading } = useMembers();
   const { data: sessions = [], isLoading: sessionsLoading } = useSessions();
+  const { data: allVisitors = [] } = useVisitors();
+  const { data: followUpCandidates = [] } = useFollowUpCandidates();
+  const createFollowUp = useCreateFollowUpTask();
+  const updateVisitorFollowUp = useUpdateVisitorFollowUp();
 
-  // Build editable rows from members list
+  // ── Derived state ─────────────────────────────────────────
+  const initialRows = useAttendanceRows(members);
   const [rows, setRows] = useState<AttendanceRow[]>([]);
 
   // Sync rows when members load (only initialise once)
   React.useEffect(() => {
-    if (members.length && rows.length === 0) {
-      setRows(
-        members
-          .filter((m) => m.membershipStatus === "active")
-          .map((m) => ({
-            memberId: m.uid,
-            memberName: `${m.firstName} ${m.lastName}`,
-            department: m.department ?? "",
-            status: "absent" as AttendanceStatus,
-            notes: "",
-          })),
-      );
+    if (initialRows.length > 0 && rows.length === 0) {
+      setRows(initialRows);
     }
-  }, [members, rows.length]);
+  }, [initialRows, rows.length]);
+
+  const stats = useAttendanceStats(sessions);
+
+  // Build a live session object from current rows for stat cards
+  const liveSession =
+    rows.length > 0
+      ? {
+          id: "",
+          date: toIsoDate(date),
+          serviceType,
+          totalPresent: rows.filter((r) => r.status === "present").length,
+          totalAbsent: rows.filter((r) => r.status === "absent").length,
+          totalLate: rows.filter((r) => r.status === "late").length,
+          totalExcused: rows.filter((r) => r.status === "excused").length,
+          totalVisitors: visitors.length,
+          createdAt: "",
+        }
+      : null;
 
   // ── Row handlers ──────────────────────────────────────────
   const handleRowChange = useCallback(
@@ -90,31 +139,63 @@ export const AttendancePage: React.FC = () => {
     setRows((prev) => prev.map((r) => ({ ...r, status })));
   }, []);
 
+  // ── Visitor handlers ──────────────────────────────────────
+  const handleAddVisitor = useCallback(() => {
+    if (!visitorName.trim() || !visitorPhone.trim()) return;
+    setVisitors((prev) => [
+      ...prev,
+      {
+        name: visitorName.trim(),
+        phone: visitorPhone.trim(),
+        email: visitorEmail.trim() || undefined,
+        notes: visitorNotes.trim(),
+      },
+    ]);
+    setVisitorName("");
+    setVisitorPhone("");
+    setVisitorEmail("");
+    setVisitorNotes("");
+  }, [visitorName, visitorPhone, visitorEmail, visitorNotes]);
+
+  const handleRemoveVisitor = useCallback((index: number) => {
+    setVisitors((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
   // ── Save ──────────────────────────────────────────────────
   const saveMutation = useBulkSaveAttendance();
 
   const handleSave = async () => {
-    await saveMutation.mutateAsync({
-      date,
-      serviceType,
-      rows,
-      markedBy: markedBy || "Admin",
-    });
-    // Reset row notes after save; keep statuses
-    setRows((prev) => prev.map((r) => ({ ...r, notes: "" })));
+    try {
+      await saveMutation.mutateAsync({
+        date: toIsoDate(date),
+        serviceType,
+        rows,
+        visitors,
+        markedBy: markedBy || "Admin",
+      });
+      // Reset notes after save; keep statuses as they were
+      setRows((prev) => prev.map((r) => ({ ...r, notes: "" })));
+      setVisitors([]);
+    } catch (error) {
+      // Error is already tracked by useMutation's error state
+      // The InlineNotification component will display the error message
+      console.error("Failed to save attendance:", error);
+    }
   };
 
-  // Derive live stat card from current rows (before save)
-  const liveSession = {
-    id: "",
-    date,
-    serviceType,
-    totalPresent: rows.filter((r) => r.status === "present").length,
-    totalAbsent: rows.filter((r) => r.status === "absent").length,
-    totalLate: rows.filter((r) => r.status === "late").length,
-    totalExcused: rows.filter((r) => r.status === "excused").length,
-    createdAt: "",
+  // ── Follow-up modal state ─────────────────────────────────
+  const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
+
+  const handleAutoFollowUp = async () => {
+    setFollowUpModalOpen(true);
   };
+
+  // ── Visitor follow-up modal state ─────────────────────────
+  const [visitorFollowUpModalOpen, setVisitorFollowUpModalOpen] =
+    useState(false);
+  const [selectedVisitor, setSelectedVisitor] = useState<
+    (typeof allVisitors)[0] | null
+  >(null);
 
   return (
     <div className={styles.attendancepage}>
@@ -127,7 +208,24 @@ export const AttendancePage: React.FC = () => {
                 <h1 className={styles.attendanceheader__title}>
                   Attendance Tracking
                 </h1>
+                <p className={styles.attendanceheader__subtitle}>
+                  {stats.totalSessions > 0
+                    ? `${stats.totalSessions} sessions recorded · ${stats.presentRate}% overall attendance · ${stats.totalVisitors} total visitors`
+                    : "Record and manage service attendance"}
+                </p>
               </div>
+              {/* Follow-up alert badge */}
+              {followUpCandidates.length > 0 && (
+                <Button
+                  kind="ghost"
+                  size="sm"
+                  renderIcon={Police}
+                  onClick={handleAutoFollowUp}
+                >
+                  {followUpCandidates.length} follow-up
+                  {followUpCandidates.length > 1 ? "s" : ""} needed
+                </Button>
+              )}
             </div>
           </Column>
         </Grid>
@@ -141,6 +239,7 @@ export const AttendancePage: React.FC = () => {
               kind="success"
               lowContrast
               title="Attendance saved successfully"
+              subtitle="The session has been recorded. Member profiles and events synced."
               style={{ marginBottom: "1rem" }}
               onCloseButtonClick={() => saveMutation.reset()}
             />
@@ -149,7 +248,7 @@ export const AttendancePage: React.FC = () => {
             <InlineNotification
               kind="error"
               lowContrast
-              title="Failed to save: "
+              title="Failed to save attendance"
               subtitle={(saveMutation.error as Error)?.message}
               style={{ marginBottom: "1rem" }}
               onCloseButtonClick={() => saveMutation.reset()}
@@ -161,6 +260,7 @@ export const AttendancePage: React.FC = () => {
             <TabList aria-label="Attendance sections" contained>
               <Tab renderIcon={EventSchedule}>Mark Attendance</Tab>
               <Tab renderIcon={List}>Session History</Tab>
+              <Tab renderIcon={UserFollow}>Visitors</Tab>
             </TabList>
 
             <TabPanels>
@@ -168,18 +268,14 @@ export const AttendancePage: React.FC = () => {
               <TabPanel>
                 {/* Session config tile */}
                 <Tile style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(220px, 1fr))",
-                      gap: "1.25rem",
-                    }}
-                  >
+                  <div className={styles.attendancepage__config}>
                     <DatePicker
                       datePickerType="single"
+                      dateFormat="m/d/Y"
                       value={date}
-                      onChange={([d]) => d && setDate(toIso(d))}
+                      onChange={([d]) => {
+                        if (d) setDate(d);
+                      }}
                       maxDate={new Date().toLocaleDateString("en-US")}
                     >
                       <DatePickerInput
@@ -212,12 +308,79 @@ export const AttendancePage: React.FC = () => {
                   </div>
                 </Tile>
 
+                {/* Visitor quick-add */}
+                <Tile style={{ marginBottom: "1rem" }}>
+                  <div className={styles.attendancepage__visitor}>
+                    <TextInput
+                      id="visitor-name"
+                      labelText="Visitor Name"
+                      placeholder="Enter name"
+                      value={visitorName}
+                      onChange={(e) => setVisitorName(e.target.value)}
+                    />
+                    <TextInput
+                      id="visitor-phone"
+                      labelText="Phone"
+                      placeholder="Phone number"
+                      value={visitorPhone}
+                      onChange={(e) => setVisitorPhone(e.target.value)}
+                    />
+                    <TextInput
+                      id="visitor-email"
+                      labelText="Email"
+                      placeholder="Email (optional)"
+                      value={visitorEmail}
+                      onChange={(e) => setVisitorEmail(e.target.value)}
+                    />
+                    <TextInput
+                      id="visitor-notes"
+                      labelText="Notes"
+                      placeholder="Notes"
+                      value={visitorNotes}
+                      onChange={(e) => setVisitorNotes(e.target.value)}
+                    />
+                    <Button
+                      kind="secondary"
+                      size="sm"
+                      onClick={handleAddVisitor}
+                      disabled={!visitorName.trim() || !visitorPhone.trim()}
+                    >
+                      Add Visitor
+                    </Button>
+                  </div>
+                  {visitors.length > 0 && (
+                    <div className={styles.attendancepage__visitorlist}>
+                      <p className={styles.attendancepage__visitorlistlabel}>
+                        Visitors added ({visitors.length}):
+                      </p>
+                      {visitors.map((v, i) => (
+                        <div
+                          key={i}
+                          className={styles.attendancepage__visitoritem}
+                        >
+                          <span>
+                            {v.name} — {v.phone}
+                          </span>
+                          <Button
+                            kind="ghost"
+                            size="sm"
+                            hasIconOnly
+                            renderIcon={Police}
+                            iconDescription="Remove"
+                            onClick={() => handleRemoveVisitor(i)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Tile>
+
                 {/* Live stat cards */}
-                <StatCards session={rows.length > 0 ? liveSession : null} />
+                <StatCards session={liveSession} />
 
                 {/* Mark table */}
                 {membersLoading ? (
-                  <DataTableSkeleton columnCount={4} rowCount={8} />
+                  <DataTableSkeleton columnCount={5} rowCount={8} />
                 ) : (
                   <MarkAttendanceTable
                     rows={rows}
@@ -238,10 +401,210 @@ export const AttendancePage: React.FC = () => {
                   />
                 </div>
               </TabPanel>
+
+              {/* ── Tab 3: Visitors ────────────────────── */}
+              <TabPanel>
+                <div style={{ marginTop: "1.5rem" }}>
+                  <TableContainer
+                    title="Visitor Records"
+                    description={`${allVisitors.length} total visitors recorded`}
+                  >
+                    <Table size="lg" useZebraStyles>
+                      <TableHead>
+                        <TableRow>
+                          <TableHeader>Name</TableHeader>
+                          <TableHeader>Phone</TableHeader>
+                          <TableHeader>Email</TableHeader>
+                          <TableHeader>Date</TableHeader>
+                          <TableHeader>Service</TableHeader>
+                          <TableHeader>Follow-Up</TableHeader>
+                          <TableHeader>Actions</TableHeader>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {allVisitors.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={7}>
+                              <div className="attendance-empty">
+                                <p className="attendance-empty__title">
+                                  No visitors recorded
+                                </p>
+                                <p className="attendance-empty__body">
+                                  Visitors are automatically recorded when you
+                                  add them during attendance marking.
+                                </p>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          allVisitors.map((v) => (
+                            <TableRow key={v.id}>
+                              <TableCell>{v.name}</TableCell>
+                              <TableCell>{v.phone}</TableCell>
+                              <TableCell>{v.email || "—"}</TableCell>
+                              <TableCell>
+                                {new Date(v.date).toLocaleDateString("en-UG", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                })}
+                              </TableCell>
+                              <TableCell>
+                                <Tag type="teal" size="sm">
+                                  {v.serviceType}
+                                </Tag>
+                              </TableCell>
+                              <TableCell>
+                                <Tag
+                                  type={
+                                    v.followUpStatus === "pending"
+                                      ? "red"
+                                      : v.followUpStatus === "contacted"
+                                        ? "blue"
+                                        : v.followUpStatus === "converted"
+                                          ? "green"
+                                          : "gray"
+                                  }
+                                  size="sm"
+                                >
+                                  {v.followUpStatus}
+                                </Tag>
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  kind="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedVisitor(v);
+                                    setVisitorFollowUpModalOpen(true);
+                                  }}
+                                >
+                                  Update
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </div>
+              </TabPanel>
             </TabPanels>
           </Tabs>
         </Column>
       </Grid>
+
+      {/* ── Follow-up candidates modal ──────────────────────── */}
+      <Modal
+        open={followUpModalOpen}
+        modalHeading="Members Needing Follow-Up"
+        primaryButtonText="Close"
+        onRequestClose={() => setFollowUpModalOpen(false)}
+        onRequestSubmit={() => setFollowUpModalOpen(false)}
+        size="lg"
+      >
+        {followUpCandidates.length === 0 ? (
+          <p>No members currently need follow-up for missed attendance.</p>
+        ) : (
+          <Table size="sm" useZebraStyles>
+            <TableHead>
+              <TableRow>
+                <TableHeader>Member</TableHeader>
+                <TableHeader>Consecutive Misses</TableHeader>
+                <TableHeader>Last Attended</TableHeader>
+                <TableHeader>Actions</TableHeader>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {followUpCandidates.map((c) => (
+                <TableRow key={c.memberId}>
+                  <TableCell>{c.memberName}</TableCell>
+                  <TableCell>
+                    <Tag type="red" size="sm">
+                      {c.consecutiveMisses}
+                    </Tag>
+                  </TableCell>
+                  <TableCell>
+                    {c.lastAttended
+                      ? new Date(c.lastAttended).toLocaleDateString("en-UG")
+                      : "Never"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      kind="ghost"
+                      size="sm"
+                      onClick={async () => {
+                        try {
+                          await createFollowUp.mutateAsync({
+                            memberFirebaseKey: c.memberId,
+                            candidate: c,
+                          });
+                        } catch (error) {
+                          console.error(
+                            "Failed to create follow-up task:",
+                            error,
+                          );
+                        }
+                      }}
+                      disabled={createFollowUp.isPending}
+                    >
+                      Create Task
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </Modal>
+
+      {/* ── Visitor follow-up update modal ──────────────────── */}
+      <Modal
+        open={visitorFollowUpModalOpen}
+        modalHeading={`Follow-Up: ${selectedVisitor?.name ?? ""}`}
+        primaryButtonText="Update"
+        secondaryButtonText="Cancel"
+        onRequestClose={() => {
+          setVisitorFollowUpModalOpen(false);
+          setSelectedVisitor(null);
+        }}
+        onRequestSubmit={async () => {
+          if (!selectedVisitor) return;
+          try {
+            const sessionId = `${selectedVisitor.date}_${selectedVisitor.serviceType.replace(/\s+/g, "_").toLowerCase()}`;
+            await updateVisitorFollowUp.mutateAsync({
+              sessionId,
+              visitorId: selectedVisitor.id,
+              status: "contacted",
+            });
+            setVisitorFollowUpModalOpen(false);
+            setSelectedVisitor(null);
+          } catch (error) {
+            console.error("Failed to update visitor follow-up:", error);
+          }
+        }}
+      >
+        <p>Update follow-up status for {selectedVisitor?.name}.</p>
+        <Select
+          id="visitor-followup-status"
+          labelText="Follow-Up Status"
+          value={selectedVisitor?.followUpStatus ?? "pending"}
+          onChange={(e) => {
+            if (selectedVisitor) {
+              setSelectedVisitor({
+                ...selectedVisitor,
+                followUpStatus: e.target.value as any,
+              });
+            }
+          }}
+        >
+          <SelectItem value="pending" text="Pending" />
+          <SelectItem value="contacted" text="Contacted" />
+          <SelectItem value="converted" text="Converted" />
+          <SelectItem value="no_interest" text="No Interest" />
+        </Select>
+      </Modal>
     </div>
   );
 };

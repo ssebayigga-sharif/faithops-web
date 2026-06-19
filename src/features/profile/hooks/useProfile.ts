@@ -1,8 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ProfileService, generateUid } from "@/features/profile/services/profile.services";
+import {
+  ProfileService,
+  generateUid,
+} from "@/features/profile/services/profile.services";
 import type { ChurchProfile } from "@/features/profile/types";
 import { DEFAULT_PROFILE } from "@/features/profile/data/profile";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 export const profileKeys = {
   one: (uid: string) => ["profile", uid] as const,
@@ -32,7 +35,10 @@ export function useProfile(uidInput?: string) {
   const activeUid = uidInput || getSavedProfileUid() || "";
 
   // Query to fetch profile from Firebase
-  const { data, isLoading, isError, error } = useQuery<ChurchProfile | null, Error>({
+  const { data, isLoading, isError, error } = useQuery<
+    ChurchProfile | null,
+    Error
+  >({
     queryKey: profileKeys.one(activeUid),
     queryFn: () => {
       if (!activeUid) return null;
@@ -51,8 +57,9 @@ export function useProfile(uidInput?: string) {
       }
 
       // Generate a stable UID if we don't have one
-      const targetUid = updatedProfile.uid || activeUid || generateUid(emailOrName);
-      
+      const targetUid =
+        updatedProfile.uid || activeUid || generateUid(emailOrName);
+
       const saved = await ProfileService.save(targetUid, {
         ...updatedProfile,
         uid: targetUid,
@@ -66,17 +73,27 @@ export function useProfile(uidInput?: string) {
     onSuccess: (savedData) => {
       if (savedData.uid) {
         queryClient.setQueryData(profileKeys.one(savedData.uid), savedData);
-        queryClient.invalidateQueries({ queryKey: profileKeys.one(savedData.uid) });
+        queryClient.invalidateQueries({
+          queryKey: profileKeys.one(savedData.uid),
+        });
       }
     },
   });
 
-  const clearProfileCache = useCallback((uid: string) => {
-    queryClient.invalidateQueries({ queryKey: profileKeys.one(uid) });
-  }, [queryClient]);
+  const clearProfileCache = useCallback(
+    (uid: string) => {
+      queryClient.invalidateQueries({ queryKey: profileKeys.one(uid) });
+    },
+    [queryClient],
+  );
+
+  const profile = useMemo(
+    () => data || { ...DEFAULT_PROFILE, uid: activeUid },
+    [data, activeUid],
+  );
 
   return {
-    profile: data || { ...DEFAULT_PROFILE, uid: activeUid },
+    profile,
     isLoading: isLoading && !!activeUid,
     isError,
     error: error?.message || null,

@@ -383,7 +383,7 @@ const MemberModal = ({
 
           <DatePicker
             datePickerType="single"
-            value={form.joinedAt}
+            value={form.joinedAt ? new Date(form.joinedAt + "T00:00:00") : ""}
             onChange={([date]) => {
               if (date) set("joinedAt", date.toISOString().split("T")[0]);
             }}

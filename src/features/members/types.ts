@@ -1,5 +1,5 @@
 import type { UseQueryResult } from "@tanstack/react-query";
-import type { Gender, MaritalStatus } from "@/shared/types";
+import type { Gender, MaritalStatus, ServiceType } from "@/shared/types";
 
 export type MemberStatus =
   | "active"
@@ -57,8 +57,10 @@ export interface FamilyLink {
 
 export interface MemberAttendanceRecord {
   date: string;
-  serviceType: "Sunday" | "Midweek" | "Special";
-  present: boolean;
+  serviceType: ServiceType;
+  sessionId: string;
+  status: "present" | "absent" | "late" | "excused";
+  markedBy: string;
 }
 
 export interface MemberGivingRecord {
