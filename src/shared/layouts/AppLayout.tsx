@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Content, Theme } from "@carbon/react";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -12,25 +12,42 @@ type AppLayoutProps = {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   const isMobileNav = useIsMobileNav();
-  const [isSideNavExpanded, setIsSideNavExpanded] = useState(!isMobileNav);
+  const [isSideNavExpanded, setIsSideNavExpanded] = useState(false);
   const { theme } = useAppTheme();
 
-  // Desktop: keep rail open. Mobile: start closed, overlay on menu.
   useEffect(() => {
-    setIsSideNavExpanded(!isMobileNav);
+    const width = window.innerWidth;
+    if (width > 1056) {
+      setIsSideNavExpanded(true); // Desktop: expanded by default
+    } else {
+      setIsSideNavExpanded(false); // Tablet & Mobile: collapsed by default
+    }
   }, [isMobileNav]);
 
-  const handleMenuClick = () => {
-    if (isMobileNav) {
+  const handleMenuClick = useCallback(() => {
+    const width = window.innerWidth;
+    // On desktop (> 66rem), toggle expand/collapse
+    if (width > 1056) {
+      setIsSideNavExpanded((expanded) => !expanded);
+    } else {
+      // On tablet & mobile, overlay opens/closes
       setIsSideNavExpanded((expanded) => !expanded);
     }
-  };
+  }, []);
 
-  const handleCloseSideNav = () => {
-    setIsSideNavExpanded(false);
-  };
+  const handleCloseSideNav = useCallback(() => {
+    const width = window.innerWidth;
+    // Only close on tablet/mobile overlay; desktop stays as-is
+    if (width <= 1056) {
+      setIsSideNavExpanded(false);
+    }
+  }, []);
 
-  const contentExpanded = isMobileNav ? false : isSideNavExpanded;
+  // Desktop: sidebar rail is always visible; content adjusts margin
+  // Tablet/Mobile: sidebar is overlay; content always has no margin
+  const isDesktop =
+    typeof window !== "undefined" ? window.innerWidth > 1056 : true;
+  const contentExpanded = isDesktop ? isSideNavExpanded : false;
 
   return (
     <Theme theme={theme}>

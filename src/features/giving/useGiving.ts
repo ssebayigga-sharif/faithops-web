@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import type {
   GivingCategoryId,
   GivingEntry,
@@ -7,6 +7,9 @@ import type {
   GivingStep,
   GivingMethod,
   GivingRecord,
+  GivingReport,
+  YearlySummary,
+  MonthlySummary,
 } from "@/features/giving/types";
 import {
   generateReceiptNumber,
@@ -14,7 +17,19 @@ import {
   getTitheFromEntries,
   getTotalFromEntries,
   getRecentSabbaths,
+  buildYearlySummary,
+  buildMonthlySummary,
+  buildReport,
+  getAvailableYears,
+  getAvailableMonths,
 } from "./givingUtils";
+import {
+  loadRecords,
+  saveRecord as persistRecord,
+  searchRecords,
+  filterRecordsByDateRange,
+  filterRecordsByCategory,
+} from "./services/giving.service";
 
 const INITIAL_FORM: GivingFormState = {
   memberId: "",
@@ -37,9 +52,38 @@ export function useGiving() {
     null,
   );
   const [history, setHistory] = useState<GivingRecord[]>([]);
-  const [activeTab, setActiveTab] = useState<"record" | "history" | "summary">(
-    "record",
+  const [activeTab, setActiveTab] = useState<
+    "record" | "history" | "summary" | "reports"
+  >("record");
+
+  // Load persisted records on mount
+  useEffect(() => {
+    const persisted = loadRecords();
+    if (persisted.length > 0) {
+      setHistory(persisted);
+    }
+  }, []);
+
+  // ── Report state ──────────────────────────────────────────────────────────
+
+  const [selectedYear, setSelectedYear] = useState<string>(
+    new Date().getFullYear().toString(),
   );
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    new Date().toISOString().slice(0, 7),
+  );
+  const [reportFromDate, setReportFromDate] = useState<string>(
+    new Date(new Date().getFullYear(), 0, 1).toISOString().split("T")[0],
+  );
+  const [reportToDate, setReportToDate] = useState<string>(
+    new Date().toISOString().split("T")[0],
+  );
+
+  const [activeReportTab, setActiveReportTab] = useState<
+    "monthly" | "yearly" | "custom"
+  >("monthly");
+
+  const [memberStatementName, setMemberStatementName] = useState("");
 
   // ── Entry amounts parsed to numbers ──────────────────────────────────────
 
@@ -64,6 +108,57 @@ export function useGiving() {
     () => getOfferingsFromEntries(parsedEntries),
     [parsedEntries],
   );
+
+  // ── Report computations ──────────────────────────────────────────────────
+
+  const monthlySummary = useMemo(
+    () => buildMonthlySummary(history, selectedMonth),
+    [history, selectedMonth],
+  );
+
+  const yearlySummary = useMemo(
+    () => buildYearlySummary(history, selectedYear),
+    [history, selectedYear],
+  );
+
+  const customReport = useMemo(
+    () => buildReport(history, reportFromDate, reportToDate),
+    [history, reportFromDate, reportToDate],
+  );
+
+  const availableYears = useMemo(() => getAvailableYears(history), [history]);
+  const availableMonths = useMemo(() => getAvailableMonths(history), [history]);
+
+  // ── Member statement ─────────────────────────────────────────────────────
+
+  const memberStatement = useMemo((): GivingRecord[] => {
+    if (!memberStatementName.trim()) return [];
+    return history.filter((r) =>
+      r.memberName.toLowerCase().includes(memberStatementName.toLowerCase()),
+    );
+  }, [history, memberStatementName]);
+
+  const memberStatementTotal = useMemo(
+    () => memberStatement.reduce((sum, r) => sum + r.totalAmount, 0),
+    [memberStatement],
+  );
+
+  // ── Filtered history ─────────────────────────────────────────────────────
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [dateFromFilter, setDateFromFilter] = useState("");
+  const [dateToFilter, setDateToFilter] = useState("");
+
+  const filteredHistory = useMemo(() => {
+    let result = history;
+    if (searchQuery) result = searchRecords(result, searchQuery);
+    if (categoryFilter)
+      result = filterRecordsByCategory(result, categoryFilter);
+    if (dateFromFilter && dateToFilter)
+      result = filterRecordsByDateRange(result, dateFromFilter, dateToFilter);
+    return result;
+  }, [history, searchQuery, categoryFilter, dateFromFilter, dateToFilter]);
 
   // ── Form field updaters ───────────────────────────────────────────────────
 
@@ -136,6 +231,7 @@ export function useGiving() {
 
     setSubmittedRecord(record);
     setHistory((prev) => [record, ...prev]);
+    persistRecord(record);
     setStep("receipt");
   }, [form, parsedEntries, totalAmount, isValid]);
 
@@ -172,5 +268,36 @@ export function useGiving() {
     // Tab navigation
     activeTab,
     setActiveTab,
+    // Report state
+    selectedYear,
+    setSelectedYear,
+    selectedMonth,
+    setSelectedMonth,
+    reportFromDate,
+    setReportFromDate,
+    reportToDate,
+    setReportToDate,
+    activeReportTab,
+    setActiveReportTab,
+    monthlySummary,
+    yearlySummary,
+    customReport,
+    availableYears,
+    availableMonths,
+    // Member statement
+    memberStatementName,
+    setMemberStatementName,
+    memberStatement,
+    memberStatementTotal,
+    // Filtered history
+    searchQuery,
+    setSearchQuery,
+    categoryFilter,
+    setCategoryFilter,
+    dateFromFilter,
+    setDateFromFilter,
+    dateToFilter,
+    setDateToFilter,
+    filteredHistory,
   };
 }

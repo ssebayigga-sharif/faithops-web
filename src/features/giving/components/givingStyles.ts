@@ -1,13 +1,13 @@
 import type { CSSProperties } from "react";
 
-/** Shared inline tokens aligned with Members page */
+/** Shared inline tokens using Carbon CSS custom properties for dark mode support */
 export const colors = {
-  text: "#161616",
-  textSecondary: "#525252",
-  textMuted: "#6f6f6f",
-  border: "#e0e0e0",
-  pageBg: "#f4f4f4",
-  white: "#ffffff",
+  text: "var(--cds-text-primary, #161616)",
+  textSecondary: "var(--cds-text-secondary, #525252)",
+  textMuted: "var(--cds-text-helper, #6f6f6f)",
+  border: "var(--cds-border-subtle-01, #e0e0e0)",
+  pageBg: "var(--cds-background, #f4f4f4)",
+  white: "var(--cds-layer-01, #ffffff)",
   brand: "#0f2d52",
   interactive: "#0f62fe",
   success: "#198038",
@@ -21,6 +21,7 @@ export const pageShell: CSSProperties = {
 
 export const pageInner: CSSProperties = {
   padding: "1.5rem",
+  /** Padding is overridden responsively by .giving-page__inner class in globals.css */
 };
 
 export const pageTitle: CSSProperties = {

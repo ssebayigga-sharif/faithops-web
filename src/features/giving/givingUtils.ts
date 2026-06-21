@@ -3,6 +3,10 @@ import type {
   GivingFrequency,
   GivingRecord,
   MonthlySummary,
+  YearlySummary,
+  CategoryTotal,
+  GivingReport,
+  GivingCategoryId,
 } from "@/features/giving/types";
 import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
 
@@ -39,6 +43,12 @@ export function formatShortDate(isoDate: string): string {
   });
 }
 
+export function formatMonthLabel(month: string): string {
+  const [year, num] = month.split("-");
+  const date = new Date(parseInt(year), parseInt(num) - 1, 1);
+  return date.toLocaleDateString("en-UG", { month: "long", year: "numeric" });
+}
+
 // ─── Tithe calculator ─────────────────────────────────────────────────────────
 
 export function calculateSuggestedTithe(income: number): number {
@@ -73,6 +83,15 @@ export function getOfferingsFromEntries(entries: GivingEntry[]): number {
     .reduce((sum, e) => sum + (e.amount || 0), 0);
 }
 
+export function getCategoryTotalFromEntries(
+  entries: GivingEntry[],
+  categoryId: GivingCategoryId,
+): number {
+  return entries
+    .filter((e) => e.categoryId === categoryId)
+    .reduce((sum, e) => sum + (e.amount || 0), 0);
+}
+
 // ─── Category label lookup ────────────────────────────────────────────────────
 
 export function getCategoryLabel(id: string): string {
@@ -101,6 +120,10 @@ export function buildMonthlySummary(
   const monthRecords = records.filter((r) => r.date.startsWith(month));
 
   const byCategory = {} as MonthlySummary["byCategory"];
+  // Initialize with zeros for all categories
+  for (const cat of GIVING_CATEGORIES) {
+    byCategory[cat.id] = 0;
+  }
   for (const record of monthRecords) {
     for (const entry of record.entries) {
       byCategory[entry.categoryId] =
@@ -125,6 +148,133 @@ export function buildMonthlySummary(
     recordCount: monthRecords.length,
     byCategory,
   };
+}
+
+// ─── Yearly summary builder ───────────────────────────────────────────────────
+
+export function buildYearlySummary(
+  records: GivingRecord[],
+  year: string,
+): YearlySummary {
+  const yearRecords = records.filter((r) => r.date.startsWith(year));
+
+  // Build monthly breakdown
+  const months = Array.from({ length: 12 }, (_, i) =>
+    String(i + 1).padStart(2, "0"),
+  );
+  const monthlyBreakdown = months.map((m) =>
+    buildMonthlySummary(yearRecords, `${year}-${m}`),
+  );
+
+  // Aggregate by category
+  const byCategory = {} as Record<GivingCategoryId, number>;
+  for (const cat of GIVING_CATEGORIES) {
+    byCategory[cat.id] = 0;
+  }
+  for (const record of yearRecords) {
+    for (const entry of record.entries) {
+      byCategory[entry.categoryId] =
+        (byCategory[entry.categoryId] ?? 0) + entry.amount;
+    }
+  }
+
+  const totalTithe = yearRecords.reduce(
+    (sum, r) => sum + getTitheFromEntries(r.entries),
+    0,
+  );
+  const totalOfferings = yearRecords.reduce(
+    (sum, r) => sum + getOfferingsFromEntries(r.entries),
+    0,
+  );
+
+  return {
+    year,
+    totalAmount: totalTithe + totalOfferings,
+    totalTithe,
+    totalOfferings,
+    recordCount: yearRecords.length,
+    monthlyBreakdown,
+    byCategory,
+  };
+}
+
+// ─── Category totals for a set of records ─────────────────────────────────────
+
+export function buildCategoryTotals(records: GivingRecord[]): CategoryTotal[] {
+  const totals: Record<GivingCategoryId, number> = {
+    tithe: 0,
+    offering: 0,
+    building_fund: 0,
+    mission_fund: 0,
+  };
+
+  for (const record of records) {
+    for (const entry of record.entries) {
+      totals[entry.categoryId] = (totals[entry.categoryId] ?? 0) + entry.amount;
+    }
+  }
+
+  const grandTotal = Object.values(totals).reduce((s, v) => s + v, 0) || 1;
+
+  return GIVING_CATEGORIES.map((cat) => ({
+    categoryId: cat.id,
+    label: cat.label,
+    amount: totals[cat.id] ?? 0,
+    percentage: Math.round(((totals[cat.id] ?? 0) / grandTotal) * 100),
+  }));
+}
+
+// ─── Report builder ───────────────────────────────────────────────────────────
+
+export function buildReport(
+  records: GivingRecord[],
+  fromDate: string,
+  toDate: string,
+): GivingReport {
+  const filtered = records.filter((r) => {
+    return r.date >= fromDate && r.date <= toDate;
+  });
+
+  const totalTithe = filtered.reduce(
+    (sum, r) => sum + getTitheFromEntries(r.entries),
+    0,
+  );
+  const totalOfferings = filtered.reduce(
+    (sum, r) => sum + getOfferingsFromEntries(r.entries),
+    0,
+  );
+
+  return {
+    fromDate,
+    toDate,
+    totalRecords: filtered.length,
+    totalAmount: totalTithe + totalOfferings,
+    totalTithe,
+    totalOfferings,
+    categoryTotals: buildCategoryTotals(filtered),
+    records: filtered,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+// ─── Available years from records ─────────────────────────────────────────────
+
+export function getAvailableYears(records: GivingRecord[]): string[] {
+  const years = new Set<string>();
+  for (const r of records) {
+    const year = r.date.slice(0, 4);
+    if (year) years.add(year);
+  }
+  return Array.from(years).sort().reverse();
+}
+
+export function getAvailableMonths(records: GivingRecord[]): string[] {
+  const months = new Set<string>();
+  for (const r of records) {
+    const month = r.date.slice(0, 7);
+    if (month) months.add(month);
+  }
+  return Array.from(months).sort().reverse();
 }
 
 // ─── Recent Sabbaths ──────────────────────────────────────────────────────────

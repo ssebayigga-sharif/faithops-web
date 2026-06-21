@@ -140,12 +140,6 @@ export type AttendanceFilter = "high" | "medium" | "low" | "missing" | "";
 
 export interface MemberFilters {
   search: string;
-  status: MemberStatus | "";
-  ministry: Ministry | "";
-  gender: Gender | "";
-  baptized: "yes" | "no" | "";
-  attendance: AttendanceFilter;
-  cellGroup: string;
 }
 
 export type SortField =

@@ -8,7 +8,7 @@ import type {
   MinistryRole,
 } from "@/features/members/types";
 
-// ─── Compute derived fields ───────────────────────────────────────────────────
+// ─── Compute derived fields
 
 export function computeMember(member: Member): Member {
   const attendance = Array.isArray(member.attendance) ? member.attendance : [];
@@ -76,7 +76,7 @@ export function computeMembers(members: Member[]): Member[] {
   return members.map(computeMember);
 }
 
-// ─── Filter ───────────────────────────────────────────────────────────────────
+//  Filter
 
 export function filterMembers(
   members: Member[],
@@ -94,37 +94,11 @@ export function filterMembers(
       return false;
     }
 
-    if (filters.status && m.status !== filters.status) return false;
-
-    if (
-      filters.ministry &&
-      !m.ministries.some((mn) => mn.ministry === filters.ministry && mn.active)
-    ) {
-      return false;
-    }
-
-    if (filters.gender && m.gender !== filters.gender) return false;
-
-    if (filters.baptized === "yes" && !m.baptized) return false;
-    if (filters.baptized === "no" && m.baptized) return false;
-
-    if (filters.cellGroup && m.cellGroup !== filters.cellGroup) return false;
-
-    if (filters.attendance) {
-      const rate = m._computed?.attendanceRate ?? 0;
-      if (filters.attendance === "high" && rate < 75) return false;
-      if (filters.attendance === "medium" && (rate < 40 || rate >= 75))
-        return false;
-      if (filters.attendance === "low" && (rate < 1 || rate >= 40))
-        return false;
-      if (filters.attendance === "missing" && rate !== 0) return false;
-    }
-
     return true;
   });
 }
 
-// ─── Sort ─────────────────────────────────────────────────────────────────────
+// Sort
 
 export function sortMembers(members: Member[], sort: SortState): Member[] {
   return [...members].sort((a, b) => {
@@ -160,7 +134,7 @@ export function sortMembers(members: Member[], sort: SortState): Member[] {
   });
 }
 
-// ─── Formatting helpers ───────────────────────────────────────────────────────
+//  Formatting helpers
 
 export function formatUGX(amount: number): string {
   return `UGX ${new Intl.NumberFormat("en-UG").format(amount)}`;
@@ -201,7 +175,7 @@ export function getAttendanceColor(
   return "red";
 }
 
-// ─── Generate member ID ───────────────────────────────────────────────────────
+//  Generate member ID
 
 export function generateMemberId(existingIds: string[]): string {
   const nums = existingIds

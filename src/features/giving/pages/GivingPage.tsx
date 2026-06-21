@@ -15,8 +15,10 @@ import {
 } from "@carbon/react";
 import {
   ChartBar,
+  DocumentPdf,
   Finance,
   Renew,
+  ReportData,
   Time,
 } from "@carbon/icons-react";
 
@@ -26,6 +28,8 @@ import { GivingReview } from "../components/GivingReview";
 import { GivingReceipt } from "../components/GivingReceipt";
 import { GivingHistory } from "../components/GivingHistory";
 import { GivingSummary } from "../components/GivingSummary";
+import { GivingReports } from "../components/GivingReports";
+import { MemberStatement } from "../components/MemberStatement";
 import { formatUGX } from "../givingUtils";
 import {
   colors,
@@ -115,17 +119,54 @@ export default function GivingPage() {
     history,
     activeTab,
     setActiveTab,
+    selectedYear,
+    setSelectedYear,
+    selectedMonth,
+    setSelectedMonth,
+    reportFromDate,
+    setReportFromDate,
+    reportToDate,
+    setReportToDate,
+    activeReportTab,
+    setActiveReportTab,
+    monthlySummary,
+    yearlySummary,
+    customReport,
+    availableYears,
+    availableMonths,
+    memberStatementName,
+    setMemberStatementName,
+    memberStatement,
+    memberStatementTotal,
+    searchQuery,
+    setSearchQuery,
+    categoryFilter,
+    setCategoryFilter,
+    dateFromFilter,
+    setDateFromFilter,
+    dateToFilter,
+    setDateToFilter,
+    filteredHistory,
   } = giving;
 
-  const tabIndex = activeTab === "record" ? 0 : activeTab === "history" ? 1 : 2;
+  const tabIndex =
+    activeTab === "record"
+      ? 0
+      : activeTab === "history"
+        ? 1
+        : activeTab === "summary"
+          ? 2
+          : 3;
+
+  const TABS = ["record", "history", "summary", "reports"] as const;
 
   return (
-    <main style={pageShell}>
-      <div style={pageInner}>
+    <main className="giving-page" style={pageShell}>
+      <div className="giving-page__inner" style={pageInner}>
         <Breadcrumb style={{ marginBottom: "0.5rem" }}>
           <BreadcrumbItem href="/dashboard">Dashboard</BreadcrumbItem>
           <BreadcrumbItem href="/giving" isCurrentPage>
-            Tithe &amp; Offerings
+            Tithe & Offerings
           </BreadcrumbItem>
         </Breadcrumb>
 
@@ -136,9 +177,9 @@ export default function GivingPage() {
           }}
         >
           <div>
-            <h1 style={pageTitle}>Tithe &amp; Offerings</h1>
+            <h1 style={pageTitle}>Tithe & Offerings</h1>
             <p style={pageSubtitle}>
-              Kabulengwa SDA Church · Faithful stewardship of God&apos;s blessings
+              Kabulengwa SDA Church · Faithful stewardship of God's blessings
             </p>
           </div>
           {step === "receipt" && (
@@ -151,11 +192,13 @@ export default function GivingPage() {
         <Tabs
           selectedIndex={tabIndex}
           onChange={({ selectedIndex }) => {
-            const tabs = ["record", "history", "summary"] as const;
-            setActiveTab(tabs[selectedIndex]);
+            setActiveTab(TABS[selectedIndex]);
           }}
         >
-          <TabList aria-label="Giving page sections" style={{ overflowX: "auto" }}>
+          <TabList
+            aria-label="Giving page sections"
+            style={{ overflowX: "auto" }}
+          >
             <Tab renderIcon={Finance}>Record giving</Tab>
             <Tab renderIcon={Time}>
               History
@@ -166,9 +209,11 @@ export default function GivingPage() {
               )}
             </Tab>
             <Tab renderIcon={ChartBar}>Summary</Tab>
+            <Tab renderIcon={ReportData}>Reports</Tab>
           </TabList>
 
           <TabPanels>
+            {/* Tab 1: Record Giving */}
             <TabPanel>
               <Grid fullWidth>
                 <Column sm={4} md={8} lg={12}>
@@ -196,11 +241,12 @@ export default function GivingPage() {
                                 fontStyle: "italic",
                               }}
                             >
-                              &ldquo;Bring the whole tithe into the storehouse, that
-                              there may be food in my house. Test me in this… and see
-                              if I will not throw open the floodgates of heaven and pour
-                              out so much blessing that there will not be room enough to
-                              store it.&rdquo;
+                              &ldquo;Bring the whole tithe into the storehouse,
+                              that there may be food in my house. Test me in
+                              this… and see if I will not throw open the
+                              floodgates of heaven and pour out so much blessing
+                              that there will not be room enough to store
+                              it.&rdquo;
                             </p>
                             <p
                               style={{
@@ -254,26 +300,42 @@ export default function GivingPage() {
                     <Stack gap={4}>
                       <Tile style={tileSection}>
                         <Stack gap={3}>
-                          <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 600 }}>
-                            SDA Stewardship principles
+                          <h4
+                            style={{
+                              margin: 0,
+                              fontSize: "14px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            Giving Categories
                           </h4>
                           <Stack gap={3}>
                             {[
                               {
                                 title: "Tithe",
-                                desc: "10% of all income, returned to God — not a gift but a recognition of His ownership. Goes to the conference for pastoral support and mission.",
+                                desc: "10% of all income, returned to God — a recognition of His ownership.",
                               },
                               {
-                                title: "Systematic Benevolence",
-                                desc: "Regular, proportional freewill offerings. Supports local church operations and world mission budget.",
+                                title: "Offering",
+                                desc: "Freewill offering for local church operations and ministries.",
                               },
                               {
-                                title: "Special Offerings",
-                                desc: "Directed giving — building fund, ADRA, Ingathering, Bible correspondence school.",
+                                title: "Building Fund",
+                                desc: "Contributions for maintaining and expanding the church sanctuary.",
+                              },
+                              {
+                                title: "Mission Fund",
+                                desc: "Supporting local and global evangelism efforts.",
+                              },
+                              {
+                                title: "Church lunch",
+                                desc: "Put in something for lunch .",
                               },
                             ].map((item) => (
                               <Stack key={item.title} gap={1}>
-                                <strong style={{ fontSize: "13px" }}>{item.title}</strong>
+                                <strong style={{ fontSize: "13px" }}>
+                                  {item.title}
+                                </strong>
                                 <p style={sectionDesc}>{item.desc}</p>
                               </Stack>
                             ))}
@@ -288,12 +350,24 @@ export default function GivingPage() {
                         }}
                       >
                         <Stack gap={2}>
-                          <p style={{ margin: 0, fontSize: "13px", fontStyle: "italic" }}>
-                            &ldquo;Each of you should give what you have decided in your
-                            heart to give, not reluctantly or under compulsion, for God
-                            loves a cheerful giver.&rdquo;
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: "13px",
+                              fontStyle: "italic",
+                            }}
+                          >
+                            &ldquo;Each of you should give what you have decided
+                            in your heart to give, not reluctantly or under
+                            compulsion, for God loves a cheerful giver.&rdquo;
                           </p>
-                          <p style={{ margin: 0, fontSize: "12px", color: colors.textMuted }}>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: "12px",
+                              color: colors.textMuted,
+                            }}
+                          >
                             — 2 Corinthians 9:7
                           </p>
                         </Stack>
@@ -307,14 +381,33 @@ export default function GivingPage() {
                           }}
                         >
                           <Stack gap={2}>
-                            <span style={{ fontSize: "11px", color: colors.textMuted, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                            <span
+                              style={{
+                                fontSize: "11px",
+                                color: colors.textMuted,
+                                textTransform: "uppercase",
+                                letterSpacing: "0.06em",
+                              }}
+                            >
                               Current total
                             </span>
-                            <strong style={{ fontSize: "22px", color: colors.text }}>
+                            <strong
+                              style={{
+                                fontSize: "22px",
+                                color: colors.text,
+                              }}
+                            >
                               {formatUGX(totalAmount)}
                             </strong>
-                            <p style={{ margin: 0, fontSize: "12px", color: colors.textMuted }}>
-                              {totalTithe > 0 && `${formatUGX(totalTithe)} tithe`}
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: "12px",
+                                color: colors.textMuted,
+                              }}
+                            >
+                              {totalTithe > 0 &&
+                                `${formatUGX(totalTithe)} tithe`}
                               {totalTithe > 0 && totalOfferings > 0 && " · "}
                               {totalOfferings > 0 &&
                                 `${formatUGX(totalOfferings)} offerings`}
@@ -328,12 +421,65 @@ export default function GivingPage() {
               </Grid>
             </TabPanel>
 
+            {/* Tab 2: History */}
             <TabPanel>
-              <GivingHistory records={history} />
+              <GivingHistory
+                records={filteredHistory}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                categoryFilter={categoryFilter}
+                onCategoryFilterChange={setCategoryFilter}
+                dateFromFilter={dateFromFilter}
+                onDateFromChange={setDateFromFilter}
+                dateToFilter={dateToFilter}
+                onDateToChange={setDateToFilter}
+              />
             </TabPanel>
 
+            {/* Tab 3: Summary */}
             <TabPanel>
-              <GivingSummary records={history} />
+              <GivingSummary
+                records={history}
+                selectedMonth={selectedMonth}
+                onMonthChange={setSelectedMonth}
+                availableMonths={availableMonths}
+              />
+            </TabPanel>
+
+            {/* Tab 4: Reports */}
+            <TabPanel>
+              <Stack gap={6}>
+                <GivingReports
+                  records={history}
+                  selectedYear={selectedYear}
+                  onYearChange={setSelectedYear}
+                  selectedMonth={selectedMonth}
+                  onMonthChange={setSelectedMonth}
+                  reportFromDate={reportFromDate}
+                  onFromDateChange={setReportFromDate}
+                  reportToDate={reportToDate}
+                  onToDateChange={setReportToDate}
+                  activeReportTab={activeReportTab}
+                  onReportTabChange={setActiveReportTab}
+                  availableYears={availableYears}
+                  availableMonths={availableMonths}
+                />
+
+                <hr
+                  style={{
+                    border: "none",
+                    borderTop: `1px solid ${colors.border}`,
+                    margin: "0.5rem 0",
+                  }}
+                />
+
+                <MemberStatement
+                  memberName={memberStatementName}
+                  onMemberNameChange={setMemberStatementName}
+                  records={memberStatement}
+                  totalAmount={memberStatementTotal}
+                />
+              </Stack>
             </TabPanel>
           </TabPanels>
         </Tabs>

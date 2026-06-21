@@ -95,6 +95,39 @@
 
 // ── Responsive ────────────────────────────────────────────────
 
-@media (max-width: 671px) {
+// Tablet
+@media (max-width: 65.98rem) {
+  .attendancepage {
+    &__config {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    &__visitor {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+// Mobile
+@media (max-width: 49rem) {
+  .attendancepage {
+    &__config {
+      grid-template-columns: 1fr;
+    }
+
+    &__visitor {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .attendanceheader { padding: 1rem 0; }
   .attendanceheader__inner { flex-direction: column; align-items: flex-start; }
+  .attendanceheader__title { font-size: 1.25rem; }
+}
+
+// Small mobile
+@media (max-width: 30rem) {
+  .attendanceheader__inner .cds--btn {
+    width: 100%;
+  }
 }

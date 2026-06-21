@@ -1,14 +1,8 @@
 export type GivingCategoryId =
   | "tithe"
-  | "local_church_budget"
+  | "offering"
   | "building_fund"
-  | "world_budget"
-  | "adra"
-  | "community_services"
-  | "evangelism"
-  | "bible_school"
-  | "welfare"
-  | "special";
+  | "mission_fund";
 
 export type GivingFrequency = "once" | "weekly" | "monthly" | "quarterly";
 
@@ -54,6 +48,35 @@ export interface MonthlySummary {
   totalAmount: number;
   recordCount: number;
   byCategory: Record<GivingCategoryId, number>;
+}
+
+export interface YearlySummary {
+  year: string;
+  totalAmount: number;
+  totalTithe: number;
+  totalOfferings: number;
+  recordCount: number;
+  monthlyBreakdown: MonthlySummary[];
+  byCategory: Record<GivingCategoryId, number>;
+}
+
+export interface CategoryTotal {
+  categoryId: GivingCategoryId;
+  label: string;
+  amount: number;
+  percentage: number;
+}
+
+export interface GivingReport {
+  fromDate: string;
+  toDate: string;
+  totalRecords: number;
+  totalAmount: number;
+  totalTithe: number;
+  totalOfferings: number;
+  categoryTotals: CategoryTotal[];
+  records: GivingRecord[];
+  generatedAt: string;
 }
 
 export interface GivingFormState {

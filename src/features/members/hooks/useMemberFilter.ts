@@ -1,15 +1,17 @@
 import { useState, useMemo } from "react";
-import type { Member, MemberFilters, SortState } from "@/features/members/types";
-import { sortMembers, filterMembers, computeMembers } from "../utils/memberUtils";
+import type {
+  Member,
+  MemberFilters,
+  SortState,
+} from "@/features/members/types";
+import {
+  sortMembers,
+  filterMembers,
+  computeMembers,
+} from "../utils/memberUtils";
 
 const DEFAULT_FILTERS: MemberFilters = {
   search: "",
-  status: "",
-  ministry: "",
-  gender: "",
-  baptized: "",
-  attendance: "",
-  cellGroup: "",
 };
 
 const DEFAULT_SORT: SortState = {
@@ -36,7 +38,6 @@ export function useMemberFilters(rawMembers: Member[]): UseMemberFiltersReturn {
   const [filters, setFilters] = useState<MemberFilters>(DEFAULT_FILTERS);
   const [sort, setSortState] = useState<SortState>(DEFAULT_SORT);
 
-  // Compute once — memoised
   const computedMembers = useMemo(
     () => computeMembers(rawMembers),
     [rawMembers],
@@ -61,9 +62,7 @@ export function useMemberFilters(rawMembers: Member[]): UseMemberFiltersReturn {
 
   const resetFilters = () => setFilters(DEFAULT_FILTERS);
 
-  const hasActiveFilters = Object.entries(filters).some(
-    ([key, val]) => key !== "search" && val !== "",
-  );
+  const hasActiveFilters = filters.search !== "";
 
   return {
     filters,

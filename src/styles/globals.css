@@ -16,6 +16,8 @@ a {
   color: inherit;
 }
 
+/* ── App Shell ─────────────────────────────────────────────── */
+
 .app-shell {
   min-height: 100vh;
 }
@@ -121,6 +123,8 @@ a {
   color: #ffffff;
 }
 
+/* ── Sidebar ────────────────────────────────────────────────── */
+
 .app-sidebar.cds--side-nav {
   border-right: 1px solid var(--cds-border-subtle-01, #d0d7de);
   background: var(--cds-layer-01, #ffffff);
@@ -160,6 +164,8 @@ a {
   font-weight: 600;
 }
 
+/* ── Content area ───────────────────────────────────────────── */
+
 .app-shell__content {
   display: flex;
   min-height: calc(100vh - 3rem);
@@ -185,6 +191,8 @@ a {
   box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
   color: var(--cds-text-primary, #161616);
 }
+
+/* ── Footer ─────────────────────────────────────────────────── */
 
 .app-shell__footer {
   display: grid;
@@ -330,6 +338,8 @@ a {
   box-shadow: 0 0 0 3px rgba(36, 161, 72, 0.16);
 }
 
+/* ── Generic utilities ──────────────────────────────────────── */
+
 .hero-card,
 .page-placeholder {
   padding: 2rem;
@@ -350,6 +360,8 @@ a {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+/* ── Slide-over / Drawer ────────────────────────────────────── */
 
 .slide-over {
   position: fixed;
@@ -434,6 +446,8 @@ a {
   padding: 1rem;
 }
 
+/* ── Admin page shared ──────────────────────────────────────── */
+
 .admin-page {
   min-height: 100%;
   background: var(--cds-background, #f4f4f4);
@@ -473,6 +487,8 @@ a {
   gap: 0.5rem;
 }
 
+/* ── Dashboard: Metric Cards ────────────────────────────────── */
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -509,6 +525,8 @@ a {
   color: var(--cds-text-helper, #6f6f6f);
   font-size: 0.75rem;
 }
+
+/* ── Dashboard: Grids ───────────────────────────────────────── */
 
 .dashboard-grid {
   display: grid;
@@ -750,12 +768,17 @@ p {
   margin: 0 0 1rem;
 }
 
+/* ── Responsive: Tablet (66rem – 82rem) ────────────────────── */
+/* At this range, the sidebar is still fixed but can be collapsed.
+   Mainly tweaks for mid-sized screens. */
+
 @media (max-width: 82rem) {
   .app-header__nav {
     display: none;
   }
 }
 
+/* ── Responsive: Large tablet / small desktop (49rem – 66rem) ─ */
 @media (max-width: 65.98rem) {
   .app-header__brand {
     min-width: auto;
@@ -785,28 +808,44 @@ p {
   }
 
   .app-shell__footer {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1.75rem;
   }
 
-  .app-footer__nav {
-    align-items: flex-start;
+  .app-shell__page {
+    min-height: calc(100vh - 10rem);
+    padding: 1.25rem;
   }
 
   .app-footer__bottom {
-    align-items: flex-start;
+    grid-column: 1 / -1;
     flex-direction: column;
+    align-items: flex-start;
   }
 
-  .metric-grid,
-  .dashboard-grid,
-  .dashboard-analytics,
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-analytics {
+    grid-template-columns: 1fr;
+  }
+
   .dashboard-split {
     grid-template-columns: 1fr;
   }
+
+  .admin-page__inner {
+    padding: 1.25rem;
+  }
 }
 
-@media (max-width: 41.98rem) {
+/* ── Responsive: Mobile (≤ 49rem) ───────────────────────────── */
+@media (max-width: 49rem) {
   .app-header__search {
     display: none;
   }
@@ -815,13 +854,14 @@ p {
     padding: 1rem 1rem 0;
   }
 
-  .app-shell__page,
-  .hero-card,
-  .page-placeholder {
+  .app-shell__page {
+    min-height: calc(100vh - 8rem);
     padding: 1rem;
   }
 
   .app-shell__footer {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
     padding: 1.25rem;
   }
 
@@ -833,8 +873,17 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .app-footer__bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .admin-page__inner {
     padding: 1rem;
+  }
+
+  .admin-page__title {
+    font-size: 1.125rem;
   }
 
   .slide-over__panel {
@@ -854,6 +903,10 @@ p {
     grid-template-columns: auto minmax(0, 1fr);
   }
 
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .dashboard-analytics__summary {
     grid-template-columns: 1fr;
   }
@@ -864,6 +917,28 @@ p {
     gap: 0.2rem;
   }
 }
+
+/* ── Responsive: Small mobile (≤ 30rem) ─────────────────────── */
+@media (max-width: 30rem) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-page__header {
+    flex-direction: column;
+  }
+
+  .admin-actions {
+    width: 100%;
+  }
+
+  .admin-actions .cds--btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* ── Slide-over modal ───────────────────────────────────────── */
 
 .slide-over-modal.cds--modal {
   align-items: stretch;
@@ -887,6 +962,8 @@ p {
 .slide-over-modal .cds--modal-content {
   padding-bottom: 1.5rem;
 }
+
+/* ── Events page ────────────────────────────────────────────── */
 
 .events-page {
   min-height: 100%;
@@ -1314,6 +1391,8 @@ p {
   white-space: nowrap;
 }
 
+/* ── Responsive: Events page ────────────────────────────────── */
+
 @media (max-width: 82rem) {
   .event-calendar__week {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1350,15 +1429,15 @@ p {
   .slide-over-modal__container--lg {
     width: 100vw;
   }
-}
-
-@media (max-width: 41.98rem) {
-  .event-checkbox-grid {
-    grid-template-columns: 1fr;
-  }
 
   .event-calendar__toolbar .cds--content-switcher {
     width: 100%;
+  }
+}
+
+@media (max-width: 49rem) {
+  .event-checkbox-grid {
+    grid-template-columns: 1fr;
   }
 
   .event-feed-card .cds--btn,
@@ -1368,7 +1447,7 @@ p {
   }
 }
 
-/* ── Attendance Shared Styles ────────────────────────────────────
+/* ── Attendance Shared Styles ──────────────────────────────────
    These live in globals.css so they aren't hashed by CSS Modules.
    Used by StatCards, SessionHistoryTable, MarkAttendanceTable,
    and AttendancePage.                                     */
@@ -1504,5 +1583,79 @@ p {
 @media (min-width: 1024px) {
   .stat-cards {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* ── Responsive Tables: Scroll on mobile ────────────────────── */
+@media (max-width: 49rem) {
+  .cds--data-table-content {
+    overflow-x: auto;
+  }
+
+  .cds--table-toolbar {
+    overflow-x: auto;
+  }
+
+  /* Ensure pagination doesn't overflow */
+  .cds--pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+/* ── Giving page responsiveness ─────────────────────────────── */
+/* The giving page uses inline styles, so we target the container directly */
+
+.giving-page .cds--tab-content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 65.98rem) {
+  .giving-page .cds--tab-content .cds--grid > .cds--row > .cds--col-lg-12 {
+    padding-right: 0;
+  }
+
+  .giving-page .cds--tab-content .cds--grid > .cds--row > .cds--col-sm-0 {
+    display: none;
+  }
+}
+
+@media (max-width: 49rem) {
+  .giving-page .cds--breadcrumb {
+    flex-wrap: wrap;
+  }
+
+  .giving-page .cds--tab--list {
+    overflow-x: auto;
+  }
+}
+
+/* ── Carbon grid enhancements for responsiveness ─────────────── */
+/* These complement the default Carbon Grid breakpoints */
+
+.dashboard-carbon-grid .cds--col-lg-4,
+.dashboard-carbon-grid .cds--col-lg-6,
+.dashboard-carbon-grid .cds--col-lg-8,
+.dashboard-carbon-grid .cds--col-lg-10 {
+  min-width: 0;
+}
+
+@media (max-width: 65.98rem) {
+  .dashboard-carbon-grid .cds--col-lg-10,
+  .dashboard-carbon-grid .cds--col-lg-8,
+  .dashboard-carbon-grid .cds--col-lg-6 {
+    margin-bottom: 1rem;
+  }
+}
+
+/* ── Responsive: Events main grid ───────────────────────────── */
+.events-main-grid .cds--col-lg-11 {
+  min-width: 0;
+}
+
+@media (max-width: 65.98rem) {
+  .events-main-grid .cds--col-lg-11 {
+    width: 100%;
   }
 }

@@ -97,13 +97,24 @@
   }
 }
 
-@media (max-width: 671px) {
+@media (max-width: 65.98rem) {
+  .reportspage__summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 49rem) {
+  .reportsheader { padding: 1rem 0; }
   .reportsheader__inner {
     flex-direction: column;
     align-items: flex-start;
   }
+  .reportsheader__title { font-size: 1.25rem; }
   .reportspage__kpi {
     min-height: auto;
     padding: 1rem;
+  }
+  .reportspage__summaryGrid {
+    grid-template-columns: 1fr;
   }
 }

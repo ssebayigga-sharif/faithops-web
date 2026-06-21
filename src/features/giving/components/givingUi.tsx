@@ -1,9 +1,5 @@
 import type { CSSProperties } from "react";
-import {
-  colors,
-  labelCaps,
-  statCardStyle,
-} from "../components/givingStyles";
+import { colors, labelCaps, statCardStyle } from "../components/givingStyles";
 
 interface GivingStatCardProps {
   label: string;
@@ -12,15 +8,33 @@ interface GivingStatCardProps {
   accent: string;
 }
 
-export function GivingStatCard({ label, value, sub, accent }: GivingStatCardProps) {
+export function GivingStatCard({
+  label,
+  value,
+  sub,
+  accent,
+}: GivingStatCardProps) {
   return (
     <div style={statCardStyle(accent)}>
       <p style={{ ...labelCaps, marginBottom: 4 }}>{label}</p>
-      <p style={{ fontSize: "22px", fontWeight: 700, color: colors.text, margin: 0 }}>
+      <p
+        style={{
+          fontSize: "22px",
+          fontWeight: 700,
+          color: colors.text,
+          margin: 0,
+        }}
+      >
         {value}
       </p>
       {sub && (
-        <p style={{ fontSize: "12px", color: colors.textMuted, margin: "4px 0 0" }}>
+        <p
+          style={{
+            fontSize: "12px",
+            color: colors.textMuted,
+            margin: "4px 0 0",
+          }}
+        >
           {sub}
         </p>
       )}
@@ -47,7 +61,11 @@ export function StepNumber({
     fontSize: "0.75rem",
     fontWeight: 500,
     flexShrink: 0,
-    background: done ? colors.success : active ? colors.interactive : "#f4f4f4",
+    background: done
+      ? colors.success
+      : active
+        ? colors.interactive
+        : "var(--cds-layer-02, #f4f4f4)",
     border: `1px solid ${done ? colors.success : active ? colors.interactive : colors.border}`,
     color: done || active ? "#ffffff" : colors.textMuted,
   };

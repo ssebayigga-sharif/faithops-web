@@ -76,6 +76,7 @@ export function GivingForm({
 
   return (
     <Stack gap={6}>
+      {/* Member information */}
       <Tile style={tileSection}>
         <Stack gap={4}>
           <h3 style={sectionTitle}>Member information</h3>
@@ -142,6 +143,7 @@ export function GivingForm({
         </Stack>
       </Tile>
 
+      {/* Tithe section */}
       <Tile
         style={{
           ...tileSection,
@@ -150,6 +152,9 @@ export function GivingForm({
       >
         <Stack gap={4}>
           <Stack orientation="horizontal" gap={3}>
+            <h3 style={{ ...sectionTitle, color: colors.interactive }}>
+              {titheCategory.label}
+            </h3>
             <p style={sectionDesc}>{titheCategory.subtitle}</p>
             <Tooltip
               label={`"${titheCategory.scripture}" — ${titheCategory.scriptureRef}`}
@@ -167,7 +172,7 @@ export function GivingForm({
 
           <Tile
             style={{
-              background: "#f4f4f4",
+              background: "var(--cds-layer-02, #f4f4f4)",
               border: `1px solid ${colors.border}`,
             }}
           >
@@ -242,14 +247,14 @@ export function GivingForm({
         </Stack>
       </Tile>
 
+      {/* Offerings section */}
       <Tile style={tileSection}>
         <Stack gap={5}>
           <Stack gap={1}>
             <h3 style={sectionTitle}>Offerings</h3>
             <p style={sectionDesc}>
-              &ldquo;Each of you should give what you have decided in your heart
-              to give, not reluctantly or under compulsion, for God loves a
-              cheerful giver.&rdquo; — 2 Corinthians 9:7
+              Freewill offerings for church operations, building fund, and
+              mission work.
             </p>
           </Stack>
 
@@ -302,6 +307,7 @@ export function GivingForm({
         </Stack>
       </Tile>
 
+      {/* Notes */}
       <Tile style={tileSection}>
         <TextInput
           id="notes"
@@ -312,6 +318,7 @@ export function GivingForm({
         />
       </Tile>
 
+      {/* Running total */}
       {totalAmount > 0 && (
         <Tile
           style={{
@@ -338,6 +345,7 @@ export function GivingForm({
         </Tile>
       )}
 
+      {/* Validation hint */}
       {!isValid && totalAmount === 0 && (
         <InlineNotification
           kind="info"
@@ -348,9 +356,10 @@ export function GivingForm({
         />
       )}
 
+      {/* Submit */}
       <Stack orientation="horizontal" gap={3} style={{ flexWrap: "wrap" }}>
         <Button kind="primary" size="lg" disabled={!isValid} onClick={onReview}>
-          Review &amp; Confirm
+          Review & Confirm
         </Button>
       </Stack>
     </Stack>
