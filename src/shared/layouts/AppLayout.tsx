@@ -1,4 +1,5 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import { Content, Theme } from "@carbon/react";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -6,11 +7,7 @@ import Sidebar from "./sidebar";
 import { useIsMobileNav } from "@/shared/hooks/useIsMobileNav";
 import { useAppTheme } from "@/shared/hooks/useTheme";
 
-type AppLayoutProps = {
-  children: ReactNode;
-};
-
-const AppLayout = ({ children }: AppLayoutProps) => {
+const AppLayout = () => {
   const isMobileNav = useIsMobileNav();
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(false);
   const { theme } = useAppTheme();
@@ -70,7 +67,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           }
         >
           <main className="app-shell__main">
-            <section className="app-shell__page">{children}</section>
+            <section className="app-shell__page">
+              <Outlet />
+            </section>
           </main>
           <Footer />
         </Content>

@@ -41,6 +41,7 @@ interface GivingFormProps {
   totalTithe: number;
   totalOfferings: number;
   isValid: boolean;
+  isAdmin: boolean;
   onSetField: <K extends keyof GivingFormState>(
     key: K,
     value: GivingFormState[K],
@@ -66,6 +67,7 @@ export function GivingForm({
   totalTithe,
   totalOfferings,
   isValid,
+  isAdmin,
   onSetField,
   onSetEntryAmount,
   onApplySuggestedTithe,
@@ -87,6 +89,7 @@ export function GivingForm({
                 labelText="Member name"
                 placeholder="Full name"
                 value={form.memberName}
+                readOnly={!isAdmin}
                 onChange={(e) => onSetField("memberName", e.target.value)}
               />
             </Column>
@@ -136,6 +139,7 @@ export function GivingForm({
                 labelText="Recorded by (treasurer / elder)"
                 placeholder="Name of recorder"
                 value={form.recordedBy}
+                readOnly={!isAdmin}
                 onChange={(e) => onSetField("recordedBy", e.target.value)}
               />
             </Column>

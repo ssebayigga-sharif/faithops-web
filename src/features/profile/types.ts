@@ -1,4 +1,10 @@
-import type { Gender, MaritalStatus, MembershipStatus, BaptismStatus } from "@/shared/types";
+import type {
+  Gender,
+  MaritalStatus,
+  MembershipStatus,
+  BaptismStatus,
+} from "@/shared/types";
+import type { ChurchRole } from "@/features/auth/types";
 
 export interface EmergencyContact {
   name: string;
@@ -43,6 +49,7 @@ export interface ChurchProfile {
   spiritualGifts: string[];
   occupation: string;
   employer: string;
+  role: ChurchRole;
   createdAt: string;
   updatedAt: string;
 }

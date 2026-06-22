@@ -37,6 +37,7 @@ export const DEFAULT_PROFILE: ChurchProfile = {
   spiritualGifts: [],
   occupation: "",
   employer: "",
+  role: "member",
   createdAt: "",
   updatedAt: "",
 };

@@ -62,9 +62,7 @@ export function GivingReports({
   availableYears,
   availableMonths,
 }: GivingReportsProps) {
-  const printRef = useRef<HTMLDivElement>(
-    null!,
-  ) as React.RefObject<HTMLDivElement>;
+  const printRef = useRef<HTMLDivElement | null>(null);
 
   const handlePrint = () => {
     window.print();
@@ -147,7 +145,6 @@ export function GivingReports({
               <ReportView
                 title={`Monthly Report — ${formatMonthLabel(selectedMonth)}`}
                 totals={monthlySum}
-                printRef={printRef}
                 onPrint={handlePrint}
               />
             </Stack>
@@ -237,17 +234,15 @@ export function GivingReports({
 function ReportView({
   title,
   totals,
-  printRef,
   onPrint,
 }: {
   title: string;
   totals: MonthlySummary;
-  printRef: React.RefObject<HTMLDivElement | null>;
   onPrint: () => void;
 }) {
   return (
     <Stack gap={4}>
-      <div ref={printRef}>
+      <div>
         <Tile
           style={{
             background: colors.white,

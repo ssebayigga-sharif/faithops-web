@@ -30,6 +30,10 @@ import {
   filterRecordsByDateRange,
   filterRecordsByCategory,
 } from "./services/giving.service";
+import { useAuthContext } from "@/features/auth/context/AuthContext";
+import type { ChurchRole } from "@/features/auth/types";
+
+const ADMIN_ROLES: ChurchRole[] = ["pastor", "elder", "deacon", "treasurer"];
 
 const INITIAL_FORM: GivingFormState = {
   memberId: "",
@@ -46,8 +50,21 @@ const INITIAL_FORM: GivingFormState = {
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useGiving() {
+  const { user, userProfile } = useAuthContext();
+  const role = userProfile?.role ?? "member";
+  const isAdmin = ADMIN_ROLES.includes(role);
+  const currentUserId = user?.uid ?? "";
+  const currentUserName = userProfile
+    ? `${userProfile.firstName} ${userProfile.lastName}`.trim()
+    : "";
   const [step, setStep] = useState<GivingStep>("entry");
-  const [form, setForm] = useState<GivingFormState>(INITIAL_FORM);
+  const [form, setForm] = useState<GivingFormState>({
+    ...INITIAL_FORM,
+    // Auto-populate for members: they give on their own behalf
+    memberId: isAdmin ? "" : currentUserId,
+    memberName: isAdmin ? "" : currentUserName,
+    recordedBy: currentUserName,
+  });
   const [submittedRecord, setSubmittedRecord] = useState<GivingRecord | null>(
     null,
   );
@@ -63,6 +80,14 @@ export function useGiving() {
       setHistory(persisted);
     }
   }, []);
+
+  // Filter history: members only see their own records; admins see all
+  const scopedHistory = useMemo(() => {
+    if (isAdmin) return history;
+    return history.filter(
+      (r) => r.memberId === currentUserId || r.memberName === currentUserName,
+    );
+  }, [history, isAdmin, currentUserId, currentUserName]);
 
   // ── Report state ──────────────────────────────────────────────────────────
 
@@ -109,34 +134,40 @@ export function useGiving() {
     [parsedEntries],
   );
 
-  // ── Report computations ──────────────────────────────────────────────────
+  // ── Report computations (scoped to member's own data for members) ────────
 
   const monthlySummary = useMemo(
-    () => buildMonthlySummary(history, selectedMonth),
-    [history, selectedMonth],
+    () => buildMonthlySummary(scopedHistory, selectedMonth),
+    [scopedHistory, selectedMonth],
   );
 
   const yearlySummary = useMemo(
-    () => buildYearlySummary(history, selectedYear),
-    [history, selectedYear],
+    () => buildYearlySummary(scopedHistory, selectedYear),
+    [scopedHistory, selectedYear],
   );
 
   const customReport = useMemo(
-    () => buildReport(history, reportFromDate, reportToDate),
-    [history, reportFromDate, reportToDate],
+    () => buildReport(scopedHistory, reportFromDate, reportToDate),
+    [scopedHistory, reportFromDate, reportToDate],
   );
 
-  const availableYears = useMemo(() => getAvailableYears(history), [history]);
-  const availableMonths = useMemo(() => getAvailableMonths(history), [history]);
+  const availableYears = useMemo(
+    () => getAvailableYears(scopedHistory),
+    [scopedHistory],
+  );
+  const availableMonths = useMemo(
+    () => getAvailableMonths(scopedHistory),
+    [scopedHistory],
+  );
 
   // ── Member statement ─────────────────────────────────────────────────────
 
   const memberStatement = useMemo((): GivingRecord[] => {
     if (!memberStatementName.trim()) return [];
-    return history.filter((r) =>
+    return scopedHistory.filter((r) =>
       r.memberName.toLowerCase().includes(memberStatementName.toLowerCase()),
     );
-  }, [history, memberStatementName]);
+  }, [scopedHistory, memberStatementName]);
 
   const memberStatementTotal = useMemo(
     () => memberStatement.reduce((sum, r) => sum + r.totalAmount, 0),
@@ -151,14 +182,20 @@ export function useGiving() {
   const [dateToFilter, setDateToFilter] = useState("");
 
   const filteredHistory = useMemo(() => {
-    let result = history;
+    let result = scopedHistory;
     if (searchQuery) result = searchRecords(result, searchQuery);
     if (categoryFilter)
       result = filterRecordsByCategory(result, categoryFilter);
     if (dateFromFilter && dateToFilter)
       result = filterRecordsByDateRange(result, dateFromFilter, dateToFilter);
     return result;
-  }, [history, searchQuery, categoryFilter, dateFromFilter, dateToFilter]);
+  }, [
+    scopedHistory,
+    searchQuery,
+    categoryFilter,
+    dateFromFilter,
+    dateToFilter,
+  ]);
 
   // ── Form field updaters ───────────────────────────────────────────────────
 
@@ -238,12 +275,21 @@ export function useGiving() {
   // ── Reset ─────────────────────────────────────────────────────────────────
 
   const resetForm = useCallback(() => {
-    setForm(INITIAL_FORM);
+    const freshForm: GivingFormState = {
+      ...INITIAL_FORM,
+      // Preserve auto-populate for members
+      memberId: isAdmin ? "" : currentUserId,
+      memberName: isAdmin ? "" : currentUserName,
+      recordedBy: currentUserName,
+    };
+    setForm(freshForm);
     setSubmittedRecord(null);
     setStep("entry");
-  }, []);
+  }, [isAdmin, currentUserId, currentUserName]);
 
   return {
+    // Role info
+    isAdmin,
     // Step navigation
     step,
     setStep,
