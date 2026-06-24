@@ -1,5 +1,12 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Grid, Column, Button, ContentSwitcher, Switch, InlineNotification } from "@carbon/react";
+import {
+  Grid,
+  Column,
+  Button,
+  ContentSwitcher,
+  Switch,
+  InlineNotification,
+} from "@carbon/react";
 import { Calendar } from "@carbon/icons-react";
 import styles from "../homepage.module.scss";
 import { UPCOMING_EVENTS } from "@/features/home/data/home";
@@ -13,37 +20,49 @@ const EventsSection: React.FC = () => {
   const ref = useFadeIn<HTMLElement>();
 
   const categories = useMemo(
-    () => [ALL_LABEL, ...Array.from(new Set(UPCOMING_EVENTS.map((e) => e.category)))],
-    []
+    () => [
+      ALL_LABEL,
+      ...Array.from(new Set(UPCOMING_EVENTS.map((e) => e.category))),
+    ],
+    [],
   );
   const [activeIdx, setActiveIdx] = useState(0);
 
   const activeCategory = categories[activeIdx];
-  const filtered = activeCategory === ALL_LABEL
-    ? UPCOMING_EVENTS
-    : UPCOMING_EVENTS.filter(
-        (e: HomeChurchEvent) => e.category === activeCategory,
-      );
+  const filtered =
+    activeCategory === ALL_LABEL
+      ? UPCOMING_EVENTS
+      : UPCOMING_EVENTS.filter(
+          (e: HomeChurchEvent) => e.category === activeCategory,
+        );
 
-  const handleSwitch = useCallback((info: { index?: number; name?: string | number; text?: string }) => {
-    if (info.index !== undefined) {
-      setActiveIdx(info.index);
-    }
-  }, []);
+  const handleSwitch = useCallback(
+    (info: { index?: number; name?: string | number; text?: string }) => {
+      if (info.index !== undefined) {
+        setActiveIdx(info.index);
+      }
+    },
+    [],
+  );
 
   return (
     <section
       ref={ref}
-      className={`${styles.churchSection} ${styles.churchSectionCream}`}
+      className={`${styles.churchSection} ${styles.churchSectionLayer}`}
       aria-labelledby="events-heading"
     >
       <Grid>
         <Column lg={10} md={5} sm={4}>
           <div data-animate className={styles.fadeUp}>
             <span className={styles.churchGoldRule} aria-hidden="true" />
-            <h2 id="events-heading" className={styles.churchSectionHeader__title}>Upcoming Events</h2>
+            <h2
+              id="events-heading"
+              className={styles.churchSectionHeader__title}
+            >
+              Upcoming Events
+            </h2>
             <p className={styles.churchSectionSubhead}>
-              Don't miss what God is doing in our community.
+              See what's happening in our community.
             </p>
           </div>
         </Column>
@@ -89,7 +108,11 @@ const EventsSection: React.FC = () => {
         ) : (
           filtered.map((ev: HomeChurchEvent, i: number) => (
             <Column key={ev.id} lg={4} md={4} sm={4}>
-              <div data-animate className={styles.fadeUp} style={{ transitionDelay: `${i * 0.08}s` }}>
+              <div
+                data-animate
+                className={styles.fadeUp}
+                style={{ transitionDelay: `${i * 0.06}s` }}
+              >
                 <EventCard event={ev} />
               </div>
             </Column>

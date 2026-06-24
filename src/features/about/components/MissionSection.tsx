@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid, Column, Tile } from "@carbon/react";
-import { useFadeIn } from "@/features/home/useFadeIn";
 import styles from "../about.module.scss";
 import type { MissionPillar } from "@/features/about/types";
 
@@ -35,16 +34,8 @@ interface PillarCardProps {
 }
 
 const PillarCard: React.FC<PillarCardProps> = ({ pillar }) => (
-  <Tile
-    className={`${styles["pillar-card"]} ${styles.fadeUp}`}
-    aria-label={pillar.label}
-    data-animate
-  >
-    <div className={styles["pillar-card__top-rule"]} aria-hidden />
-    <p className={styles["pillar-card__eyebrow"]}>
-      <span aria-hidden>{pillar.icon} </span>
-      {pillar.label}
-    </p>
+  <Tile className={styles["pillar-card"]} aria-label={pillar.label}>
+    <p className={styles["pillar-card__eyebrow"]}>{pillar.label}</p>
     <h3 className={styles["pillar-card__title"]}>{pillar.title}</h3>
     <p className={styles["pillar-card__body"]}>{pillar.body}</p>
     <blockquote className={styles["pillar-card__verse"]}>
@@ -55,20 +46,14 @@ const PillarCard: React.FC<PillarCardProps> = ({ pillar }) => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const MissionSection: React.FC = () => {
-  const ref = useFadeIn();
-
   return (
     <section
       className={`${styles.sectionCream} ${styles["mission-section"]}`}
-      ref={ref}
       aria-labelledby="mission-heading"
     >
       <Grid>
         <Column sm={4} md={8} lg={16}>
-          <div
-            data-animate
-            className={`${styles["section-header"]} ${styles.fadeUp}`}
-          >
+          <div className={styles["section-header"]}>
             <div className={styles.goldRule} aria-hidden />
             <h2 id="mission-heading" className={styles["section-heading"]}>
               Mission, Vision &amp; Values

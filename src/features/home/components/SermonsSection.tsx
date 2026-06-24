@@ -1,6 +1,13 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Grid, Column, Button, ContentSwitcher, Switch, InlineNotification } from "@carbon/react";
+import {
+  Grid,
+  Column,
+  Button,
+  ContentSwitcher,
+  Switch,
+  InlineNotification,
+} from "@carbon/react";
 import { ArrowRight } from "@carbon/icons-react";
 import styles from "../homepage.module.scss";
 import { FEATURED_SERMONS } from "@/features/home/data/home";
@@ -13,33 +20,45 @@ const SermonsSection: React.FC = () => {
   const ref = useFadeIn<HTMLElement>();
 
   const tags = useMemo(
-    () => [ALL_LABEL, ...Array.from(new Set(FEATURED_SERMONS.map((s) => s.tag)))],
-    []
+    () => [
+      ALL_LABEL,
+      ...Array.from(new Set(FEATURED_SERMONS.map((s) => s.tag))),
+    ],
+    [],
   );
   const [activeIdx, setActiveIdx] = useState(0);
 
   const activeTag = tags[activeIdx];
-  const filtered = activeTag === ALL_LABEL
-    ? FEATURED_SERMONS
-    : FEATURED_SERMONS.filter((s) => s.tag === activeTag);
+  const filtered =
+    activeTag === ALL_LABEL
+      ? FEATURED_SERMONS
+      : FEATURED_SERMONS.filter((s) => s.tag === activeTag);
 
-  const handleSwitch = useCallback((info: { index?: number; name?: string | number; text?: string }) => {
-    if (info.index !== undefined) {
-      setActiveIdx(info.index);
-    }
-  }, []);
+  const handleSwitch = useCallback(
+    (info: { index?: number; name?: string | number; text?: string }) => {
+      if (info.index !== undefined) {
+        setActiveIdx(info.index);
+      }
+    },
+    [],
+  );
 
   return (
     <section
       ref={ref}
-      className={`${styles.churchSection} ${styles.churchSectionCream}`}
+      className={`${styles.churchSection} ${styles.churchSectionLayer}`}
       aria-labelledby="sermons-heading"
     >
       <Grid>
         <Column lg={10} md={5} sm={4}>
           <div data-animate className={styles.fadeUp}>
             <span className={styles.churchGoldRule} aria-hidden="true" />
-            <h2 id="sermons-heading" className={styles.churchSectionHeader__title}>Recent Sermons</h2>
+            <h2
+              id="sermons-heading"
+              className={styles.churchSectionHeader__title}
+            >
+              Recent Sermons
+            </h2>
             <p className={styles.churchSectionSubhead}>
               Faith comes by hearing — listen and grow.
             </p>
@@ -91,7 +110,11 @@ const SermonsSection: React.FC = () => {
         ) : (
           filtered.map((s, i) => (
             <Column key={s.id} lg={4} md={4} sm={4}>
-              <div data-animate className={styles.fadeUp} style={{ transitionDelay: `${i * 0.08}s` }}>
+              <div
+                data-animate
+                className={styles.fadeUp}
+                style={{ transitionDelay: `${i * 0.06}s` }}
+              >
                 <SermonCardItem sermon={s} />
               </div>
             </Column>

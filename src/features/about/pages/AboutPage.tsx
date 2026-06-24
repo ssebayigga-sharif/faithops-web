@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../about.module.scss";
-import { LEADERS, BELIEFS } from "../../home/data/home";
+import { LEADERS, BELIEFS } from "../../home/data/about";
 import {
   AboutHero,
   MissionSection,

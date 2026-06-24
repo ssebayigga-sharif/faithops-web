@@ -3,34 +3,42 @@
 @use '@carbon/react/scss/type';
 @use '@carbon/react/scss/spacing' as space;
 @use '@carbon/react/scss/breakpoint' as bp;
+@use '@carbon/react/scss/theme' as theme;
 
-/* ── Brand tokens ──────────────────────────────────────────────────────────── */
+/*
+ * ── Brand accent ─────────────────────────────────────────────────────────
+ * Only ONE custom value lives outside Carbon's theme tokens: the gold
+ * accent. Everything else (background, text, borders) is pulled from
+ * Carbon's theme so this page re-themes correctly under white/g10/g90/g100
+ * instead of fighting the theme switcher with hardcoded hex backgrounds.
+ */
 :root {
-  --church-navy:      #0a1628;
-  --church-navy-mid:  #162035;
-  --church-gold:      #c8a84b;
-  --church-gold-pale: #fdf8ee;
-  --church-muted:     #6b7280;
-  --church-text:      #1c2430;
-  --church-divider:   #e5e7eb;
-  --font-display:     'Playfair Display', Georgia, serif;
-  --font-verse:       'EB Garamond', Georgia, serif;
+  --church-gold: #c8a84b;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-verse: 'EB Garamond', Georgia, serif;
 }
 
-/* ── Page enter animation ──────────────────────────────────────────────────── */
+/* ── Page enter ───────────────────────────────────────────────────────────
+ * Kept: a single, brief load transition. Removed: the floating cross
+ * rotation and the diagonal stripe sweep on the CTA — those were ambient
+ * decoration with no functional purpose and read as showy rather than
+ * professional.
+ */
 @keyframes pageEnter {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.pageEnter { animation: pageEnter 0.5s ease both; }
+.pageEnter { animation: pageEnter 0.4s ease both; }
 
-/* ── Intersection-observer driven fade ─────────────────────────────────────── */
+/* ── Scroll-triggered fade ────────────────────────────────────────────────
+ * Kept deliberately: this is the same restrained entrance pattern used on
+ * IBM/Carbon's own marketing pages, not a decorative flourish.
+ */
 .fadeUp {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s cubic-bezier(0.23, 1, 0.32, 1),
-              transform 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 
   &[data-visible] {
     opacity: 1;
@@ -38,30 +46,32 @@
   }
 }
 
-/* ── Shared section layout ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pageEnter,
+  .fadeUp {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── Shared section layout ───────────────────────────────────────────────── */
 .churchSection {
   padding: 5rem 0;
 }
 
-.churchSectionWhite { background: #ffffff; }
-.churchSectionCream { background: var(--church-gold-pale); }
-.churchSectionNavy  { background: var(--church-navy); }
+.churchSectionWhite { background: theme.$background; }
+.churchSectionLayer { background: theme.$layer-01; }
 
 .churchSectionHeader {
   margin-bottom: 3rem;
 
-  h2 {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    color: var(--church-text);
-    margin: 0.25rem 0 0.5rem;
-    font-weight: 700;
-  }
-
+  h2,
   &__title {
     font-family: var(--font-display);
     font-size: clamp(1.75rem, 4vw, 2.75rem);
-    color: var(--church-text);
+    color: theme.$text-primary;
     margin: 0.25rem 0 0.5rem;
     font-weight: 700;
   }
@@ -70,7 +80,7 @@
 .churchSectionHeaderCenter { text-align: center; }
 
 .churchSectionSubhead {
-  color: var(--church-muted);
+  color: theme.$text-secondary;
   font-size: 1rem;
   max-width: 480px;
   line-height: 1.7;
@@ -79,30 +89,21 @@
 
 .churchSectionSubheadCenter { margin-inline: auto; }
 
-/* ── Gold decorative rules ─────────────────────────────────────────────────── */
+/* ── Gold rule: the one recurring accent ─────────────────────────────────── */
 .churchGoldRule,
 .churchGoldRuleCenter {
   display: block;
   height: 2px;
-  background: linear-gradient(90deg, var(--church-gold), transparent);
+  background: var(--church-gold);
   margin-bottom: 1.25rem;
   width: 48px;
 }
 
-.churchGoldRuleCenter {
-  margin-inline: auto;
-  background: linear-gradient(90deg, transparent, var(--church-gold), transparent);
-}
+.churchGoldRuleCenter { margin-inline: auto; }
 
-/* ── Shared button overrides ───────────────────────────────────────────────── */
-.churchBtnNavy {
-  background-color: var(--church-navy) !important;
-  border-color: var(--church-navy) !important;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
-
-  &:hover {
-    background-color: var(--church-navy-mid) !important;
-  }
+/* ── Shared button overrides ─────────────────────────────────────────────── */
+.churchBtnPrimary {
+  transition: background-color 0.2s ease !important;
 
   &:focus {
     box-shadow: 0 0 0 3px var(--church-gold) !important;
@@ -110,71 +111,37 @@
 }
 
 .churchBtnOutline {
-  color: var(--church-navy) !important;
-  border: 1.5px solid var(--church-navy) !important;
   transition: background 0.2s ease, border-color 0.2s ease !important;
-
-  &:hover {
-    background: rgba(10, 22, 40, 0.06) !important;
-  }
 }
 
-/* ── Hero ─────────────────────────────────────────────────────────────────── */
+/* ── Hero ─────────────────────────────────────────────────────────────────
+ * Removed: floating rotating cross SVG, diagonal overlay gradient.
+ * Kept: the verse blockquote — that's the warmth this page is built on.
+ */
 .churchHero {
   position: relative;
-  min-height: 92vh;
+  min-height: 15vh;
   display: flex;
   align-items: center;
-  background:
-    radial-gradient(ellipse at 20% 80%, rgba(200, 168, 75, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(200, 168, 75, 0.05) 0%, transparent 50%),
-    var(--church-navy);
+  background: theme.$background-inverse;
   overflow: hidden;
-
-  &__cross {
-    position: absolute;
-    right: -80px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 680px;
-    height: 680px;
-    color: var(--church-gold);
-    opacity: 0.04;
-    pointer-events: none;
-    animation: heroFloat 20s ease-in-out infinite;
-  }
-
-  &__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(10, 22, 40, 0.6) 0%,
-      rgba(10, 22, 40, 0.2) 50%,
-      rgba(10, 22, 40, 0.5) 100
-    );
-    pointer-events: none;
-  }
 
   &__grid {
     width: 100%;
-    padding-block: 4rem;
-    position: relative;
-    z-index: 1;
+    padding-block: 1rem;
   }
 
   &__eyebrow {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 1.75rem;
-    animation: pageEnter 0.6s 0.1s both;
+    margin-bottom: 0.875rem;
   }
 
   &__rule {
     display: block;
     width: 32px;
-    height: 2px;
+    height: 1px;
     background: var(--church-gold);
     flex-shrink: 0;
   }
@@ -190,45 +157,41 @@
   &__heading {
     font-family: var(--font-display);
     font-size: clamp(2.5rem, 7vw, 5rem);
-    color: #f0ece4;
+    color: theme.$text-on-color;
     line-height: 1.1;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
     font-weight: 700;
-    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
-    animation: pageEnter 0.6s 0.2s both;
   }
 
   &__headingAccent {
     color: var(--church-gold);
-    text-shadow: 0 0 40px rgba(200, 168, 75, 0.2);
   }
 
   &__body {
     font-size: 1.1rem;
-    color: #9aa0ac;
+    color: theme.$text-on-color;
+    opacity: 0.85;
     line-height: 1.8;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.25rem;
     max-width: 520px;
-    animation: pageEnter 0.6s 0.3s both;
   }
 
   &__actions {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    animation: pageEnter 0.6s 0.4s both;
   }
 
   &__verse {
-    margin-top: 3rem;
+    margin-top: 1.5rem;
     border-left: 3px solid var(--church-gold);
     padding-left: 1.25rem;
-    animation: pageEnter 0.6s 0.5s both;
 
     p {
       font-family: var(--font-verse);
       font-style: italic;
-      color: #c8c8d0;
+      color: theme.$text-on-color;
+      opacity: 0.85;
       font-size: 1rem;
       line-height: 1.7;
       margin: 0;
@@ -250,49 +213,21 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(
-      90deg,
-      var(--church-gold) 0%,
-      rgba(200, 168, 75, 0.4) 50%,
-      var(--church-gold) 100%
-    );
+    height: 3px;
+    background: var(--church-gold);
   }
 }
 
-@keyframes heroFloat {
-  0%, 100% { transform: translateY(-50%) rotate(0deg); }
-  50%      { transform: translateY(-48%) rotate(1.5deg); }
-}
-
-/* ── Service Tiles ─────────────────────────────────────────────────────────── */
+/* ── Service Tiles ────────────────────────────────────────────────────────── */
 .churchServiceTile {
   position: relative;
-  overflow: hidden;
-  border-left: 4px solid var(--church-gold);
+  border-left: 3px solid var(--church-gold);
   height: 100%;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  transition: box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 8px 24px rgba(10, 22, 40, 0.06),
-      inset 0 0 0 1px rgba(200, 168, 75, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -4px;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--church-gold), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover::before { opacity: 1; }
 
   &__day {
     display: block;
@@ -308,7 +243,7 @@
 .churchServiceTileTime {
   font-family: var(--font-display);
   font-size: 1.75rem;
-  color: var(--church-navy);
+  color: theme.$text-primary;
   font-weight: 700;
   line-height: 1;
   margin: 0 0 0.5rem;
@@ -317,30 +252,31 @@
 .churchServiceTileName {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--church-text);
+  color: theme.$text-primary;
   margin: 0 0 0.5rem;
 }
 
 .churchServiceTileDesc {
   font-size: 0.875rem;
-  color: var(--church-muted);
+  color: theme.$text-secondary;
   line-height: 1.6;
   margin: 0;
 }
 
-/* ── Stats Banner ──────────────────────────────────────────────────────────── */
+/* ── Stats Banner ─────────────────────────────────────────────────────────
+ * Numbers are now static (no count-up). The count-up read as a marketing
+ * gimmick rather than information; a confident static figure is more in
+ * line with "professional."
+ */
 .churchStats {
-  border-top: 1px solid rgba(200, 168, 75, 0.2);
-  border-bottom: 1px solid rgba(200, 168, 75, 0.2);
-  background:
-    linear-gradient(135deg, rgba(200, 168, 75, 0.03) 0%, transparent 50%),
-    var(--church-navy);
+  background: theme.$background-inverse;
+  border-top: 1px solid var(--church-gold);
+  border-bottom: 1px solid var(--church-gold);
 }
 
 .churchStat {
   text-align: center;
   padding-block: 0.75rem;
-  position: relative;
 
   &__value {
     display: block;
@@ -349,14 +285,13 @@
     color: var(--church-gold);
     font-weight: 700;
     line-height: 1;
-    text-shadow: 0 0 30px rgba(200, 168, 75, 0.15);
   }
 
   &__label {
     display: block;
     font-size: 0.875rem;
     font-weight: 700;
-    color: #c8c8d0;
+    color: theme.$text-on-color;
     margin-top: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -365,12 +300,13 @@
   &__detail {
     display: block;
     font-size: 0.75rem;
-    color: #6b6b8a;
+    color: theme.$text-on-color;
+    opacity: 0.6;
     margin-top: 0.25rem;
   }
 }
 
-/* ── Sermon Cards ──────────────────────────────────────────────────────────── */
+/* ── Sermon Cards ─────────────────────────────────────────────────────────── */
 .churchSermons {
   display: flex;
   align-items: flex-end;
@@ -392,22 +328,15 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 6px;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
-              box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-6px);
-    box-shadow:
-      0 16px 40px rgba(10, 22, 40, 0.14),
-      0 2px 8px rgba(10, 22, 40, 0.08);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 
   &__thumb {
     position: relative;
-    background:
-      radial-gradient(ellipse at center, rgba(200, 168, 75, 0.08), transparent 70%),
-      var(--church-navy);
+    background: theme.$background-inverse;
   }
 
   &__play {
@@ -418,23 +347,16 @@
     justify-content: center;
 
     > * {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      background: rgba(200, 168, 75, 0.12);
-      border: 2px solid rgba(200, 168, 75, 0.5);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid var(--church-gold);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--church-gold);
-      transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
     }
-  }
-
-  &:hover &__play > * {
-    background: rgba(200, 168, 75, 0.25);
-    border-color: var(--church-gold);
-    transform: scale(1.08);
   }
 
   &__overlayTop {
@@ -448,11 +370,10 @@
     bottom: 12px;
     right: 12px;
     font-size: 0.7rem;
-    color: #c8c8d0;
-    background: rgba(10, 22, 40, 0.75);
+    color: theme.$text-on-color;
+    background: rgba(0, 0, 0, 0.6);
     padding: 2px 10px;
     border-radius: 3px;
-    backdrop-filter: blur(4px);
     letter-spacing: 0.04em;
   }
 
@@ -476,7 +397,7 @@
   &__title {
     font-family: var(--font-display);
     font-size: 1.15rem;
-    color: var(--church-text);
+    color: theme.$text-primary;
     line-height: 1.3;
     font-weight: 700;
     flex: 1;
@@ -486,12 +407,12 @@
   &__meta {
     margin-top: auto;
     padding-top: 0.75rem;
-    border-top: 1px solid var(--church-divider);
+    border-top: 1px solid theme.$border-subtle;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.8rem;
-    color: var(--church-muted);
+    color: theme.$text-secondary;
 
     span {
       display: flex;
@@ -501,7 +422,7 @@
   }
 }
 
-/* ── Ministry Tiles ────────────────────────────────────────────────────────── */
+/* ── Ministry Tiles ───────────────────────────────────────────────────────── */
 .churchMinistries {
   display: flex;
   justify-content: center;
@@ -510,31 +431,29 @@
 
 .churchMinistryTile {
   height: 100%;
-  border-top: 3px solid var(--church-gold) !important;
-  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  border-top: 2px solid var(--church-gold) !important;
+  transition: box-shadow 0.2s ease;
 
   &:hover {
-    background: var(--church-gold-pale);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(10, 22, 40, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--church-navy), var(--church-navy-mid));
-    font-size: 1.4rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: theme.$background-inverse;
+    font-size: 1.3rem;
     margin-bottom: 1rem;
   }
 
   &__name {
     font-family: var(--font-display);
     font-size: 1.1rem;
-    color: var(--church-navy);
+    color: theme.$text-primary;
     margin: 0 0 0.35rem;
   }
 
@@ -552,13 +471,13 @@
 
   &__desc {
     font-size: 0.875rem;
-    color: var(--church-muted);
+    color: theme.$text-secondary;
     line-height: 1.7;
     margin: 0;
   }
 }
 
-/* ── Event Cards ───────────────────────────────────────────────────────────── */
+/* ── Event Cards ──────────────────────────────────────────────────────────── */
 .churchEvents {
   display: flex;
   align-items: flex-end;
@@ -578,20 +497,15 @@
   overflow: hidden;
   display: flex;
   height: 100%;
-  border-radius: 6px;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
-              box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow:
-      0 12px 32px rgba(10, 22, 40, 0.15),
-      0 2px 6px rgba(10, 22, 40, 0.06);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   }
 
   &__date {
-    background: linear-gradient(180deg, var(--church-navy) 0%, var(--church-navy-mid) 100%);
-    color: #fff;
+    background: theme.$background-inverse;
+    color: theme.$text-on-color;
     padding: 1.25rem 1rem;
     display: flex;
     flex-direction: column;
@@ -607,7 +521,6 @@
     font-family: var(--font-display);
     color: var(--church-gold);
     line-height: 1;
-    text-shadow: 0 0 20px rgba(200, 168, 75, 0.2);
   }
 
   &__month {
@@ -615,8 +528,8 @@
     font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.1em;
-    color: #9aa0ac;
     text-transform: uppercase;
+    opacity: 0.75;
     margin-top: 2px;
   }
 
@@ -630,7 +543,7 @@
   &__title {
     font-family: var(--font-display);
     font-size: 1rem;
-    color: var(--church-text);
+    color: theme.$text-primary;
     margin: 0 0 0.5rem;
     line-height: 1.3;
   }
@@ -640,7 +553,7 @@
     padding: 0;
     margin: 0;
     font-size: 0.78rem;
-    color: var(--church-muted);
+    color: theme.$text-secondary;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -653,75 +566,43 @@
   }
 }
 
-/* ── CTA Banner ────────────────────────────────────────────────────────────── */
+/* ── CTA Banner ───────────────────────────────────────────────────────────
+ * Removed: diagonal stripe pattern overlay, full gold-fill background.
+ * A bordered, theme-background panel reads as more professional than a
+ * loud color block, while the gold rule keeps it recognizably "branded."
+ */
 .churchCta {
-  background: var(--church-gold);
+  background: theme.$layer-01;
+  border-top: 1px solid var(--church-gold);
   padding: 5rem 0;
-  position: relative;
-  overflow: hidden;
   text-align: center;
+}
 
-  &__pattern {
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 20px,
-        rgba(255, 255, 255, 0.04) 20px,
-        rgba(255, 255, 255, 0.04) 40px
-      );
-    pointer-events: none;
-  }
+.churchCta__content {
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  &__grid {
-    position: relative;
-    z-index: 1;
-  }
+.churchCta__heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  color: theme.$text-primary;
+  margin-bottom: 1rem;
+}
 
-  &__content {
-    margin-inline: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.churchCta__body {
+  font-size: 1rem;
+  color: theme.$text-secondary;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  line-height: 1.7;
+}
 
-  &__heading {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 4vw, 2.75rem);
-    color: var(--church-navy);
-    margin-bottom: 1rem;
-  }
-
-  &__body {
-    font-size: 1rem;
-    color: rgba(10, 22, 40, 0.75);
-    max-width: 500px;
-    margin: 0 auto 2rem;
-    line-height: 1.7;
-  }
-
-  &__actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  &__btnPrimary {
-    background: var(--church-navy) !important;
-    border-color: var(--church-navy) !important;
-    transition: background 0.2s ease !important;
-
-    &:hover { background: var(--church-navy-mid) !important; }
-  }
-
-  &__btnSecondary {
-    color: var(--church-navy) !important;
-    border-color: var(--church-navy) !important;
-    transition: background 0.2s ease !important;
-
-    &:hover { background: rgba(10, 22, 40, 0.08) !important; }
-  }
+.churchCta__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }

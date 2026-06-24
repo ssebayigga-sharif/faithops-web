@@ -17,23 +17,14 @@ import {
   DataTableSkeleton,
   Button,
   Modal,
-  Tag,
-  Table,
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableToolbar,
-  TableToolbarContent,
-  TableToolbarSearch,
 } from "@carbon/react";
 import { EventSchedule, List, UserFollow, Police } from "@carbon/icons-react";
 
 import { StatCards } from "@/features/attendance/components/StatCards";
 import { MarkAttendanceTable } from "@/features/attendance/components/MarkAttendanceTable";
 import { SessionHistoryTable } from "@/features/attendance/components/SessionHistoryTable";
+import { VisitorsTable } from "@/features/attendance/components/VisitorsTable";
+import { FollowUpModal } from "@/features/attendance/components/FollowUpModal";
 import {
   useMembers,
   useSessions,
@@ -52,6 +43,7 @@ import type {
   VisitorRowPayload,
   VisitorRecord,
 } from "@/features/attendance/types";
+import type { FollowUpCandidate } from "@/features/attendance/services/sync.services";
 
 import styles from "@/features/attendance/attendance.module.scss";
 
@@ -173,12 +165,9 @@ export const AttendancePage: React.FC = () => {
         visitors,
         markedBy: markedBy || "Admin",
       });
-      // Reset notes after save; keep statuses as they were
       setRows((prev) => prev.map((r) => ({ ...r, notes: "" })));
       setVisitors([]);
     } catch (error) {
-      // Error is already tracked by useMutation's error state
-      // The InlineNotification component will display the error message
       console.error("Failed to save attendance:", error);
     }
   };
@@ -193,9 +182,14 @@ export const AttendancePage: React.FC = () => {
   // ── Visitor follow-up modal state ─────────────────────────
   const [visitorFollowUpModalOpen, setVisitorFollowUpModalOpen] =
     useState(false);
-  const [selectedVisitor, setSelectedVisitor] = useState<
-    (typeof allVisitors)[0] | null
-  >(null);
+  const [selectedVisitor, setSelectedVisitor] = useState<VisitorRecord | null>(
+    null,
+  );
+
+  const handleVisitorUpdate = useCallback((visitor: VisitorRecord) => {
+    setSelectedVisitor(visitor);
+    setVisitorFollowUpModalOpen(true);
+  }, []);
 
   return (
     <div className={styles.attendancepage}>
@@ -214,7 +208,6 @@ export const AttendancePage: React.FC = () => {
                     : "Record and manage service attendance"}
                 </p>
               </div>
-              {/* Follow-up alert badge */}
               {followUpCandidates.length > 0 && (
                 <Button
                   kind="ghost"
@@ -233,7 +226,6 @@ export const AttendancePage: React.FC = () => {
 
       <Grid>
         <Column lg={16} md={8} sm={4}>
-          {/* ── Save feedback ───────────────────────────── */}
           {saveMutation.isSuccess && (
             <InlineNotification
               kind="success"
@@ -255,7 +247,6 @@ export const AttendancePage: React.FC = () => {
             />
           )}
 
-          {/* ── Tabs ────────────────────────────────────── */}
           <Tabs>
             <TabList aria-label="Attendance sections" contained>
               <Tab renderIcon={EventSchedule}>Mark Attendance</Tab>
@@ -266,7 +257,6 @@ export const AttendancePage: React.FC = () => {
             <TabPanels>
               {/* ── Tab 1: Mark attendance ─────────────── */}
               <TabPanel>
-                {/* Session config tile */}
                 <Tile style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
                   <div className={styles.attendancepage__config}>
                     <DatePicker
@@ -375,10 +365,8 @@ export const AttendancePage: React.FC = () => {
                   )}
                 </Tile>
 
-                {/* Live stat cards */}
                 <StatCards session={liveSession} />
 
-                {/* Mark table */}
                 {membersLoading ? (
                   <DataTableSkeleton columnCount={5} rowCount={8} />
                 ) : (
@@ -405,89 +393,10 @@ export const AttendancePage: React.FC = () => {
               {/* ── Tab 3: Visitors ────────────────────── */}
               <TabPanel>
                 <div style={{ marginTop: "1.5rem" }}>
-                  <TableContainer
-                    title="Visitor Records"
-                    description={`${allVisitors.length} total visitors recorded`}
-                  >
-                    <Table size="lg" useZebraStyles>
-                      <TableHead>
-                        <TableRow>
-                          <TableHeader>Name</TableHeader>
-                          <TableHeader>Phone</TableHeader>
-                          <TableHeader>Email</TableHeader>
-                          <TableHeader>Date</TableHeader>
-                          <TableHeader>Service</TableHeader>
-                          <TableHeader>Follow-Up</TableHeader>
-                          <TableHeader>Actions</TableHeader>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {allVisitors.length === 0 ? (
-                          <TableRow>
-                            <TableCell colSpan={7}>
-                              <div className="attendance-empty">
-                                <p className="attendance-empty__title">
-                                  No visitors recorded
-                                </p>
-                                <p className="attendance-empty__body">
-                                  Visitors are automatically recorded when you
-                                  add them during attendance marking.
-                                </p>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ) : (
-                          allVisitors.map((v) => (
-                            <TableRow key={v.id}>
-                              <TableCell>{v.name}</TableCell>
-                              <TableCell>{v.phone}</TableCell>
-                              <TableCell>{v.email || "—"}</TableCell>
-                              <TableCell>
-                                {new Date(v.date).toLocaleDateString("en-UG", {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })}
-                              </TableCell>
-                              <TableCell>
-                                <Tag type="teal" size="sm">
-                                  {v.serviceType}
-                                </Tag>
-                              </TableCell>
-                              <TableCell>
-                                <Tag
-                                  type={
-                                    v.followUpStatus === "pending"
-                                      ? "red"
-                                      : v.followUpStatus === "contacted"
-                                        ? "blue"
-                                        : v.followUpStatus === "converted"
-                                          ? "green"
-                                          : "gray"
-                                  }
-                                  size="sm"
-                                >
-                                  {v.followUpStatus}
-                                </Tag>
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  kind="ghost"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedVisitor(v);
-                                    setVisitorFollowUpModalOpen(true);
-                                  }}
-                                >
-                                  Update
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  <VisitorsTable
+                    visitors={allVisitors}
+                    onUpdateFollowUp={handleVisitorUpdate}
+                  />
                 </div>
               </TabPanel>
             </TabPanels>
@@ -496,68 +405,22 @@ export const AttendancePage: React.FC = () => {
       </Grid>
 
       {/* ── Follow-up candidates modal ──────────────────────── */}
-      <Modal
+      <FollowUpModal
         open={followUpModalOpen}
-        modalHeading="Members Needing Follow-Up"
-        primaryButtonText="Close"
-        onRequestClose={() => setFollowUpModalOpen(false)}
-        onRequestSubmit={() => setFollowUpModalOpen(false)}
-        size="lg"
-      >
-        {followUpCandidates.length === 0 ? (
-          <p>No members currently need follow-up for missed attendance.</p>
-        ) : (
-          <Table size="sm" useZebraStyles>
-            <TableHead>
-              <TableRow>
-                <TableHeader>Member</TableHeader>
-                <TableHeader>Consecutive Misses</TableHeader>
-                <TableHeader>Last Attended</TableHeader>
-                <TableHeader>Actions</TableHeader>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {followUpCandidates.map((c) => (
-                <TableRow key={c.memberId}>
-                  <TableCell>{c.memberName}</TableCell>
-                  <TableCell>
-                    <Tag type="red" size="sm">
-                      {c.consecutiveMisses}
-                    </Tag>
-                  </TableCell>
-                  <TableCell>
-                    {c.lastAttended
-                      ? new Date(c.lastAttended).toLocaleDateString("en-UG")
-                      : "Never"}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      kind="ghost"
-                      size="sm"
-                      onClick={async () => {
-                        try {
-                          await createFollowUp.mutateAsync({
-                            memberFirebaseKey: c.memberId,
-                            candidate: c,
-                          });
-                        } catch (error) {
-                          console.error(
-                            "Failed to create follow-up task:",
-                            error,
-                          );
-                        }
-                      }}
-                      disabled={createFollowUp.isPending}
-                    >
-                      Create Task
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </Modal>
+        candidates={followUpCandidates}
+        isCreating={createFollowUp.isPending}
+        onClose={() => setFollowUpModalOpen(false)}
+        onCreateTask={async (candidate) => {
+          try {
+            await createFollowUp.mutateAsync({
+              memberFirebaseKey: candidate.memberId,
+              candidate,
+            });
+          } catch (error) {
+            console.error("Failed to create follow-up task:", error);
+          }
+        }}
+      />
 
       {/* ── Visitor follow-up update modal ──────────────────── */}
       <Modal

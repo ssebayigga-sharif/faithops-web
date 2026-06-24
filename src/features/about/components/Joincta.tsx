@@ -8,19 +8,8 @@ import styles from "../about.module.scss";
 const JoinCTA: React.FC = () => (
   <section className={styles["join-cta"]} aria-labelledby="join-cta-heading">
     {/* Decorative cross */}
-    <svg
-      aria-hidden
-      focusable="false"
-      viewBox="0 0 400 400"
-      className={styles["join-cta__cross-bg"]}
-    >
-      <rect x="180" y="20" width="40" height="360" fill="var(--church-gold)" />
-      <rect x="20" y="160" width="360" height="40" fill="var(--church-gold)" />
-    </svg>
 
     <div className={styles["join-cta__inner"]}>
-      <div className={styles.goldRuleCenter} aria-hidden />
-
       <h2 id="join-cta-heading" className={styles["join-cta__heading"]}>
         Come Worship With Us This Sabbath
       </h2>

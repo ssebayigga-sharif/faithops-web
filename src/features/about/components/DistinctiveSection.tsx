@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid, Column, Tile } from "@carbon/react";
-import { useFadeIn } from "@/features/home/useFadeIn";
 import styles from "../about.module.scss";
 import type { Distinctive } from "@/features/about/types";
 
@@ -38,6 +37,56 @@ const DISTINCTIVES: Distinctive[] = [
   },
 ];
 
+// ─── Icon Helper ──────────────────────────────────────────────────────────────
+const getDistinctiveIcon = (title: string) => {
+  if (title === "Sola Scriptura") {
+    return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </svg>
+    );
+  }
+  if (title === "The Sabbath (Saturday)") {
+    return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+    );
+  }
+  if (title === "Wholistic Health") {
+    return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    );
+  }
+  if (title === "The Sanctuary Message") {
+    return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+    );
+  }
+  if (title === "Prophetic Mission") {
+    return (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </svg>
+    );
+  }
+  // Personal Evangelism
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
+    </svg>
+  );
+};
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 interface DistinctiveCardProps {
   distinctive: Distinctive;
@@ -45,18 +94,11 @@ interface DistinctiveCardProps {
 
 const DistinctiveCard: React.FC<DistinctiveCardProps> = ({ distinctive }) => (
   <Tile
-    className={`${styles["distinctive-card"]} ${styles.fadeUp}`}
+    className={styles["distinctive-card"]}
     aria-label={distinctive.title}
-    data-animate
   >
-    {/* Gold top rule */}
-    <div className={styles["distinctive-card__rule"]} aria-hidden />
-    <div
-      className={styles["distinctive-card__icon"]}
-      aria-hidden
-      role="presentation"
-    >
-      {distinctive.icon}
+    <div className={styles["distinctive-card__icon-wrapper"]} aria-hidden>
+      {getDistinctiveIcon(distinctive.title)}
     </div>
     <h3 className={styles["distinctive-card__title"]}>{distinctive.title}</h3>
     <p className={styles["distinctive-card__body"]}>{distinctive.body}</p>
@@ -65,30 +107,20 @@ const DistinctiveCard: React.FC<DistinctiveCardProps> = ({ distinctive }) => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const DistinctivesSection: React.FC = () => {
-  const ref = useFadeIn();
-
   return (
     <section
       className={`${styles.sectionWhite} ${styles["distinctives-section"]}`}
-      ref={ref}
       aria-labelledby="distinctives-heading"
     >
       <Grid>
         <Column sm={4} md={8} lg={16}>
-          <div
-            data-animate
-            className={`${styles["section-header"]} ${styles["section-header--center"]} ${styles.fadeUp}`}
-          >
+          <div className={`${styles["section-header"]} ${styles["section-header--center"]}`}>
             <div className={styles.goldRuleCenter} aria-hidden />
-            <h2
-              id="distinctives-heading"
-              className={styles["section-heading"]}
-            >
+            <h2 id="distinctives-heading" className={styles["section-heading"]}>
               What Makes Us Adventist
             </h2>
             <p className={styles["section-lead"]}>
-              Six distinctive convictions that shape how we worship, live, and
-              serve.
+              Six distinctive convictions that shape how we worship, live, and serve.
             </p>
           </div>
         </Column>

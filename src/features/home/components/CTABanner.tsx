@@ -6,16 +6,14 @@ import styles from "../homepage.module.scss";
 
 const CTABanner: React.FC = () => (
   <section className={styles.churchCta} aria-labelledby="cta-heading">
-    <div className={styles.churchCta__pattern} aria-hidden="true" />
-
-    <Grid className={styles.churchCta__grid}>
+    <Grid>
       <Column lg={8} md={6} sm={4} className={styles.churchCta__content}>
         <h2 id="cta-heading" className={styles.churchCta__heading}>
-          New Here? We'd Love to Meet You.
+          Plan Your First Visit
         </h2>
         <p className={styles.churchCta__body}>
-          Whether you're exploring faith or looking for a church home — you
-          belong here. Come as you are.
+          Service times, parking, and what to expect — everything you need for
+          your first Sabbath with us.
         </p>
         <div className={styles.churchCta__actions}>
           <Button
@@ -23,7 +21,7 @@ const CTABanner: React.FC = () => (
             to="/contact"
             kind="primary"
             renderIcon={ArrowRight}
-            className={styles.churchCta__btnPrimary}
+            className={styles.churchBtnPrimary}
           >
             Plan Your Visit
           </Button>
@@ -32,7 +30,7 @@ const CTABanner: React.FC = () => (
             to="/about"
             kind="tertiary"
             renderIcon={ArrowRight}
-            className={styles.churchCta__btnSecondary}
+            className={styles.churchBtnOutline}
           >
             Learn About Us
           </Button>

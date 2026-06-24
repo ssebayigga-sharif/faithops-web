@@ -13,17 +13,8 @@ export function MemberFiltersBar({
   onReset,
 }: MemberFiltersBarProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.75rem",
-        padding: "0.75rem 0",
-        borderBottom: "1px solid #e0e0e0",
-        marginBottom: "0.5rem",
-      }}
-    >
-      <div style={{ width: "70%" }}>
+    <div className="members-filters">
+      <div className="members-filters__search">
         <Search
           id="member-search"
           labelText="Search members"
@@ -40,7 +31,7 @@ export function MemberFiltersBar({
           renderIcon={Reset}
           size="md"
           onClick={onReset}
-          style={{ flexShrink: 0 }}
+          className="members-filters__reset"
         >
           Reset
         </Button>

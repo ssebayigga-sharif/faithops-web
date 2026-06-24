@@ -1,0 +1,148 @@
+@use "@carbon/react/scss/theme" as *;
+@use "@carbon/react/scss/spacing" as *;
+@use "@carbon/react/scss/type" as *;
+@use "@carbon/react/scss/breakpoint" as *;
+
+.contactPage {
+  padding-block: $spacing-09 $spacing-10;
+}
+
+.hero {
+  background: linear-gradient(
+    135deg,
+    $background-inverse 0%,
+    $link-primary 100%
+  );
+  padding: $spacing-10 $spacing-07;
+  text-align: center;
+  margin-bottom: $spacing-09;
+  color: $text-on-color;
+}
+
+.heroTitle {
+  @include type-style("heading-05");
+  margin: 0 0 $spacing-03;
+  color: $text-on-color;
+}
+
+.heroSubtitle {
+  @include type-style("body-02");
+  margin: 0 auto;
+  max-width: 38rem;
+  opacity: 0.9;
+}
+
+
+.bibleVerse {
+  @include type-style("heading-compact-02");
+  font-style: italic;
+  background: $layer-01;
+  border-left: 4px solid $border-interactive;
+  padding: $spacing-06 $spacing-07;
+  border-radius: 0 $spacing-03 $spacing-03 0;
+  margin-bottom: $spacing-09;
+  color: $text-primary;
+}
+
+.verseRef {
+  display: block;
+  margin-top: $spacing-03;
+  font-style: normal;
+  @include type-style("heading-compact-01");
+  color: $text-secondary;
+}
+
+
+.infoSection {
+  margin-bottom: $spacing-08;
+}
+
+.infoSectionHeading {
+  @include type-style("heading-03");
+  margin-bottom: $spacing-05;
+  color: $text-primary;
+}
+
+.infoTile {
+  height: 100%;
+  text-align: center;
+  padding: $spacing-06;
+}
+
+.infoTile :global(.cds--tile) {
+  height: 100%;
+}
+
+.infoIcon {
+  fill: $icon-primary;
+  margin-bottom: $spacing-04;
+}
+
+.infoTitle {
+  @include type-style("heading-compact-02");
+  margin: 0 0 $spacing-03;
+  color: $text-primary;
+}
+
+.infoDetail {
+  @include type-style("body-compact-01");
+  color: $text-secondary;
+  margin: 0;
+
+  a {
+    color: $link-primary;
+
+    &:hover {
+      color: $link-primary-hover;
+    }
+  }
+}
+
+.serviceTile {
+  padding: $spacing-06;
+  text-align: left;
+}
+
+.serviceRow {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-04;
+  padding-block: $spacing-04;
+  border-bottom: 1px solid $border-subtle;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.serviceLabel {
+  @include type-style("body-compact-01");
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.serviceTime {
+  @include type-style("body-compact-01");
+  color: $text-secondary;
+}
+
+
+.contactTile {
+  padding: $spacing-07;
+}
+
+.formHeading {
+  @include type-style("heading-03");
+  margin: 0 0 $spacing-05;
+  color: $text-primary;
+}
+
+.notificationWrapper {
+  margin-bottom: $spacing-05;
+}
+
+@media (max-width: breakpoint("md")) {
+  .hero {
+    padding: $spacing-08 $spacing-05;
+  }
+}

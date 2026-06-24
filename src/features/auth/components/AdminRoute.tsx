@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { Loading } from "@carbon/react";
 import { useAuthContext } from "@/features/auth/context/AuthContext";
 import type { ChurchRole } from "@/features/auth/types";
 
@@ -7,16 +8,13 @@ const ADMIN_ROLES: ChurchRole[] = ["pastor", "elder", "deacon", "treasurer"];
 interface AdminRouteProps {
   children: React.ReactNode;
 }
-
 const AdminRoute = ({ children }: AdminRouteProps) => {
   const { user, userProfile, isLoading } = useAuthContext();
 
   if (isLoading) {
     return (
       <div className="auth-page">
-        <div className="auth-card">
-          <p>Loading…</p>
-        </div>
+        <Loading description="Checking your access…" withOverlay={false} />
       </div>
     );
   }

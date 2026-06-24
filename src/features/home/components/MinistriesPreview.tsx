@@ -17,10 +17,15 @@ const MinistriesPreview: React.FC = () => {
     >
       <Grid>
         <Column lg={16} md={8} sm={4}>
-          <div data-animate className={`${styles.fadeUp} ${styles.churchSectionHeader} ${styles.churchSectionHeaderCenter}`}>
+          <div
+            data-animate
+            className={`${styles.fadeUp} ${styles.churchSectionHeader} ${styles.churchSectionHeaderCenter}`}
+          >
             <span className={styles.churchGoldRuleCenter} aria-hidden="true" />
             <h2 id="ministries-heading">Ministries &amp; Departments</h2>
-            <p className={`${styles.churchSectionSubhead} ${styles.churchSectionSubheadCenter}`}>
+            <p
+              className={`${styles.churchSectionSubhead} ${styles.churchSectionSubheadCenter}`}
+            >
               Every member is a minister. Find your place in God's work.
             </p>
           </div>
@@ -28,29 +33,42 @@ const MinistriesPreview: React.FC = () => {
 
         {MINISTRIES.map((m: HomeMinistry, i: number) => (
           <Column key={m.id} lg={4} md={4} sm={4}>
-            <div data-animate className={styles.fadeUp} style={{ transitionDelay: `${i * 0.07}s` }}>
+            <div
+              data-animate
+              className={styles.fadeUp}
+              style={{ transitionDelay: `${i * 0.06}s` }}
+            >
               <ClickableTile className={styles.churchMinistryTile}>
-                <span className={styles.churchMinistryTile__icon} role="img" aria-label={m.name}>
+                <span
+                  className={styles.churchMinistryTile__icon}
+                  role="img"
+                  aria-label={m.name}
+                >
                   {m.icon}
                 </span>
                 <h3 className={styles.churchMinistryTile__name}>{m.name}</h3>
                 <span className={styles.churchMinistryTile__leader}>
                   <User size={12} /> {m.leader}
                 </span>
-                <p className={styles.churchMinistryTile__desc}>{m.description}</p>
+                <p className={styles.churchMinistryTile__desc}>
+                  {m.description}
+                </p>
               </ClickableTile>
             </div>
           </Column>
         ))}
 
         <Column lg={16} md={8} sm={4}>
-          <div data-animate className={`${styles.fadeUp} ${styles.churchMinistries}`}>
+          <div
+            data-animate
+            className={`${styles.fadeUp} ${styles.churchMinistries}`}
+          >
             <Button
               as={Link}
               to="/ministries"
               kind="primary"
               renderIcon={ArrowRight}
-              className={styles.churchBtnNavy}
+              className={styles.churchBtnPrimary}
             >
               Explore All Ministries
             </Button>

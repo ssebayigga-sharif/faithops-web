@@ -1,15 +1,10 @@
-/**
- * AuthContext.tsx
- *
- * Provides authentication state (Firebase Auth + user profile from RTDB)
- * to the entire app.
- */
 import {
   createContext,
   useContext,
   useEffect,
   useState,
   useCallback,
+  useRef,
   type ReactNode,
 } from "react";
 import {
@@ -19,13 +14,13 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
   type User,
+  type AuthError,
 } from "firebase/auth";
 import { ref, set, get, child } from "firebase/database";
 import {
   getFirebaseAuth,
   getFirebaseDatabase,
 } from "@/shared/services/firebase";
-import type { ChurchRole } from "@/features/auth/types";
 import type { ChurchProfile } from "@/features/profile/types";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -40,6 +35,10 @@ interface AuthState {
   /** True while a mutation (login / register / logout) is in flight */
   isProcessing: boolean;
   error: string | null;
+  /** True when login is temporarily blocked after repeated failures */
+  isLoginLocked: boolean;
+  /** Seconds remaining on the login lockout, for UI display */
+  lockoutSecondsRemaining: number;
 }
 
 interface AuthContextValue extends AuthState {
@@ -59,7 +58,59 @@ export interface RegisterProfileData {
   firstName: string;
   lastName: string;
   phone: string;
-  role?: ChurchRole;
+}
+
+const MIN_PASSWORD_LENGTH = 8;
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+
+export function validatePassword(password: string): string | null {
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
+  if (!PASSWORD_PATTERN.test(password)) {
+    return "Password must include at least one letter and one number.";
+  }
+  return null;
+}
+
+// ─── Login throttling ──────────────────────────────────────────────────────────
+
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_SECONDS = 60;
+
+function sanitizeAuthError(
+  err: unknown,
+  context: "login" | "register" | "reset" | "logout",
+): string {
+  const code = (err as AuthError)?.code ?? "";
+
+  switch (code) {
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+    case "auth/invalid-credential":
+      // Deliberately identical message for both cases — do not reveal
+      // whether the email exists.
+      return "Incorrect email or password.";
+    case "auth/too-many-requests":
+      return "Too many attempts. Please wait a moment and try again.";
+    case "auth/email-already-in-use":
+      return "An account with this email already exists.";
+    case "auth/weak-password":
+      return "Please choose a stronger password.";
+    case "auth/network-request-failed":
+      return "Network error. Check your connection and try again.";
+    default: {
+      const fallback: Record<typeof context, string> = {
+        login: "Login failed. Please try again.",
+        register: "Registration failed. Please try again.",
+        reset: "Failed to send reset email.",
+        logout: "Logout failed.",
+      };
+      return fallback[context];
+    }
+  }
 }
 
 // ─── Initial state ─────────────────────────────────────────────────────────────
@@ -70,6 +121,8 @@ const INITIAL_STATE: AuthState = {
   isLoading: true,
   isProcessing: false,
   error: null,
+  isLoginLocked: false,
+  lockoutSecondsRemaining: 0,
 };
 
 // ─── Context ───────────────────────────────────────────────────────────────────
@@ -82,6 +135,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [state, setState] = useState<AuthState>(INITIAL_STATE);
   const auth = getFirebaseAuth();
   const db = getFirebaseDatabase();
+
+  const failedAttemptsRef = useRef(0);
+  const lockoutTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isLoginLockedRef = useRef(false);
 
   // ── Fetch profile from RTDB by UID ──────────────────────────────────────────
 
@@ -112,51 +169,89 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const profile = await fetchProfile(firebaseUser.uid);
-        setState({
+        setState((prev) => ({
+          ...prev,
           user: firebaseUser,
           userProfile: profile,
           isLoading: false,
           isProcessing: false,
           error: null,
-        });
+        }));
       } else {
-        setState({
+        setState((prev) => ({
+          ...prev,
           user: null,
           userProfile: null,
           isLoading: false,
           isProcessing: false,
           error: null,
-        });
+        }));
       }
     });
     return unsubscribe;
   }, [auth, fetchProfile]);
 
+  // ── Lockout countdown cleanup ────────────────────────────────────────────────
+
+  useEffect(() => {
+    return () => {
+      if (lockoutTimerRef.current) clearInterval(lockoutTimerRef.current);
+    };
+  }, []);
+
+  const startLockout = useCallback(() => {
+    isLoginLockedRef.current = true;
+    setState((prev) => ({
+      ...prev,
+      isLoginLocked: true,
+      lockoutSecondsRemaining: LOCKOUT_DURATION_SECONDS,
+      error: `Too many failed attempts. Try again in ${LOCKOUT_DURATION_SECONDS}s.`,
+    }));
+
+    lockoutTimerRef.current = setInterval(() => {
+      setState((prev) => {
+        const next = prev.lockoutSecondsRemaining - 1;
+        if (next <= 0) {
+          if (lockoutTimerRef.current) clearInterval(lockoutTimerRef.current);
+          failedAttemptsRef.current = 0;
+          isLoginLockedRef.current = false;
+          return {
+            ...prev,
+            isLoginLocked: false,
+            lockoutSecondsRemaining: 0,
+            error: null,
+          };
+        }
+        return { ...prev, lockoutSecondsRemaining: next };
+      });
+    }, 1000);
+  }, []);
+
   // ── Login ───────────────────────────────────────────────────────────────────
 
   const login = useCallback(
     async (email: string, password: string) => {
+      if (isLoginLockedRef.current) return;
+
       setState((prev) => ({ ...prev, isProcessing: true, error: null }));
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        failedAttemptsRef.current = 0;
         // Profile is loaded by onAuthStateChanged listener
       } catch (err: unknown) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "Login failed. Please try again.";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: message,
-        }));
+        failedAttemptsRef.current += 1;
+        const message = sanitizeAuthError(err, "login");
+
+        setState((prev) => ({ ...prev, isProcessing: false, error: message }));
+
+        if (failedAttemptsRef.current >= MAX_FAILED_ATTEMPTS) {
+          startLockout();
+        }
         throw err;
       }
     },
-    [auth],
+    [auth, startLockout],
   );
-
-  // ── Register ────────────────────────────────────────────────────────────────
 
   const register = useCallback(
     async (
@@ -164,6 +259,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password: string,
       profileData: RegisterProfileData,
     ) => {
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        setState((prev) => ({ ...prev, error: passwordError }));
+        throw new Error(passwordError);
+      }
+
       setState((prev) => ({ ...prev, isProcessing: true, error: null }));
       try {
         const credential = await createUserWithEmailAndPassword(
@@ -207,7 +308,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           spiritualGifts: [],
           occupation: "",
           employer: "",
-          role: profileData.role ?? "member",
+          role: "member", // hardcoded — see security note #1
           createdAt: now,
           updatedAt: now,
         };
@@ -215,15 +316,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await set(ref(db, `profiles/${uid}`), profile);
         // Profile will be loaded by onAuthStateChanged
       } catch (err: unknown) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "Registration failed. Please try again.";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: message,
-        }));
+        const message = sanitizeAuthError(err, "register");
+        setState((prev) => ({ ...prev, isProcessing: false, error: message }));
         throw err;
       }
     },
@@ -236,8 +330,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setState((prev) => ({ ...prev, isProcessing: true, error: null }));
     try {
       await signOut(auth);
+      failedAttemptsRef.current = 0;
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Logout failed.";
+      const message = sanitizeAuthError(err, "logout");
       setState((prev) => ({ ...prev, isProcessing: false, error: message }));
       throw err;
     }
@@ -252,13 +347,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await sendPasswordResetEmail(auth, email);
         setState((prev) => ({ ...prev, isProcessing: false }));
       } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Failed to send reset email.";
-        setState((prev) => ({
-          ...prev,
-          isProcessing: false,
-          error: message,
-        }));
+        // Note: we intentionally still show success-like UI even on
+        // auth/user-not-found at the page level, to avoid email
+        // enumeration. See ForgotPasswordPage.
+        const message = sanitizeAuthError(err, "reset");
+        setState((prev) => ({ ...prev, isProcessing: false, error: message }));
         throw err;
       }
     },
@@ -286,7 +379,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// ─── Hook ──────────────────────────────────────────────────────────────────────
+// ─── Hook
 
 export const useAuthContext = (): AuthContextValue => {
   const ctx = useContext(AuthContext);

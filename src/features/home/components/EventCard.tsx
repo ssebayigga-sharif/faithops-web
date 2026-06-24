@@ -4,13 +4,6 @@ import { Time, Location } from "@carbon/icons-react";
 import styles from "../homepage.module.scss";
 import type { HomeChurchEvent } from "@/features/home/types";
 
-const EVENT_TAG_TYPE: Record<string, "red" | "magenta" | "purple" | "blue" | "cyan" | "teal" | "green" | "gray"> = {
-  Worship: "red",
-  Community: "blue",
-  Youth: "green",
-  Study: "purple",
-};
-
 const EventCard: React.FC<{ event: HomeChurchEvent }> = ({ event }) => (
   <ClickableTile
     className={styles.churchEventTile}
@@ -22,11 +15,7 @@ const EventCard: React.FC<{ event: HomeChurchEvent }> = ({ event }) => (
     </div>
 
     <div className={styles.churchEventTile__body}>
-      <Tag
-        type={EVENT_TAG_TYPE[event.category] ?? "gray"}
-        size="sm"
-        className={styles.churchEventTile__tag}
-      >
+      <Tag type="gray" size="sm" className={styles.churchEventTile__tag}>
         {event.category}
       </Tag>
       <h3 className={styles.churchEventTile__title}>{event.title}</h3>

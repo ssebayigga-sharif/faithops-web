@@ -21,10 +21,13 @@ a {
 
 .app-shell {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .app-header {
+  height: calc(3rem + 5px);
   border-bottom: 1px solid #262626;
+  z-index: 8001;
 }
 
 .app-header__brand {
@@ -77,10 +80,11 @@ a {
 }
 
 .app-header__search input {
-  width: min(28rem, 100%);
+  width: min(29.25rem, 100%);
   height: 2rem;
   border: 1px solid #525252;
   border-left: 0;
+  border-radius: 0 6px 6px 0;
   padding: 0 0.75rem;
   background: #262626;
   color: #f4f4f4;
@@ -93,6 +97,7 @@ a {
   height: 1rem;
   border: 1px solid #525252;
   border-right: 0;
+  border-radius: 6px 0 0 6px;
   padding: 0.4375rem 0.625rem;
   background: #262626;
   color: #c6c6c6;
@@ -130,6 +135,10 @@ a {
   border-right: 1px solid var(--cds-border-subtle-01, #d0d7de);
   background: var(--cds-layer-01, #ffffff);
   box-shadow: 4px 0 18px rgba(15, 23, 42, 0.06);
+  z-index: 8000;
+  top: calc(3rem + 25px);
+  height: calc(100vh - 3rem - 25px);
+  overflow-y: auto;
 }
 
 .app-sidebar__section-label {
@@ -166,22 +175,38 @@ a {
 }
 
 /* ── Content area ───────────────────────────────────────────── */
+/* Desktop default: sidebar rail (3rem collapsed) or expanded (16rem) */
 
 .app-shell__content {
   display: flex;
-  min-height: calc(100vh - 3rem);
+  min-height: calc(100vh - 3rem - 5px);
   flex-direction: column;
   margin-left: 3rem;
   padding: 1.5rem 1.5rem 0;
-  transition: margin-left 160ms ease;
+  transition: margin-left 110ms cubic-bezier(0.2, 0, 0.38, 0.9);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .app-shell__content--expanded {
   margin-left: 16rem;
 }
 
+/* Mobile/Tablet: sidebar is overlay, content always full-width */
+.app-shell--mobile-nav .app-shell__content,
+.app-shell--mobile-nav .app-shell__content--expanded,
+.app-shell--mobile-nav .cds--side-nav--expanded ~ .cds--content {
+  margin-left: 0 !important;
+}
+
+/* Overlay backdrop z-index — must sit below sidebar but above content */
+.app-shell--mobile-nav .cds--side-nav__overlay-active {
+  z-index: 7999;
+}
+
 .app-shell__main {
   flex: 1;
+  min-width: 0;
 }
 
 .app-shell__page {
@@ -191,6 +216,7 @@ a {
   padding: 1.5rem;
   box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
   color: var(--cds-text-primary, #161616);
+  overflow-x: auto;
 }
 
 /* ── Footer ─────────────────────────────────────────────────── */
@@ -445,6 +471,24 @@ a {
   border-top: 1px solid #e0e0e0;
   background: #ffffff;
   padding: 1rem;
+}
+
+/* ── Members filters ───────────────────────────────────────── */
+.members-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 0.5rem;
+}
+
+.members-filters__search {
+  width: 70%;
+}
+
+.members-filters__reset {
+  flex-shrink: 0;
 }
 
 /* ── Admin page shared ──────────────────────────────────────── */
@@ -777,6 +821,10 @@ p {
   .app-header__nav {
     display: none;
   }
+
+  .app-header__search {
+    padding: 0 0.75rem;
+  }
 }
 
 /* ── Responsive: Large tablet / small desktop (49rem – 66rem) ─ */
@@ -793,19 +841,20 @@ p {
   .app-sidebar.cds--side-nav--expanded {
     width: 16rem;
     max-width: 80vw;
-  }
-
-  .cds--side-nav__overlay {
-    z-index: 7999;
+    position: fixed !important;
+    top: calc(3rem + 25px) !important;
+    height: calc(100vh - 3rem - 25px) !important;
+    overflow-y: auto !important;
+    z-index: 8000 !important;
   }
 
   .app-sidebar.cds--side-nav {
-    z-index: 8000;
+    transform: translateX(-100%) !important;
+    transition: transform 110ms cubic-bezier(0.2, 0, 0.38, 0.9);
   }
 
-  .app-shell__content,
-  .app-shell__content--expanded {
-    margin-left: 0;
+  .app-sidebar.cds--side-nav.cds--side-nav--expanded {
+    transform: translateX(0) !important;
   }
 
   .app-shell__footer {
@@ -851,8 +900,59 @@ p {
     display: none;
   }
 
+  .app-header__brand {
+    padding: 0 0.5rem;
+    gap: 0.5rem;
+    min-width: auto;
+  }
+
   .app-shell__content {
     padding: 1rem 1rem 0;
+  }
+
+  /* ── Members page mobile fixes ────────────────────────────── */
+  .admin-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .admin-actions .cds--btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-page__header {
+    flex-direction: column;
+  }
+
+  .members-page .cds--data-table-content {
+    overflow-x: auto;
+  }
+
+  .members-page .cds--table-toolbar {
+    overflow-x: auto;
+  }
+
+  .members-page .cds--pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .members-page .metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .members-filters {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .members-filters__search {
+    width: 100% !important;
+  }
+
+  .members-filters__reset {
+    align-self: flex-start;
   }
 
   .app-shell__page {

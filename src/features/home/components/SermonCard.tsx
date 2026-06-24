@@ -4,14 +4,6 @@ import { PlayFilledAlt, Calendar, User } from "@carbon/icons-react";
 import styles from "../homepage.module.scss";
 import type { SermonCard as SermonCardType } from "@/features/home/types";
 
-const SERMON_TAG_TYPE: Record<string, "red" | "magenta" | "purple" | "blue" | "cyan" | "teal" | "green" | "gray"> = {
-  Featured: "purple",
-  Recent: "teal",
-  Series: "blue",
-  Youth: "green",
-  default: "gray",
-};
-
 const SermonCardItem: React.FC<{ sermon: SermonCardType }> = ({ sermon }) => (
   <ClickableTile
     className={styles.churchSermonTile}
@@ -23,16 +15,20 @@ const SermonCardItem: React.FC<{ sermon: SermonCardType }> = ({ sermon }) => (
       </div>
 
       <div className={styles.churchSermonTile__overlayTop}>
-        <Tag type={SERMON_TAG_TYPE[sermon.tag] ?? SERMON_TAG_TYPE.default} size="sm">
+        <Tag type={sermon.tag === "Featured" ? "warm-gray" : "gray"} size="sm">
           {sermon.tag}
         </Tag>
       </div>
 
-      <span className={styles.churchSermonTile__duration}>{sermon.duration}</span>
+      <span className={styles.churchSermonTile__duration}>
+        {sermon.duration}
+      </span>
     </AspectRatio>
 
     <div className={styles.churchSermonTile__body}>
-      <span className={styles.churchSermonTile__scripture}>{sermon.scripture}</span>
+      <span className={styles.churchSermonTile__scripture}>
+        {sermon.scripture}
+      </span>
       <h3 className={styles.churchSermonTile__title}>{sermon.title}</h3>
       <div className={styles.churchSermonTile__meta}>
         <span>

@@ -90,6 +90,7 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         aria-label={isSideNavExpanded ? "Close menu" : "Open menu"}
         isActive={isSideNavExpanded}
         onClick={onMenuClick}
+        className="app-header__menu-toggle"
       />
 
       <Link

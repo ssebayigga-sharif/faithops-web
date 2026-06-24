@@ -2,6 +2,7 @@ import {
   Building,
   Calendar,
   Dashboard,
+  Email,
   Finance,
   Group,
   Help,
@@ -76,6 +77,12 @@ export const administrationNavigationItems: NavigationItem[] = [
     label: "Help center",
     description: "Guides, support, and documentation",
     icon: Help,
+  },
+  {
+    path: "/contact",
+    label: "Contact Us",
+    description: "Send us a message or prayer request",
+    icon: Email,
   },
 ];
 

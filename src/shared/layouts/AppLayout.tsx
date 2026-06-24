@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Content, Theme } from "@carbon/react";
 import Footer from "./Footer";
@@ -11,44 +11,71 @@ const AppLayout = () => {
   const isMobileNav = useIsMobileNav();
   const [isSideNavExpanded, setIsSideNavExpanded] = useState(false);
   const { theme } = useAppTheme();
+  const location = useLocation();
 
+  // When crossing the desktop ↔ mobile/tablet threshold, reset sidebar state
   useEffect(() => {
-    const width = window.innerWidth;
-    if (width > 1056) {
-      setIsSideNavExpanded(true); // Desktop: expanded by default
+    if (isMobileNav) {
+      setIsSideNavExpanded(false); // Collapse on mobile/tablet
     } else {
-      setIsSideNavExpanded(false); // Tablet & Mobile: collapsed by default
+      setIsSideNavExpanded(true); // Expand on desktop
     }
   }, [isMobileNav]);
 
-  const handleMenuClick = useCallback(() => {
-    const width = window.innerWidth;
-    // On desktop (> 66rem), toggle expand/collapse
-    if (width > 1056) {
-      setIsSideNavExpanded((expanded) => !expanded);
-    } else {
-      // On tablet & mobile, overlay opens/closes
-      setIsSideNavExpanded((expanded) => !expanded);
+  // Close sidebar on path change (navigation)
+  useEffect(() => {
+    if (isMobileNav) {
+      setIsSideNavExpanded(false);
     }
+  }, [location.pathname, isMobileNav]);
+
+  // Close sidebar on click outside
+  useEffect(() => {
+    if (!isSideNavExpanded || !isMobileNav) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const sidebarEl = document.querySelector(".app-sidebar");
+      const menuBtnEl = document.querySelector(".app-header__menu-toggle");
+
+      if (
+        sidebarEl &&
+        !sidebarEl.contains(event.target as Node) &&
+        (!menuBtnEl || !menuBtnEl.contains(event.target as Node))
+      ) {
+        setIsSideNavExpanded(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isSideNavExpanded, isMobileNav]);
+
+  const handleMenuClick = useCallback(() => {
+    setIsSideNavExpanded((expanded) => !expanded);
   }, []);
 
   const handleCloseSideNav = useCallback(() => {
-    const width = window.innerWidth;
-    // Only close on tablet/mobile overlay; desktop stays as-is
-    if (width <= 1056) {
+    if (isMobileNav) {
       setIsSideNavExpanded(false);
     }
-  }, []);
+  }, [isMobileNav]);
 
-  // Desktop: sidebar rail is always visible; content adjusts margin
-  // Tablet/Mobile: sidebar is overlay; content always has no margin
-  const isDesktop =
-    typeof window !== "undefined" ? window.innerWidth > 1056 : true;
-  const contentExpanded = isDesktop ? isSideNavExpanded : false;
+  // Desktop: content margin follows sidebar width
+  // Mobile/Tablet: content always full-width; sidebar is overlay
+  const contentExpanded = !isMobileNav && isSideNavExpanded;
+
+  const shellClasses = [
+    "app-shell",
+    isMobileNav ? "app-shell--mobile-nav" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <Theme theme={theme}>
-      <div className="app-shell">
+      <div className={shellClasses}>
         <Header
           isSideNavExpanded={isSideNavExpanded}
           onMenuClick={handleMenuClick}

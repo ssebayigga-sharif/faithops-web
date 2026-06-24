@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid, Column } from "@carbon/react";
-import { useFadeIn } from "@/features/home/useFadeIn";
 import styles from "../about.module.scss";
 import type { AboutTimelineEvent } from "@/features/about/types";
 
@@ -51,12 +50,7 @@ interface TimelineRowProps {
 }
 
 const TimelineRow: React.FC<TimelineRowProps> = ({ event, isLast }) => (
-  <li
-    data-animate
-    className={`${styles["timeline-item"]} ${styles.fadeUp}${
-      isLast ? ` ${styles["timeline-item--last"]}` : ""
-    }`}
-  >
+  <li className={styles["timeline-item"]}>
     <div className={styles["timeline-item__year"]} aria-hidden>
       {event.year}
     </div>
@@ -77,20 +71,14 @@ const TimelineRow: React.FC<TimelineRowProps> = ({ event, isLast }) => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const HistorySection: React.FC = () => {
-  const ref = useFadeIn();
-
   return (
     <section
       className={`${styles.sectionNavy} ${styles["history-section"]}`}
-      ref={ref}
       aria-labelledby="history-heading"
     >
       <Grid>
         <Column sm={4} md={8} lg={16}>
-          <div
-            data-animate
-            className={`${styles["section-header"]} ${styles.fadeUp}`}
-          >
+          <div className={styles["section-header"]}>
             <div className={styles.goldRule} aria-hidden />
             <h2
               id="history-heading"

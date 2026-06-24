@@ -1,6 +1,5 @@
 import React from "react";
 import { Grid, Column, Accordion, AccordionItem, Tag } from "@carbon/react";
-import { useFadeIn } from "@/features/home/useFadeIn";
 import styles from "../about.module.scss";
 import type { BeliefItem } from "@/features/home/types";
 
@@ -34,10 +33,6 @@ interface BeliefContentProps {
 const BeliefContent: React.FC<BeliefContentProps> = ({ belief }) => (
   <div className={styles["belief-content"]}>
     <p className={styles["belief-content__summary"]}>{belief.summary}</p>
-    {/*
-      Carbon Tag with `type="gray"` sits well on both light and cream backgrounds.
-      We override color via CSS variable to stay on brand.
-    */}
     <Tag
       type="gray"
       className={styles["belief-content__scripture-tag"]}
@@ -50,20 +45,14 @@ const BeliefContent: React.FC<BeliefContentProps> = ({ belief }) => (
 
 // ─── Component ────────────────────────────────────────────────────────────────
 const BeliefsSection: React.FC<BeliefsSectionProps> = ({ beliefs }) => {
-  const ref = useFadeIn();
-
   return (
     <section
       className={`${styles.sectionGold} ${styles["beliefs-section"]}`}
-      ref={ref}
       aria-labelledby="beliefs-heading"
     >
       <Grid>
         <Column sm={4} md={8} lg={16}>
-          <div
-            data-animate
-            className={`${styles["section-header"]} ${styles.fadeUp}`}
-          >
+          <div className={styles["section-header"]}>
             <div className={styles.goldRule} aria-hidden />
             <h2 id="beliefs-heading" className={styles["section-heading"]}>
               Fundamental Beliefs
@@ -76,26 +65,21 @@ const BeliefsSection: React.FC<BeliefsSectionProps> = ({ beliefs }) => {
         </Column>
 
         <Column sm={4} md={8} lg={12}>
-          <div data-animate className={styles.fadeUp}>
-            <Accordion>
-              {beliefs.map((belief) => (
-                <AccordionItem
-                  key={belief.number}
-                  title={<BeliefTitle belief={belief} />}
-                  className={styles["beliefs-accordion__item"]}
-                >
-                  <BeliefContent belief={belief} />
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
+          <Accordion className={styles["beliefs-accordion"]}>
+            {beliefs.map((belief) => (
+              <AccordionItem
+                key={belief.number}
+                title={<BeliefTitle belief={belief} />}
+                className={styles["beliefs-accordion__item"]}
+              >
+                <BeliefContent belief={belief} />
+              </AccordionItem>
+            ))}
+          </Accordion>
         </Column>
 
         <Column sm={4} md={8} lg={16}>
-          <div
-            data-animate
-            className={`${styles.fadeUp} ${styles["beliefs-section__cta"]}`}
-          >
+          <div className={styles["beliefs-section__cta"]}>
             <a
               href="https://www.adventist.org/beliefs"
               target="_blank"

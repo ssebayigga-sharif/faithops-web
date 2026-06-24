@@ -1,0 +1,187 @@
+// .helpPage {
+//   padding: 2rem 0;
+// }
+
+// .hero {
+//   background: linear-gradient(135deg, #1a3a5c 0%, #2a5a8c 100%);
+//   padding: 4rem 2rem;
+//   text-align: center;
+//   margin-bottom: 2rem;
+//   border-radius: 8px;
+//   color: #fff;
+// }
+
+// .heroTitle {
+//   font-size: 2.5rem;
+//   font-weight: 700;
+//   margin: 0 0 0.5rem;
+//   color: #fff;
+// }
+
+// .heroSubtitle {
+//   font-size: 1.1rem;
+//   opacity: 0.9;
+//   margin: 0;
+//   max-width: 600px;
+//   margin: 0 auto;
+// }
+
+// .section {
+//   margin-bottom: 2rem;
+// }
+
+// .sectionTitle {
+//   font-size: 1.5rem;
+//   font-weight: 600;
+//   margin: 0 0 1.5rem;
+//   color: #1a3a5c;
+//   display: flex;
+//   align-items: center;
+//   gap: 0.5rem;
+// }
+
+// .faqItem {
+//   border: 1px solid #e0e0e0;
+//   border-radius: 8px;
+//   margin-bottom: 0.75rem;
+//   overflow: hidden;
+//   transition: box-shadow 0.2s;
+
+//   &:hover {
+//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+//   }
+// }
+
+// .faqQuestion {
+//   padding: 1rem 1.25rem;
+//   font-weight: 500;
+//   font-size: 1rem;
+//   cursor: pointer;
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   background: #f8f9fa;
+//   border: none;
+//   width: 100%;
+//   text-align: left;
+//   color: #1a3a5c;
+
+//   &:hover {
+//     background: #eef1f5;
+//   }
+// }
+
+// .faqAnswer {
+//   padding: 0 1.25rem 1rem;
+//   color: #555;
+//   line-height: 1.6;
+//   font-size: 0.95rem;
+// }
+
+// .contactCard {
+//   background: #fff;
+//   border: 1px solid #e0e0e0;
+//   border-radius: 8px;
+//   padding: 2rem;
+// }
+
+// .formGroup {
+//   margin-bottom: 1.25rem;
+// }
+
+// .label {
+//   display: block;
+//   font-weight: 500;
+//   margin-bottom: 0.5rem;
+//   color: #333;
+// }
+
+// .input,
+// .textarea {
+//   width: 100%;
+//   padding: 0.75rem;
+//   border: 1px solid #d0d0d0;
+//   border-radius: 6px;
+//   font-size: 0.95rem;
+//   font-family: inherit;
+//   transition: border-color 0.2s;
+//   box-sizing: border-box;
+
+//   &:focus {
+//     outline: none;
+//     border-color: #2a5a8c;
+//     box-shadow: 0 0 0 3px rgba(42, 90, 140, 0.15);
+//   }
+// }
+
+// .textarea {
+//   min-height: 120px;
+//   resize: vertical;
+// }
+
+// .submitButton {
+//   background: #2a5a8c;
+//   color: #fff;
+//   border: none;
+//   padding: 0.75rem 2rem;
+//   border-radius: 6px;
+//   font-size: 1rem;
+//   font-weight: 600;
+//   cursor: pointer;
+//   transition: background 0.2s;
+
+//   &:hover {
+//     background: #1a3a5c;
+//   }
+
+//   &:disabled {
+//     background: #a0b8d0;
+//     cursor: not-allowed;
+//   }
+// }
+
+// .successMessage {
+//   background: #d4edda;
+//   color: #155724;
+//   padding: 1rem;
+//   border-radius: 6px;
+//   margin-bottom: 1rem;
+// }
+
+// .resourceGrid {
+//   display: grid;
+//   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+//   gap: 1rem;
+// }
+
+// .resourceCard {
+//   background: #fff;
+//   border: 1px solid #e0e0e0;
+//   border-radius: 8px;
+//   padding: 1.5rem;
+//   transition: box-shadow 0.2s, transform 0.2s;
+
+//   &:hover {
+//     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+//     transform: translateY(-2px);
+//   }
+// }
+
+// .resourceIcon {
+//   font-size: 2rem;
+//   margin-bottom: 0.75rem;
+// }
+
+// .resourceTitle {
+//   font-size: 1.1rem;
+//   font-weight: 600;
+//   margin: 0 0 0.5rem;
+//   color: #1a3a5c;
+// }
+
+// .resourceDesc {
+//   font-size: 0.9rem;
+//   color: #666;
+//   line-height: 1.5;
+//   margin: 0;
+// }
