@@ -27,12 +27,28 @@ import {
   RadioButtonGroup,
   Select,
   SelectItem,
+  Stack,
   Tag,
   TextInput,
   Toggle,
 } from "@carbon/react";
 import { SlideOver } from "@/shared/components/ui/SlideOver";
-//validation shema
+import styles from "./MemberModal.module.scss";
+
+const DEFAULT_FORM_VALUES: Partial<MemberFormValues> = {
+  firstName: "",
+  lastName: "",
+  phone: "",
+  email: "",
+  gender: undefined,
+  age: undefined,
+  maritalStatus: "single",
+  status: "active",
+  baptized: false,
+  joinedAt: new Date().toISOString().split("T")[0],
+  cellGroup: "",
+};
+
 function validateStep0(form: Partial<MemberFormValues>): string[] {
   const errs: string[] = [];
   if (!form.firstName?.trim()) errs.push("First name is required.");
@@ -51,6 +67,16 @@ function validateStep1(form: Partial<MemberFormValues>): string[] {
   return errs;
 }
 
+function ErrorList({ errors }: { errors: string[] }) {
+  return (
+    <ul className={styles.errorList}>
+      {errors.map((err) => (
+        <li key={err}>{err}</li>
+      ))}
+    </ul>
+  );
+}
+
 const MemberModal = ({
   open,
   onClose,
@@ -61,20 +87,8 @@ const MemberModal = ({
   const [step, setStep] = useState<Step>(0);
   const [errors, setErrors] = useState<string[]>([]);
   const [ministries, setMinistries] = useState<MiniAssignmentDraft[]>([]);
-
-  const [form, setForm] = useState<Partial<MemberFormValues>>({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-    gender: undefined,
-    age: undefined,
-    maritalStatus: "Single",
-    status: "active",
-    baptized: false,
-    joinedAt: new Date().toISOString().split("T")[0],
-    cellGroup: "",
-  });
+  const [form, setForm] =
+    useState<Partial<MemberFormValues>>(DEFAULT_FORM_VALUES);
 
   const set = <K extends keyof MemberFormValues>(
     key: K,
@@ -112,6 +126,14 @@ const MemberModal = ({
     setMinistries((prev) =>
       prev.map((m, idx) => (idx === i ? { ...m, [key]: value } : m)),
     );
+
+  const handleClose = () => {
+    setStep(0);
+    setErrors([]);
+    setMinistries([]);
+    setForm(DEFAULT_FORM_VALUES);
+    onClose();
+  };
 
   const handleSubmit = async () => {
     const errs = [...validateStep0(form), ...validateStep1(form)];
@@ -171,25 +193,6 @@ const MemberModal = ({
     await onSubmit(member);
     handleClose();
   };
-  const handleClose = () => {
-    setStep(0);
-    setErrors([]);
-    setMinistries([]);
-    setForm({
-      firstName: "",
-      lastName: "",
-      phone: "",
-      email: "",
-      gender: undefined,
-      age: undefined,
-      maritalStatus: "Single",
-      status: "active",
-      baptized: false,
-      joinedAt: new Date().toISOString().split("T")[0],
-      cellGroup: "",
-    });
-    onClose();
-  };
 
   return (
     <SlideOver
@@ -221,8 +224,7 @@ const MemberModal = ({
         </>
       }
     >
-      {/* Progress indicator */}
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div className={styles.progress}>
         <ProgressIndicator currentIndex={step} spaceEqually>
           {STEP_LABELS.map((label) => (
             <ProgressStep key={label} label={label} />
@@ -230,27 +232,20 @@ const MemberModal = ({
         </ProgressIndicator>
       </div>
 
-      {/* Errors */}
       {errors.length > 0 && (
         <InlineNotification
           kind="error"
           title="Please fix the following:"
-          subtitle={errors.join(" ")}
+          subtitle={errors.join(".")}
           lowContrast
-          style={{ marginBottom: "1rem" }}
+          className={styles.errorNotification}
         />
       )}
 
       {/* ── Step 0: Personal Info ── */}
       {step === 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1rem",
-            }}
-          >
+        <Stack gap={5}>
+          <div className={styles.fieldRow}>
             <TextInput
               id="firstName"
               labelText="First Name *"
@@ -267,13 +262,7 @@ const MemberModal = ({
             />
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1rem",
-            }}
-          >
+          <div className={styles.fieldRow}>
             <TextInput
               id="phone"
               labelText="Phone Number *"
@@ -291,13 +280,7 @@ const MemberModal = ({
             />
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "1rem",
-            }}
-          >
+          <div className={styles.fieldRow}>
             <FormGroup legendText="Gender *">
               <RadioButtonGroup
                 name="gender"
@@ -305,13 +288,18 @@ const MemberModal = ({
                 onChange={(val) =>
                   set("gender", val as MemberFormValues["gender"])
                 }
-                orientation="horizontal"
+                orientation="vertical"
               >
                 <RadioButton labelText="Male" value="male" id="gender-male" />
                 <RadioButton
                   labelText="Female"
-                  value="Female"
+                  value="female"
                   id="gender-female"
+                />
+                <RadioButton
+                  labelText="Prefer not to say"
+                  value="prefer_not_to_say"
+                  id="gender-prefer-not-to-say"
                 />
               </RadioButtonGroup>
             </FormGroup>
@@ -337,15 +325,17 @@ const MemberModal = ({
               )
             }
           >
-            <SelectItem value="Single" text="Single" />
-            <SelectItem value="Maried" text="Married" />
+            <SelectItem value="single" text="Single" />
+            <SelectItem value="married" text="Married" />
+            <SelectItem value="widowed" text="Widowed" />
+            <SelectItem value="divorced" text="Divorced" />
           </Select>
-        </div>
+        </Stack>
       )}
 
       {/* ── Step 1: Church Details ── */}
       {step === 1 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <Stack gap={5}>
           <Select
             id="status"
             labelText="Member Status *"
@@ -403,36 +393,19 @@ const MemberModal = ({
             labelA="No"
             labelB="Yes"
           />
-        </div>
+        </Stack>
       )}
 
       {/* ── Step 2: Ministries ── */}
       {step === 2 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <p
-            style={{
-              fontSize: "13px",
-              color: "#6f6f6f",
-              marginBottom: "0.5rem",
-            }}
-          >
+        <Stack gap={5}>
+          <p className={styles.helperText}>
             Assign this member to one or more ministries (optional — can be
             updated later).
           </p>
 
           {ministries.map((m, i) => (
-            <div
-              key={i}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr auto",
-                gap: "0.75rem",
-                alignItems: "flex-end",
-                padding: "0.75rem",
-                background: "#f4f4f4",
-                borderRadius: "4px",
-              }}
-            >
+            <div key={i} className={styles.ministryRow}>
               <Select
                 id={`min-ministry-${i}`}
                 labelText="Ministry"
@@ -462,7 +435,7 @@ const MemberModal = ({
                 renderIcon={TrashCan}
                 iconDescription="Remove"
                 onClick={() => removeMinistry(i)}
-                style={{ marginBottom: "0" }}
+                className={styles.removeButton}
               />
             </div>
           ))}
@@ -477,14 +450,7 @@ const MemberModal = ({
           </Button>
 
           {ministries.length > 0 && (
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "0.5rem",
-                marginTop: "0.25rem",
-              }}
-            >
+            <div className={styles.ministryTags}>
               {ministries.map((m, i) => (
                 <Tag key={i} type="blue" size="md">
                   {m.ministry} · {m.role}
@@ -492,7 +458,7 @@ const MemberModal = ({
               ))}
             </div>
           )}
-        </div>
+        </Stack>
       )}
     </SlideOver>
   );

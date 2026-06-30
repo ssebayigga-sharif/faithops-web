@@ -1,1 +1,1 @@
-// export { default as HelpPage } from "./components/HelpPage";
+export { default as HelpPage } from "./components/HelpPage";

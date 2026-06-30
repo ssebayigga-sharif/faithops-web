@@ -1039,32 +1039,34 @@ p {
   }
 }
 
-/* ── Slide-over modal ───────────────────────────────────────── */
+/* Slide-over modal  */
 
 .slide-over-modal.cds--modal {
   align-items: stretch;
   justify-content: flex-end;
+  top: calc(3rem + 5px);
+  z-index: 7900;
 }
 
 .slide-over-modal .cds--modal-container {
-  height: 100vh;
-  max-height: 100vh;
-  margin: 0;
+  height: calc(100vh - 3rem - 5px);
+  max-height: calc(100vh - 3rem - 5px);
+  margin: 20px;
 }
 
 .slide-over-modal__container--md {
-  width: min(100vw, 42rem);
+  width: clamp(320px, 30vw, 20rem);
 }
 
 .slide-over-modal__container--lg {
-  width: min(100vw, 56rem);
+  width: clamp(360px, 35vw, 26rem);
 }
 
 .slide-over-modal .cds--modal-content {
   padding-bottom: 1.5rem;
 }
 
-/* ── Events page ────────────────────────────────────────────── */
+/*  Events page  */
 
 .events-page {
   min-height: 100%;
@@ -1492,7 +1494,7 @@ p {
   white-space: nowrap;
 }
 
-/* ── Responsive: Events page ────────────────────────────────── */
+/*  Responsive: Events page  */
 
 @media (max-width: 82rem) {
   .event-calendar__week {
@@ -1548,10 +1550,7 @@ p {
   }
 }
 
-/* ── Attendance Shared Styles ──────────────────────────────────
-   These live in globals.css so they aren't hashed by CSS Modules.
-   Used by StatCards, SessionHistoryTable, MarkAttendanceTable,
-   and AttendancePage.                                     */
+/* Attendance Shared Styles  */
 
 .stat-cards {
   display: grid;

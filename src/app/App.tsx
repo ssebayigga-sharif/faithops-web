@@ -29,7 +29,7 @@ const ForgotPasswordPage = lazy(
   () => import("@/features/auth/pages/ForgotPasswordPage"),
 );
 const SearchPage = lazy(() => import("@/features/search/pages/SearchPage"));
-//const HelpPage = lazy(() => import("@/features/help/components/HelpPage"));
+const HelpPage = lazy(() => import("@/features/help/components/HelpPage"));
 const ContactPage = lazy(() => import("@/features/contact/page/ContactPage"));
 
 // ── Loading fallback ─────────────────────────────────────────────────
@@ -119,14 +119,14 @@ const App = () => (
                 </AdminRoute>
               }
             />
-            {/* <Route
+            <Route
               path="help"
               element={
                 <AdminRoute>
                   <HelpPage />
                 </AdminRoute>
               }
-            /> */}
+            />
             <Route
               path="privacy"
               element={
