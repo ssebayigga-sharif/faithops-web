@@ -200,7 +200,7 @@ const MemberModal = ({
       onClose={handleClose}
       title="Add New Member"
       eyebrow="Membership"
-      description="Create a complete member record with church details, ministry assignments, and a timeline entry."
+      description="Create a complete member record with church details."
       width="lg"
       footer={
         <>

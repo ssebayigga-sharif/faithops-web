@@ -1,16 +1,9 @@
 import type { NavItem } from "@/shared/types";
-import type {
-  SermonCard,
-  ServiceTime,
-  HomeMinistry,
-  StatItem,
-  HomeChurchEvent,
-} from "@/features/home/types";
+import type { ServiceTime, HomeMinistry, StatItem } from "@/features/home/types";
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
-  { label: "Sermons", path: "/sermons" },
   { label: "Ministries", path: "/ministries" },
   { label: "Give", path: "/give" },
   { label: "Contact", path: "/contact" },
@@ -21,64 +14,25 @@ export const SERVICE_TIMES: ServiceTime[] = [
     day: "Saturday",
     time: "09:00 AM",
     name: "Sabbath School",
-    description: "In-depth Bible study and discussion for all ages",
+    description: "Bible study classes for children, youth, and adults.",
   },
   {
     day: "Saturday",
     time: "11:00 AM",
     name: "Divine Worship",
-    description: "Our main weekly worship service and sermon",
+    description: "Congregational worship, prayer, music, and the Word.",
   },
   {
     day: "Wednesday",
     time: "06:30 PM",
     name: "Prayer Meeting",
-    description: "Mid-week intercessory prayer and devotional",
+    description: "Midweek Bible reflection and intercessory prayer.",
   },
   {
     day: "Friday",
     time: "06:00 PM",
     name: "Vespers",
-    description: "Welcoming the Sabbath with praise and reflection",
-  },
-];
-
-export const FEATURED_SERMONS: SermonCard[] = [
-  {
-    id: "1",
-    title: "The Everlasting Gospel",
-    speaker: "Pastor James Mukasa",
-    date: "June 7, 2025",
-    duration: "52 min",
-    scripture: "Revelation 14:6–12",
-    tag: "Featured",
-  },
-  {
-    id: "2",
-    title: "Sanctuary Truth for Today",
-    speaker: "Elder Ruth Namutebi",
-    date: "May 31, 2025",
-    duration: "46 min",
-    scripture: "Hebrews 8:1–2",
-    tag: "Recent",
-  },
-  {
-    id: "3",
-    title: "Health: The Temple Restored",
-    speaker: "Pastor James Mukasa",
-    date: "May 24, 2025",
-    duration: "38 min",
-    scripture: "1 Corinthians 6:19",
-    tag: "Series",
-  },
-  {
-    id: "4",
-    title: "Standing Firm in the Last Days",
-    speaker: "Bro. Samuel Opio",
-    date: "May 17, 2025",
-    duration: "41 min",
-    scripture: "Ephesians 6:10–18",
-    tag: "Youth",
+    description: "Welcoming the Sabbath with praise and reflection.",
   },
 ];
 
@@ -88,8 +42,8 @@ export const MINISTRIES: HomeMinistry[] = [
     name: "Youth & Pathfinders",
     leader: "Bro. Samuel Opio",
     description:
-      "Equipping the next generation with faith, character, and service skills through Pathfinder and Adventurer clubs.",
-    icon: "🌟",
+      "Guiding children and youth in Bible study, character, discipline, and service through Adventurer and Pathfinder ministry.",
+    icon: "YP",
     color: "gold",
   },
   {
@@ -97,8 +51,8 @@ export const MINISTRIES: HomeMinistry[] = [
     name: "Women's Ministry",
     leader: "Sis. Grace Nakato",
     description:
-      "Nurturing spiritual growth, community, and empowerment for women at every stage of life.",
-    icon: "✦",
+      "Encouraging spiritual growth, prayer, visitation, and practical care among women and families.",
+    icon: "WM",
     color: "navy",
   },
   {
@@ -106,8 +60,8 @@ export const MINISTRIES: HomeMinistry[] = [
     name: "Health & Temperance",
     leader: "Dr. Peter Ssempala",
     description:
-      "Promoting God's ideal of total wellness through NEWSTART principles and community health programs.",
-    icon: "❤",
+      "Promoting whole-person wellness, temperance, and community health education.",
+    icon: "HT",
     color: "cream",
   },
   {
@@ -115,8 +69,8 @@ export const MINISTRIES: HomeMinistry[] = [
     name: "Community Services",
     leader: "Elder Faith Apio",
     description:
-      "Serving our neighbors through food banks, disaster relief, education sponsorships, and care visits.",
-    icon: "🤝",
+      "Serving neighbors through visitation, relief, education support, and practical compassion.",
+    icon: "CS",
     color: "gold",
   },
   {
@@ -124,8 +78,8 @@ export const MINISTRIES: HomeMinistry[] = [
     name: "Music & Worship",
     leader: "Bro. David Kizza",
     description:
-      "Leading the congregation in Spirit-filled praise through choir, instrumental ministry, and audio-visual production.",
-    icon: "♪",
+      "Supporting reverent worship through choir, congregational singing, and audio-visual service.",
+    icon: "MW",
     color: "navy",
   },
   {
@@ -134,7 +88,7 @@ export const MINISTRIES: HomeMinistry[] = [
     leader: "Sis. Mary Birungi",
     description:
       "Training members in evangelism, Bible studies, and sharing the Three Angels' Messages with the community.",
-    icon: "✉",
+    icon: "PM",
     color: "cream",
   },
 ];
@@ -143,60 +97,22 @@ export const STATS: StatItem[] = [
   {
     value: "1,240+",
     label: "Baptized Members",
-    detail: "Across 3 campus locations",
+    detail: "Serving in worship, mission, and care",
   },
-  { value: "1863", label: "Year Founded", detail: "Adventist movement begins" },
   {
-    value: "21M+",
-    label: "Global Members",
-    detail: "In 215 countries worldwide",
+    value: "1863",
+    label: "Movement Organized",
+    detail: "Seventh-day Adventist Church",
   },
   {
     value: "28",
     label: "Fundamental Beliefs",
-    detail: "Grounded in Scripture alone",
+    detail: "Grounded in Scripture",
+  },
+  {
+    value: "7th",
+    label: "Sabbath Day",
+    detail: "A weekly memorial of creation and redemption",
   },
 ];
 
-export const UPCOMING_EVENTS: HomeChurchEvent[] = [
-  {
-    id: "1",
-    title: "Youth Week of Prayer",
-    date: "June 21, 2025",
-    day: "21",
-    month: "JUN",
-    time: "09:00 AM",
-    location: "Main Sanctuary",
-    category: "Youth",
-  },
-  {
-    id: "2",
-    title: "Community Health Seminar",
-    date: "June 28, 2025",
-    day: "28",
-    month: "JUN",
-    time: "10:00 AM",
-    location: "Fellowship Hall",
-    category: "Community",
-  },
-  {
-    id: "3",
-    title: "Evangelism Training",
-    date: "July 5, 2025",
-    day: "05",
-    month: "JUL",
-    time: "02:00 PM",
-    location: "Room 12",
-    category: "Study",
-  },
-  {
-    id: "4",
-    title: "Pathfinder Investiture",
-    date: "July 12, 2025",
-    day: "12",
-    month: "JUL",
-    time: "11:00 AM",
-    location: "Main Sanctuary",
-    category: "Youth",
-  },
-];

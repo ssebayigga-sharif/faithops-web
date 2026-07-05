@@ -3,23 +3,16 @@ import { Grid, Column, Tile } from "@carbon/react";
 import styles from "../homepage.module.scss";
 import { SERVICE_TIMES } from "@/features/home/data/home";
 import { SITE_CONFIG } from "../data/site";
-import { useFadeIn } from "../useFadeIn";
 import type { ServiceTime } from "@/features/home/types";
 
-const ServiceTimes: React.FC = () => {
-  const ref = useFadeIn<HTMLElement>();
-  return (
+const ServiceTimes: React.FC = () => (
     <section
-      ref={ref}
       className={`${styles.churchSection} ${styles.churchSectionWhite}`}
       aria-labelledby="services-heading"
     >
       <Grid>
         <Column lg={16} md={8} sm={4}>
-          <div
-            data-animate
-            className={`${styles.churchSectionHeader} ${styles.fadeUp}`}
-          >
+          <div className={`${styles.churchSectionHeader} ${styles.fadeUp}`}>
             <span className={styles.churchGoldRule} aria-hidden="true" />
             <h2 id="services-heading">Join Us for Worship</h2>
             <p className={styles.churchSectionSubhead}>
@@ -29,13 +22,9 @@ const ServiceTimes: React.FC = () => {
           </div>
         </Column>
 
-        {SERVICE_TIMES.map((s: ServiceTime, i: number) => (
+        {SERVICE_TIMES.map((s: ServiceTime) => (
           <Column key={s.name} lg={4} md={4} sm={4}>
-            <div
-              data-animate
-              className={styles.fadeUp}
-              style={{ transitionDelay: `${i * 0.08}s` }}
-            >
+            <div className={styles.fadeUp}>
               <Tile className={styles.churchServiceTile}>
                 <span className={styles.churchServiceTile__day}>{s.day}</span>
                 <p className={styles.churchServiceTileTime}>{s.time}</p>
@@ -47,7 +36,6 @@ const ServiceTimes: React.FC = () => {
         ))}
       </Grid>
     </section>
-  );
-};
+);
 
 export default ServiceTimes;

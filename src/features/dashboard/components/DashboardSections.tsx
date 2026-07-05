@@ -9,7 +9,10 @@ import {
   WarningAlt,
 } from "@carbon/icons-react";
 import { Grid, Column, Stack } from "@carbon/react";
-import type { ChurchEvent, EventAnalyticsSnapshot } from "@/features/events/types";
+import type {
+  ChurchEvent,
+  EventAnalyticsSnapshot,
+} from "@/features/events/types";
 import type { DashboardSnapshot } from "@/features/dashboard/types";
 import { formatDate, formatUGX } from "@/features/members/utils/memberUtils";
 import {
@@ -29,7 +32,7 @@ import {
   ProgressRow,
 } from "../components/DashboardPrimitives";
 
-// ─── Shared helpers ────────────────────────────────────────────────────────
+//  Shared helpers
 
 function formatPercent(value: number): string {
   return `${value}%`;
@@ -41,7 +44,7 @@ const EMPTY_COPY = {
   cellGroup: "Cell group attendance will appear after members are assigned.",
 } as const;
 
-// ─── AnalyticsPanel ───────────────────────────────────────────────────────────
+//  AnalyticsPanel
 
 interface AnalyticsPanelProps {
   snapshot: DashboardSnapshot;
@@ -131,7 +134,7 @@ export function AnalyticsPanel({
   );
 }
 
-// ─── NotificationsPanel ───────────────────────────────────────────────────────
+//  NotificationsPanel
 
 interface NotificationsPanelProps {
   snapshot: DashboardSnapshot;
@@ -200,7 +203,7 @@ export function NotificationsPanel({
   );
 }
 
-// ─── OperationalInsightsPanel ─────────────────────────────────────────────────
+// OperationalInsightsPanel
 
 interface OperationalInsightsPanelProps {
   snapshot: DashboardSnapshot;
@@ -242,7 +245,7 @@ export function OperationalInsightsPanel({
   );
 }
 
-// ─── SystemUpdatesPanel ───────────────────────────────────────────────────────
+//  SystemUpdatesPanel
 
 interface SystemUpdatesPanelProps {
   snapshot: DashboardSnapshot;
@@ -303,7 +306,7 @@ export function SystemUpdatesPanel({
   );
 }
 
-// ─── MinistryEngagementPanel ──────────────────────────────────────────────────
+//  MinistryEngagementPanel
 
 interface MinistryEngagementPanelProps {
   snapshot: DashboardSnapshot;
@@ -339,7 +342,7 @@ export function MinistryEngagementPanel({
   );
 }
 
-// ─── CellGroupHealthPanel ─────────────────────────────────────────────────────
+//  CellGroupHealthPanel
 
 interface CellGroupHealthPanelProps {
   snapshot: DashboardSnapshot;
@@ -375,7 +378,7 @@ export function CellGroupHealthPanel({
   );
 }
 
-// ─── EventIntelligencePanel ──────────────────────────────────────────────────
+//  EventIntelligencePanel
 
 interface EventIntelligencePanelProps {
   eventSnapshot: EventAnalyticsSnapshot;

@@ -2,25 +2,17 @@ import React from "react";
 import { Grid, Column } from "@carbon/react";
 import styles from "../homepage.module.scss";
 import { STATS } from "@/features/home/data/home";
-import { useFadeIn } from "../useFadeIn";
 import type { StatItem } from "@/features/home/types";
 
-const StatsBanner: React.FC = () => {
-  const ref = useFadeIn<HTMLElement>();
-  return (
+const StatsBanner: React.FC = () => (
     <section
-      ref={ref}
       className={`${styles.churchSection} ${styles.churchStats}`}
       aria-label="Church statistics"
     >
       <Grid>
-        {STATS.map((stat: StatItem, i: number) => (
+        {STATS.map((stat: StatItem) => (
           <Column key={stat.label} lg={4} md={4} sm={2}>
-            <div
-              data-animate
-              className={styles.fadeUp}
-              style={{ transitionDelay: `${i * 0.08}s` }}
-            >
+            <div className={styles.fadeUp}>
               <div className={styles.churchStat}>
                 <span className={styles.churchStat__value}>{stat.value}</span>
                 <span className={styles.churchStat__label}>{stat.label}</span>
@@ -31,7 +23,6 @@ const StatsBanner: React.FC = () => {
         ))}
       </Grid>
     </section>
-  );
-};
+);
 
 export default StatsBanner;

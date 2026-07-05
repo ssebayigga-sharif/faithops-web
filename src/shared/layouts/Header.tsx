@@ -17,13 +17,7 @@ import {
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { headerNavigationItems } from "@/shared/data/navigation";
 import ChurchIcon from "./ChurchIcon";
-import { useAuthContext } from "@/features/auth/context/AuthContext";
 import { useNotifications } from "@/features/notifications/hooks/useNotifications";
-import type { ChurchRole } from "@/features/auth/types";
-
-const ADMIN_ROLES: ChurchRole[] = ["pastor", "elder", "deacon", "treasurer"];
-
-const MEMBER_HEADER_PATHS = ["/dashboard", "/home", "/about"];
 
 type HeaderProps = {
   isSideNavExpanded: boolean;
@@ -32,9 +26,6 @@ type HeaderProps = {
 
 const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
   const navigate = useNavigate();
-  const { user, userProfile, logout } = useAuthContext();
-  const role = userProfile?.role ?? "member";
-  const isAdmin = ADMIN_ROLES.includes(role);
   const { unreadCount, notifications, markRead, refresh } = useNotifications();
   const [searchValue, setSearchValue] = useState("");
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
@@ -74,13 +65,6 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
     if (!notifPanelOpen) refresh();
   }, [notifPanelOpen, refresh]);
 
-  // ── Logout
-
-  const handleLogout = useCallback(async () => {
-    await logout();
-    navigate("/login");
-  }, [logout, navigate]);
-
   return (
     <CarbonHeader
       aria-label="FaithOps church management"
@@ -113,21 +97,19 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
       />
 
       <nav className="app-header__nav" aria-label="Header navigation">
-        {headerNavigationItems
-          .filter((item) => isAdmin || MEMBER_HEADER_PATHS.includes(item.path))
-          .map((item) => (
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "app-header__nav-link is-active"
-                  : "app-header__nav-link"
-              }
-              key={item.path}
-              to={item.path}
-            >
-              {item.label}
-            </NavLink>
-          ))}
+        {headerNavigationItems.map((item) => (
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? "app-header__nav-link is-active"
+                : "app-header__nav-link"
+            }
+            key={item.path}
+            to={item.path}
+          >
+            {item.label}
+          </NavLink>
+        ))}
       </nav>
 
       <HeaderGlobalBar>
@@ -159,16 +141,6 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
           <UserAvatar size={20} />
         </HeaderGlobalAction>
 
-        {user && (
-          <HeaderGlobalAction
-            tooltipAlignment="end"
-            aria-label="Sign out"
-            onClick={handleLogout}
-            className="app-header__logout"
-          >
-            <span className="app-header__logout-icon">Sign out</span>
-          </HeaderGlobalAction>
-        )}
       </HeaderGlobalBar>
 
       {/* Notifications slide-over panel */}

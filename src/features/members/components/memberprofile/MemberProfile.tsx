@@ -103,7 +103,7 @@ export function MemberProfile({ member, onClose, onEdit }: MemberProfileProps) {
       {/* Drawer */}
       <div
         style={{
-          width: 520,
+          width: "min(520px, 100vw)",
           background: "white",
           height: "100vh",
           overflow: "hidden",

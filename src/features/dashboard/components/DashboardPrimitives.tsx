@@ -1,6 +1,5 @@
 import { type CSSProperties } from "react";
 import {
-  InlineLoading,
   ProgressBar,
   Stack,
   Tag,
@@ -18,7 +17,7 @@ import type {
   DashboardTagType,
 } from "@/features/dashboard/types";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Helpers
 
 function getProgressStatus(percent: number): "active" | "finished" | "error" {
   if (percent < 40) return "error";
@@ -33,7 +32,7 @@ const INSIGHT_TAG_TYPE: Record<InsightStatus, DashboardTagType> = {
   info: "blue",
 };
 
-// ─── MetricCard ───────────────────────────────────────────────────────────────
+//  MetricCard
 
 export function MetricCard({
   label,
@@ -63,8 +62,7 @@ export function MetricCard({
   );
 }
 
-// ─── DashboardPanel ───────────────────────────────────────────────────────────
-// Discriminated union enforces icon XOR tag at compile time
+//  DashboardPanel
 
 type PanelWithTag = DashboardPanelProps & { tagLabel: string; icon?: never };
 type PanelWithIcon = DashboardPanelProps & {
@@ -119,7 +117,7 @@ function PanelSkeleton() {
   );
 }
 
-// ─── InsightItem ──────────────────────────────────────────────────────────────
+// InsightItem
 
 export function InsightItem({
   icon: Icon,
@@ -151,7 +149,7 @@ export function InsightItem({
   );
 }
 
-// ─── ProgressRow ─────────────────────────────────────────────────────────────
+//  ProgressRow
 
 export function ProgressRow({ label, value, percent }: ProgressRowProps) {
   const safePercent = Math.min(Math.max(percent, 0), 100);
@@ -174,7 +172,7 @@ export function ProgressRow({ label, value, percent }: ProgressRowProps) {
   );
 }
 
-// ─── OperationsRow ────────────────────────────────────────────────────────────
+// OperationsRow
 
 export function OperationsRow({
   title,

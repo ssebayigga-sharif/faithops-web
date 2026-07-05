@@ -46,6 +46,8 @@ import { StepNumber } from "../components/givingUi";
 
 const STEPS = ["Entry", "Review", "Receipt"] as const;
 
+type GivingTabId = "record" | "history" | "summary" | "reports";
+
 const STEP_MAP: Record<string, number> = {
   entry: 0,
   review: 1,
@@ -150,15 +152,11 @@ export default function GivingPage() {
     filteredHistory,
   } = giving;
 
-  // Build tab list based on role: members only see Record giving + History
-  const availableTabs = isAdmin
-    ? (["record", "history", "summary", "reports"] as const)
-    : (["record", "history"] as const);
+  const availableTabs: readonly GivingTabId[] = isAdmin
+    ? ["record", "history", "summary", "reports"]
+    : ["record", "history"];
 
-  const tabIndex = Math.max(
-    0,
-    availableTabs.indexOf(activeTab as (typeof availableTabs)[number]),
-  );
+  const tabIndex = Math.max(0, availableTabs.indexOf(activeTab));
 
   return (
     <main className="giving-page" style={pageShell}>
@@ -185,9 +183,7 @@ export default function GivingPage() {
         <Tabs
           selectedIndex={tabIndex}
           onChange={({ selectedIndex }) => {
-            const tab = (["record", "history", "summary", "reports"] as const)[
-              selectedIndex
-            ];
+            const tab = availableTabs[selectedIndex];
             if (tab) setActiveTab(tab);
           }}
         >

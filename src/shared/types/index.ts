@@ -31,6 +31,8 @@ export type MembershipStatus =
 
 export type BaptismStatus = "baptised" | "not_baptised" | "pending" | "";
 
+export type ChurchRole = "pastor" | "elder" | "deacon" | "treasurer" | "member";
+
 export interface FirebaseApiError {
   message: string;
   status: number | null;

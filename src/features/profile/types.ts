@@ -3,8 +3,8 @@ import type {
   MaritalStatus,
   MembershipStatus,
   BaptismStatus,
+  ChurchRole,
 } from "@/shared/types";
-import type { ChurchRole } from "@/features/auth/types";
 
 export interface EmergencyContact {
   name: string;

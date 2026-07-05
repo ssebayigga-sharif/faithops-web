@@ -1,13 +1,3 @@
-export interface SermonCard {
-  id: string;
-  title: string;
-  speaker: string;
-  date: string;
-  duration: string;
-  scripture: string;
-  tag: "Featured" | "Recent" | "Series" | "Youth";
-}
-
 export interface ServiceTime {
   day: string;
   time: string;
@@ -46,13 +36,3 @@ export interface StatItem {
   detail?: string;
 }
 
-export interface HomeChurchEvent {
-  id: string;
-  title: string;
-  date: string;
-  day: string;
-  month: string;
-  time: string;
-  location: string;
-  category: "Worship" | "Community" | "Youth" | "Study";
-}

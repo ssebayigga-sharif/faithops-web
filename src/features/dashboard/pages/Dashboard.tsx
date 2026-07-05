@@ -23,10 +23,6 @@ import {
   SystemUpdatesPanel,
 } from "../components/DashboardSections";
 
-// ─── Metric card config ───────────────────────────────────────────────────────
-// Defined outside the component so it doesn't re-create on every render.
-// Each entry is a function of snapshot + derived rates to keep this declarative.
-
 function buildMetricCards(
   snapshot: ReturnType<typeof useDashboardSnapshot>["snapshot"],
   activeRate: number,
@@ -60,7 +56,7 @@ function buildMetricCards(
   ] as const;
 }
 
-// ─── Dashboard ────────────────────────────────────────────────────────────────
+//  Dashboard
 
 export default function Dashboard() {
   const navigate = useNavigate();

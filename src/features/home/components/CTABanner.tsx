@@ -9,11 +9,11 @@ const CTABanner: React.FC = () => (
     <Grid>
       <Column lg={8} md={6} sm={4} className={styles.churchCta__content}>
         <h2 id="cta-heading" className={styles.churchCta__heading}>
-          Plan Your First Visit
+          Join Us This Sabbath
         </h2>
         <p className={styles.churchCta__body}>
-          Service times, parking, and what to expect — everything you need for
-          your first Sabbath with us.
+          Come for Bible study, worship, prayer, and fellowship. Members and
+          visitors are welcome.
         </p>
         <div className={styles.churchCta__actions}>
           <Button
@@ -23,7 +23,7 @@ const CTABanner: React.FC = () => (
             renderIcon={ArrowRight}
             className={styles.churchBtnPrimary}
           >
-            Plan Your Visit
+            Contact the Church
           </Button>
           <Button
             as={Link}

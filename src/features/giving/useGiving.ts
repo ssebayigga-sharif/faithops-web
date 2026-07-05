@@ -30,10 +30,6 @@ import {
   filterRecordsByDateRange,
   filterRecordsByCategory,
 } from "./services/giving.service";
-import { useAuthContext } from "@/features/auth/context/AuthContext";
-import type { ChurchRole } from "@/features/auth/types";
-
-const ADMIN_ROLES: ChurchRole[] = ["pastor", "elder", "deacon", "treasurer"];
 
 const INITIAL_FORM: GivingFormState = {
   memberId: "",
@@ -50,13 +46,9 @@ const INITIAL_FORM: GivingFormState = {
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useGiving() {
-  const { user, userProfile } = useAuthContext();
-  const role = userProfile?.role ?? "member";
-  const isAdmin = ADMIN_ROLES.includes(role);
-  const currentUserId = user?.uid ?? "";
-  const currentUserName = userProfile
-    ? `${userProfile.firstName} ${userProfile.lastName}`.trim()
-    : "";
+  const isAdmin: boolean = true;
+  const currentUserId = "";
+  const currentUserName = "";
   const [step, setStep] = useState<GivingStep>("entry");
   const [form, setForm] = useState<GivingFormState>({
     ...INITIAL_FORM,

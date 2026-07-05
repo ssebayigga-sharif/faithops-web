@@ -216,7 +216,8 @@ a {
   padding: 1.5rem;
   box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
   color: var(--cds-text-primary, #161616);
-  overflow-x: auto;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* ── Footer ─────────────────────────────────────────────────── */
@@ -498,10 +499,14 @@ a {
   background: var(--cds-background, #f4f4f4);
   font-family: "IBM Plex Sans", sans-serif;
   color: var(--cds-text-primary, #161616);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .admin-page__inner {
   padding: 1.5rem;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .admin-page__header {
@@ -583,6 +588,8 @@ a {
   border: 1px solid var(--cds-border-subtle-01, #e0e0e0);
   background: var(--cds-layer-01, #ffffff);
   color: var(--cds-text-primary, #161616);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .dashboard-section__header {
@@ -610,6 +617,8 @@ a {
 
 .dashboard-section__body {
   padding: 1rem;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .dashboard-analytics {
@@ -925,8 +934,10 @@ p {
     flex-direction: column;
   }
 
-  .members-page .cds--data-table-content {
+  .members-page .cds--table-container {
     overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
   }
 
   .members-page .cds--table-toolbar {
@@ -1424,8 +1435,10 @@ p {
   font-size: 0.75rem;
 }
 
-.event-management-table .cds--data-table-content {
+.event-management-table .cds--table-container {
   overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
 }
 
 .duty-roster__row,
@@ -1688,8 +1701,10 @@ p {
 
 /* ── Responsive Tables: Scroll on mobile ────────────────────── */
 @media (max-width: 49rem) {
-  .cds--data-table-content {
+  .cds--table-container {
     overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
   }
 
   .cds--table-toolbar {

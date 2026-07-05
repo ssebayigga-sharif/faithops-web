@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Grid, Column, Button } from "@carbon/react";
-import { ArrowRight, Favorite } from "@carbon/icons-react";
+import { ArrowRight, Calendar } from "@carbon/icons-react";
 import styles from "../homepage.module.scss";
 import { SITE_CONFIG } from "../data/site";
 
@@ -9,24 +9,19 @@ const Hero: React.FC = () => (
   <section className={styles.churchHero}>
     <Grid className={styles.churchHero__grid}>
       <Column lg={8} md={6} sm={4}>
-        <div className={styles.churchHero__eyebrow}>
-          <span className={styles.churchHero__rule} />
-          <span className={styles.churchHero__eyebrowText}>
-            {SITE_CONFIG.churchName}
-          </span>
-        </div>
+        <span className={styles.churchHero__eyebrowText}>
+          {SITE_CONFIG.churchName}
+        </span>
 
         <h1 className={styles.churchHero__heading}>
-          Welcome in the Name of{" "}
-          <span className={styles.churchHero__headingAccent}>Jesus Christ</span>
+          Worshiping Christ, keeping the Sabbath, serving the community
         </h1>
 
         <p className={styles.churchHero__body}>
-          Grace and peace be multiplied unto you through the knowledge of God
-          and of our Lord Jesus Christ. We are a family of believers devoted to
-          Scripture, united in Christ's love, and eagerly awaiting His soon
-          return. Whether you are a long-time member or visiting for the first
-          time, you are welcome here.
+          We are a Seventh-day Adventist church family committed to Scripture,
+          prayer, healthful living, discipleship, and the hope of Jesus Christ's
+          soon return. Join us for Sabbath School, Divine Worship, and practical
+          service in our community.
         </p>
 
         <div className={styles.churchHero__actions}>
@@ -37,26 +32,25 @@ const Hero: React.FC = () => (
             renderIcon={ArrowRight}
             className={styles.churchBtnPrimary}
           >
-            Learn Our Story
+            About Our Church
           </Button>
           <Button
-            as={Link}
-            to="/contact"
+            as="a"
+            href="#services-heading"
             kind="ghost"
-            renderIcon={Favorite}
+            renderIcon={Calendar}
             className={styles.churchBtnOutline}
           >
-            Get In Touch
+            Worship Times
           </Button>
         </div>
 
         <blockquote className={styles.churchHero__verse}>
           <p>
-            &ldquo;For God so loved the world that He gave His only begotten
-            Son, that whoever believes in Him should not perish but have
-            everlasting life.&rdquo;
+            &ldquo;Here are they that keep the commandments of God, and the faith
+            of Jesus.&rdquo;
           </p>
-          <cite>John 3:16</cite>
+          <cite>Revelation 14:12</cite>
         </blockquote>
       </Column>
     </Grid>
