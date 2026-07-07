@@ -306,7 +306,7 @@ export function MemberStatement({
                                 borderBottom: `1px solid ${colors.border}`,
                               }}
                             >
-                              {r.method.replace(/_/g, " ")}
+                              {(r.method ?? "cash").replace(/_/g, " ")}
                             </td>
                           </tr>
                         ))}

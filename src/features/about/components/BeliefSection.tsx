@@ -3,20 +3,16 @@ import { Grid, Column, Accordion, AccordionItem, Tag } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { BeliefItem } from "@/features/home/types";
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+//  Props
 interface BeliefsSectionProps {
-  /** Array of beliefs to render — typically imported from church.ts */
   beliefs: BeliefItem[];
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+//  Sub-components
 interface BeliefTitleProps {
   belief: BeliefItem;
 }
 
-/**
- * Extracted so AccordionItem title prop stays clean and testable independently.
- */
 const BeliefTitle: React.FC<BeliefTitleProps> = ({ belief }) => (
   <span className={styles["belief-title"]}>
     <span className={styles["belief-title__number"]} aria-hidden>
@@ -43,7 +39,7 @@ const BeliefContent: React.FC<BeliefContentProps> = ({ belief }) => (
   </div>
 );
 
-// ─── Component ────────────────────────────────────────────────────────────────
+//  Component
 const BeliefsSection: React.FC<BeliefsSectionProps> = ({ beliefs }) => {
   return (
     <section
@@ -53,7 +49,6 @@ const BeliefsSection: React.FC<BeliefsSectionProps> = ({ beliefs }) => {
       <Grid>
         <Column sm={4} md={8} lg={16}>
           <div className={styles["section-header"]}>
-            <div className={styles.goldRule} aria-hidden />
             <h2 id="beliefs-heading" className={styles["section-heading"]}>
               Fundamental Beliefs
             </h2>

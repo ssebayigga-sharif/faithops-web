@@ -14,15 +14,28 @@ export const SEED_MEMBERS: Member[] = [
     joinedAt: "2019-03-15",
     cellGroup: "Nakawa",
     ministries: [
-      { ministry: "Choir", role: "Section Lead", joinedAt: "2019-06-01", active: true },
+      {
+        ministry: "Choir",
+        role: "Section Lead",
+        joinedAt: "2019-06-01",
+        active: true,
+      },
     ],
     family: [
-      { memberId: "KSC-0002", name: "Joseph Namutebi", relation: "Spouse", phone: "+256 772 100 002", isEmergencyContact: true },
+      {
+        memberId: "KSC-0002",
+        name: "Joseph Namutebi",
+        relation: "Spouse",
+        phone: "+256 772 100 002",
+        isEmergencyContact: true,
+      },
     ],
     attendance: Array.from({ length: 12 }, (_, i) => ({
       date: new Date(2025, i, 7).toISOString(),
-      serviceType: "Sunday" as const,
-      present: i !== 3 && i !== 8,
+      serviceType: "Divine Service" as const,
+      sessionId: `session-${i + 1}`,
+      status: i !== 3 && i !== 8 ? "present" : "absent",
+      markedBy: "System",
     })),
     giving: [
       { month: "2025-01", amount: 150000, type: "Tithe" },
@@ -30,15 +43,43 @@ export const SEED_MEMBERS: Member[] = [
       { month: "2025-03", amount: 50000, type: "Offering" },
     ],
     followUps: [
-      { id: "f1", task: "Check on family Bible study", status: "pending", assignedTo: "Deacon Peter", dueDate: "2026-05-30" },
+      {
+        id: "f1",
+        task: "Check on family Bible study",
+        status: "pending",
+        assignedTo: "Deacon Peter",
+        dueDate: "2026-05-30",
+      },
     ],
     notes: [
-      { id: "n1", author: "Pastor Moses", authorRole: "Lead Pastor", content: "Very committed member, leads Sabbath School class.", createdAt: "2025-12-01", private: false },
+      {
+        id: "n1",
+        author: "Pastor Moses",
+        authorRole: "Lead Pastor",
+        content: "Very committed member, leads Sabbath School class.",
+        createdAt: "2025-12-01",
+        private: false,
+      },
     ],
     timeline: [
-      { id: "t1", type: "joined", description: "Agnes Namutebi joined Kampala SDA Church.", date: "2019-03-15" },
-      { id: "t2", type: "baptized", description: "Baptized by Pastor Moses.", date: "2019-05-20" },
-      { id: "t3", type: "ministry", description: "Joined the Choir as Section Lead.", date: "2019-06-01" },
+      {
+        id: "t1",
+        type: "joined",
+        description: "Agnes Namutebi joined Kampala SDA Church.",
+        date: "2019-03-15",
+      },
+      {
+        id: "t2",
+        type: "baptized",
+        description: "Baptized by Pastor Moses.",
+        date: "2019-05-20",
+      },
+      {
+        id: "t3",
+        type: "ministry",
+        description: "Joined the Choir as Section Lead.",
+        date: "2019-06-01",
+      },
     ],
   },
   {
@@ -55,14 +96,26 @@ export const SEED_MEMBERS: Member[] = [
     joinedAt: "2015-01-11",
     cellGroup: "Kololo",
     ministries: [
-      { ministry: "Prayer", role: "Team Lead", joinedAt: "2015-03-01", active: true },
-      { ministry: "Evangelism", role: "Mentor", joinedAt: "2018-01-01", active: true },
+      {
+        ministry: "Prayer",
+        role: "Team Lead",
+        joinedAt: "2015-03-01",
+        active: true,
+      },
+      {
+        ministry: "Evangelism",
+        role: "Mentor",
+        joinedAt: "2018-01-01",
+        active: true,
+      },
     ],
     family: [],
     attendance: Array.from({ length: 12 }, (_, i) => ({
       date: new Date(2025, i, 7).toISOString(),
-      serviceType: "Sunday" as const,
-      present: true,
+      serviceType: "Divine Service" as const,
+      sessionId: `session-${i + 1}`,
+      status: "present",
+      markedBy: "System",
     })),
     giving: [
       { month: "2025-01", amount: 500000, type: "Tithe" },
@@ -72,7 +125,12 @@ export const SEED_MEMBERS: Member[] = [
     followUps: [],
     notes: [],
     timeline: [
-      { id: "t1", type: "joined", description: "Peter Ssebunya joined Kampala SDA Church.", date: "2015-01-11" },
+      {
+        id: "t1",
+        type: "joined",
+        description: "Peter Ssebunya joined Kampala SDA Church.",
+        date: "2015-01-11",
+      },
     ],
   },
   {
@@ -89,23 +147,39 @@ export const SEED_MEMBERS: Member[] = [
     joinedAt: "2024-07-20",
     cellGroup: "Ntinda",
     ministries: [
-      { ministry: "Youth", role: "Member", joinedAt: "2024-08-01", active: true },
+      {
+        ministry: "Youth",
+        role: "Member",
+        joinedAt: "2024-08-01",
+        active: true,
+      },
     ],
     family: [],
     attendance: Array.from({ length: 6 }, (_, i) => ({
       date: new Date(2025, i + 6, 7).toISOString(),
-      serviceType: "Sunday" as const,
-      present: i % 3 !== 2,
+      serviceType: "Divine Service" as const,
+      sessionId: `session-${i + 1}`,
+      status: i % 3 !== 2 ? "present" : "absent",
+      markedBy: "System",
     })),
-    giving: [
-      { month: "2025-01", amount: 20000, type: "Offering" },
-    ],
+    giving: [{ month: "2025-01", amount: 20000, type: "Offering" }],
     followUps: [
-      { id: "f2", task: "New convert Bible study series", status: "overdue", assignedTo: "Elder Grace", dueDate: "2026-04-10" },
+      {
+        id: "f2",
+        task: "New convert Bible study series",
+        status: "overdue",
+        assignedTo: "Elder Grace",
+        dueDate: "2026-04-10",
+      },
     ],
     notes: [],
     timeline: [
-      { id: "t1", type: "joined", description: "Ruth Nakato joined as a new convert.", date: "2024-07-20" },
+      {
+        id: "t1",
+        type: "joined",
+        description: "Ruth Nakato joined as a new convert.",
+        date: "2024-07-20",
+      },
     ],
   },
   {
@@ -122,14 +196,26 @@ export const SEED_MEMBERS: Member[] = [
     joinedAt: "2021-02-08",
     cellGroup: "Kireka",
     ministries: [
-      { ministry: "Evangelism", role: "Team Lead", joinedAt: "2021-04-01", active: true },
-      { ministry: "Media", role: "Camera", joinedAt: "2022-01-01", active: true },
+      {
+        ministry: "Evangelism",
+        role: "Team Lead",
+        joinedAt: "2021-04-01",
+        active: true,
+      },
+      {
+        ministry: "Media",
+        role: "Camera",
+        joinedAt: "2022-01-01",
+        active: true,
+      },
     ],
     family: [],
     attendance: Array.from({ length: 10 }, (_, i) => ({
       date: new Date(2025, i, 14).toISOString(),
-      serviceType: "Sunday" as const,
-      present: i !== 5,
+      serviceType: "Divine Service" as const,
+      sessionId: `session-${i + 1}`,
+      status: i !== 5 ? "present" : "absent",
+      markedBy: "System",
     })),
     giving: [
       { month: "2025-01", amount: 300000, type: "Tithe" },
@@ -138,7 +224,12 @@ export const SEED_MEMBERS: Member[] = [
     followUps: [],
     notes: [],
     timeline: [
-      { id: "t1", type: "joined", description: "Emmanuel Okiria transferred from Mbale SDA.", date: "2021-02-08" },
+      {
+        id: "t1",
+        type: "joined",
+        description: "Emmanuel Okiria transferred from Mbale SDA.",
+        date: "2021-02-08",
+      },
     ],
   },
   {
@@ -155,19 +246,31 @@ export const SEED_MEMBERS: Member[] = [
     joinedAt: "2023-10-01",
     cellGroup: "Bugolobi",
     ministries: [
-      { ministry: "Children", role: "Teacher", joinedAt: "2023-11-01", active: true },
+      {
+        ministry: "Children",
+        role: "Teacher",
+        joinedAt: "2023-11-01",
+        active: true,
+      },
     ],
     family: [],
     attendance: Array.from({ length: 8 }, (_, i) => ({
       date: new Date(2025, i, 7).toISOString(),
-      serviceType: "Sunday" as const,
-      present: i !== 2 && i !== 3,
+      serviceType: "Divine Service" as const,
+      sessionId: `session-${i + 1}`,
+      status: i !== 2 && i !== 3 ? "present" : "absent",
+      markedBy: "System",
     })),
     giving: [],
     followUps: [],
     notes: [],
     timeline: [
-      { id: "t1", type: "joined", description: "Lydia Tumwebaze joined Kampala SDA Church.", date: "2023-10-01" },
+      {
+        id: "t1",
+        type: "joined",
+        description: "Lydia Tumwebaze joined Kampala SDA Church.",
+        date: "2023-10-01",
+      },
     ],
   },
   {
@@ -187,16 +290,29 @@ export const SEED_MEMBERS: Member[] = [
     family: [],
     attendance: Array.from({ length: 3 }, (_, i) => ({
       date: new Date(2026, i, 7).toISOString(),
-      serviceType: "Sunday" as const,
-      present: true,
+      serviceType: "Divine Service" as const,
+      sessionId: `session-${i + 1}`,
+      status: "present",
+      markedBy: "System",
     })),
     giving: [],
     followUps: [
-      { id: "f3", task: "Visitor welcome call + invite to cell group", status: "pending", assignedTo: "Deacon Simon", dueDate: "2026-05-25" },
+      {
+        id: "f3",
+        task: "Visitor welcome call + invite to cell group",
+        status: "pending",
+        assignedTo: "Deacon Simon",
+        dueDate: "2026-05-25",
+      },
     ],
     notes: [],
     timeline: [
-      { id: "t1", type: "joined", description: "David Mukasa first attended as a visitor.", date: "2026-01-15" },
+      {
+        id: "t1",
+        type: "joined",
+        description: "David Mukasa first attended as a visitor.",
+        date: "2026-01-15",
+      },
     ],
   },
 ];

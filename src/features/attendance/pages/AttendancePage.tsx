@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import {
   Grid,
   Column,
@@ -7,16 +7,10 @@ import {
   Tab,
   TabPanels,
   TabPanel,
-  Select,
-  SelectItem,
-  DatePicker,
-  DatePickerInput,
-  TextInput,
   Tile,
   InlineNotification,
   DataTableSkeleton,
   Button,
-  Modal,
 } from "@carbon/react";
 import { EventSchedule, List, UserFollow, Police } from "@carbon/icons-react";
 
@@ -25,6 +19,10 @@ import { MarkAttendanceTable } from "@/features/attendance/components/MarkAttend
 import { SessionHistoryTable } from "@/features/attendance/components/SessionHistoryTable";
 import { VisitorsTable } from "@/features/attendance/components/VisitorsTable";
 import { FollowUpModal } from "@/features/attendance/components/FollowUpModal";
+import { SessionConfig } from "@/features/attendance/components/SessionConfig";
+import { VisitorQuickAdd } from "@/features/attendance/components/VisitorQuickAdd";
+import { VisitorList } from "@/features/attendance/components/VisitorList";
+import { VisitorFollowUpModal } from "@/features/attendance/components/VisitorFollowUpModal";
 import {
   useMembers,
   useSessions,
@@ -35,6 +33,8 @@ import {
   useFollowUpCandidates,
   useCreateFollowUpTask,
   useUpdateVisitorFollowUp,
+  useEvents,
+  useSessionRecords,
 } from "@/features/attendance/hooks/useAttendance";
 import type {
   AttendanceRow,
@@ -43,7 +43,6 @@ import type {
   VisitorRowPayload,
   VisitorRecord,
 } from "@/features/attendance/types";
-import type { FollowUpCandidate } from "@/features/attendance/services/sync.services";
 
 import styles from "@/features/attendance/attendance.module.scss";
 
@@ -62,7 +61,14 @@ const toIsoDate = (d: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-const todayIso = toIsoDate(new Date());
+const isSaturday = (d: Date): boolean => d.getDay() === 6;
+
+const isOlderThanTwoMonths = (dateStr: string): boolean => {
+  const date = new Date(dateStr);
+  const twoMonthsAgo = new Date();
+  twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+  return date < twoMonthsAgo;
+};
 
 export const AttendancePage: React.FC = () => {
   // ── Session config ────────────────────────────────────────
@@ -83,21 +89,71 @@ export const AttendancePage: React.FC = () => {
   const { data: sessions = [], isLoading: sessionsLoading } = useSessions();
   const { data: allVisitors = [] } = useVisitors();
   const { data: followUpCandidates = [] } = useFollowUpCandidates();
+  const { data: events = [] } = useEvents();
   const createFollowUp = useCreateFollowUpTask();
   const updateVisitorFollowUp = useUpdateVisitorFollowUp();
+
+  // Build session ID for current date+serviceType
+  const currentSessionId = useMemo(
+    () =>
+      `${toIsoDate(date)}_${serviceType.replace(/\s+/g, "_").toLowerCase()}`,
+    [date, serviceType],
+  );
+
+  // Load existing records if this session was already saved
+  const { data: existingRecords = [] } = useSessionRecords(currentSessionId);
 
   // ── Derived state ─────────────────────────────────────────
   const initialRows = useAttendanceRows(members);
   const [rows, setRows] = useState<AttendanceRow[]>([]);
 
-  // Sync rows when members load (only initialise once)
-  React.useEffect(() => {
-    if (initialRows.length > 0 && rows.length === 0) {
+  // Sync rows whenever members change (new members appear immediately)
+  // OR when existing records are loaded (session was already saved)
+  useEffect(() => {
+    if (existingRecords.length > 0) {
+      // Merge existing records into rows
+      setRows(
+        initialRows.map((r) => {
+          const existing = existingRecords.find(
+            (rec) => rec.memberId === r.memberId,
+          );
+          return existing
+            ? {
+                ...r,
+                status: existing.status as AttendanceStatus,
+                notes: existing.notes,
+              }
+            : r;
+        }),
+      );
+    } else {
       setRows(initialRows);
     }
-  }, [initialRows, rows.length]);
+  }, [initialRows, existingRecords]);
 
-  const stats = useAttendanceStats(sessions);
+  // Build service type options from events + defaults
+  const eventServiceTypes = useMemo(() => {
+    const categories = new Set<string>();
+    events.forEach((ev) => {
+      if (ev.category) categories.add(ev.category);
+    });
+    return [...new Set([...SERVICE_TYPES, ...categories])];
+  }, [events]);
+
+  // Auto-select "Sabbath Programmes" if date is Saturday
+  useEffect(() => {
+    if (isSaturday(date) && serviceType !== "Sabbath Programmes") {
+      setServiceType("Sabbath Programmes");
+    }
+  }, [date, serviceType]);
+
+  // Filter sessions to only show those from the last 2 months
+  const recentSessions = useMemo(
+    () => sessions.filter((s) => !isOlderThanTwoMonths(s.date)),
+    [sessions],
+  );
+
+  const stats = useAttendanceStats(recentSessions);
 
   // Build a live session object from current rows for stat cards
   const liveSession =
@@ -165,21 +221,21 @@ export const AttendancePage: React.FC = () => {
         visitors,
         markedBy: markedBy || "Admin",
       });
-      setRows((prev) => prev.map((r) => ({ ...r, notes: "" })));
+      // After save, keep rows as-is (they stay saved forever)
       setVisitors([]);
     } catch (error) {
-      console.error("Failed to save attendance:", error);
+      console.error(error);
     }
   };
 
-  // ── Follow-up modal state ─────────────────────────────────
+  // ── Follow-up modal state
   const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
 
   const handleAutoFollowUp = async () => {
     setFollowUpModalOpen(true);
   };
 
-  // ── Visitor follow-up modal state ─────────────────────────
+  // ── Visitor follow-up modal state
   const [visitorFollowUpModalOpen, setVisitorFollowUpModalOpen] =
     useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState<VisitorRecord | null>(
@@ -191,16 +247,45 @@ export const AttendancePage: React.FC = () => {
     setVisitorFollowUpModalOpen(true);
   }, []);
 
+  const handleVisitorFollowUpClose = useCallback(() => {
+    setVisitorFollowUpModalOpen(false);
+    setSelectedVisitor(null);
+  }, []);
+
+  const handleVisitorFollowUpSubmit = useCallback(async () => {
+    if (!selectedVisitor) return;
+    try {
+      const sessionId = `${selectedVisitor.date}_${selectedVisitor.serviceType.replace(/\s+/g, "_").toLowerCase()}`;
+      await updateVisitorFollowUp.mutateAsync({
+        sessionId,
+        visitorId: selectedVisitor.id,
+        status: "contacted",
+      });
+      setVisitorFollowUpModalOpen(false);
+      setSelectedVisitor(null);
+    } catch (error) {
+      console.error("Failed to update visitor follow-up:", error);
+    }
+  }, [selectedVisitor, updateVisitorFollowUp]);
+
+  const handleVisitorStatusChange = useCallback(
+    (status: VisitorRecord["followUpStatus"]) => {
+      if (selectedVisitor) {
+        setSelectedVisitor({ ...selectedVisitor, followUpStatus: status });
+      }
+    },
+    [selectedVisitor],
+  );
+
   return (
     <div className={styles.attendancepage}>
-      {/* ── Page header ──────────────────────────────────── */}
       <div className={styles.attendanceheader}>
         <Grid>
           <Column lg={16} md={8} sm={4}>
             <div className={styles.attendanceheader__inner}>
               <div>
                 <h1 className={styles.attendanceheader__title}>
-                  Attendance Tracking
+                  Track Attendance
                 </h1>
                 <p className={styles.attendanceheader__subtitle}>
                   {stats.totalSessions > 0
@@ -231,7 +316,7 @@ export const AttendancePage: React.FC = () => {
               kind="success"
               lowContrast
               title="Attendance saved successfully"
-              subtitle="The session has been recorded. Member profiles and events synced."
+              subtitle="The session has been recorded. Member profiles synced."
               style={{ marginBottom: "1rem" }}
               onCloseButtonClick={() => saveMutation.reset()}
             />
@@ -255,120 +340,43 @@ export const AttendancePage: React.FC = () => {
             </TabList>
 
             <TabPanels>
-              {/* ── Tab 1: Mark attendance ─────────────── */}
+              {/*  Mark attendance */}
               <TabPanel>
                 <Tile style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
-                  <div className={styles.attendancepage__config}>
-                    <DatePicker
-                      datePickerType="single"
-                      dateFormat="m/d/Y"
-                      value={date}
-                      onChange={([d]) => {
-                        if (d) setDate(d);
-                      }}
-                      maxDate={new Date().toLocaleDateString("en-US")}
-                    >
-                      <DatePickerInput
-                        id="att-date"
-                        labelText="Service Date"
-                        placeholder="mm/dd/yyyy"
-                      />
-                    </DatePicker>
-
-                    <Select
-                      id="att-service"
-                      labelText="Service Type"
-                      value={serviceType}
-                      onChange={(e) =>
-                        setServiceType(e.target.value as ServiceType)
-                      }
-                    >
-                      {SERVICE_TYPES.map((s) => (
-                        <SelectItem key={s} value={s} text={s} />
-                      ))}
-                    </Select>
-
-                    <TextInput
-                      id="att-markedBy"
-                      labelText="Marked By"
-                      placeholder="Your name"
-                      value={markedBy}
-                      onChange={(e) => setMarkedBy(e.target.value)}
-                    />
-                  </div>
+                  <SessionConfig
+                    date={date}
+                    serviceType={serviceType}
+                    markedBy={markedBy}
+                    serviceTypes={eventServiceTypes}
+                    onDateChange={setDate}
+                    onServiceTypeChange={setServiceType}
+                    onMarkedByChange={setMarkedBy}
+                  />
                 </Tile>
 
-                {/* Visitor quick-add */}
+                {/* Visitor quick-add section */}
                 <Tile style={{ marginBottom: "1rem" }}>
-                  <div className={styles.attendancepage__visitor}>
-                    <TextInput
-                      id="visitor-name"
-                      labelText="Visitor Name"
-                      placeholder="Enter name"
-                      value={visitorName}
-                      onChange={(e) => setVisitorName(e.target.value)}
-                    />
-                    <TextInput
-                      id="visitor-phone"
-                      labelText="Phone"
-                      placeholder="Phone number"
-                      value={visitorPhone}
-                      onChange={(e) => setVisitorPhone(e.target.value)}
-                    />
-                    <TextInput
-                      id="visitor-email"
-                      labelText="Email"
-                      placeholder="Email (optional)"
-                      value={visitorEmail}
-                      onChange={(e) => setVisitorEmail(e.target.value)}
-                    />
-                    <TextInput
-                      id="visitor-notes"
-                      labelText="Notes"
-                      placeholder="Notes"
-                      value={visitorNotes}
-                      onChange={(e) => setVisitorNotes(e.target.value)}
-                    />
-                    <Button
-                      kind="secondary"
-                      size="sm"
-                      onClick={handleAddVisitor}
-                      disabled={!visitorName.trim() || !visitorPhone.trim()}
-                    >
-                      Add Visitor
-                    </Button>
-                  </div>
-                  {visitors.length > 0 && (
-                    <div className={styles.attendancepage__visitorlist}>
-                      <p className={styles.attendancepage__visitorlistlabel}>
-                        Visitors added ({visitors.length}):
-                      </p>
-                      {visitors.map((v, i) => (
-                        <div
-                          key={i}
-                          className={styles.attendancepage__visitoritem}
-                        >
-                          <span>
-                            {v.name} — {v.phone}
-                          </span>
-                          <Button
-                            kind="ghost"
-                            size="sm"
-                            hasIconOnly
-                            renderIcon={Police}
-                            iconDescription="Remove"
-                            onClick={() => handleRemoveVisitor(i)}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <VisitorQuickAdd
+                    name={visitorName}
+                    phone={visitorPhone}
+                    email={visitorEmail}
+                    notes={visitorNotes}
+                    onNameChange={setVisitorName}
+                    onPhoneChange={setVisitorPhone}
+                    onEmailChange={setVisitorEmail}
+                    onNotesChange={setVisitorNotes}
+                    onAdd={handleAddVisitor}
+                  />
+                  <VisitorList
+                    visitors={visitors}
+                    onRemove={handleRemoveVisitor}
+                  />
                 </Tile>
 
                 <StatCards session={liveSession} />
 
                 {membersLoading ? (
-                  <DataTableSkeleton columnCount={5} rowCount={8} />
+                  <DataTableSkeleton columnCount={3} rowCount={8} />
                 ) : (
                   <MarkAttendanceTable
                     rows={rows}
@@ -380,17 +388,17 @@ export const AttendancePage: React.FC = () => {
                 )}
               </TabPanel>
 
-              {/* ── Tab 2: History ─────────────────────── */}
+              {/* History */}
               <TabPanel>
                 <div style={{ marginTop: "1.5rem" }}>
                   <SessionHistoryTable
-                    sessions={sessions}
+                    sessions={recentSessions}
                     isLoading={sessionsLoading}
                   />
                 </div>
               </TabPanel>
 
-              {/* ── Tab 3: Visitors ────────────────────── */}
+              {/*  Visitors */}
               <TabPanel>
                 <div style={{ marginTop: "1.5rem" }}>
                   <VisitorsTable
@@ -403,8 +411,6 @@ export const AttendancePage: React.FC = () => {
           </Tabs>
         </Column>
       </Grid>
-
-      {/* ── Follow-up candidates modal ──────────────────────── */}
       <FollowUpModal
         open={followUpModalOpen}
         candidates={followUpCandidates}
@@ -421,53 +427,13 @@ export const AttendancePage: React.FC = () => {
           }
         }}
       />
-
-      {/* ── Visitor follow-up update modal ──────────────────── */}
-      <Modal
+      <VisitorFollowUpModal
         open={visitorFollowUpModalOpen}
-        modalHeading={`Follow-Up: ${selectedVisitor?.name ?? ""}`}
-        primaryButtonText="Update"
-        secondaryButtonText="Cancel"
-        onRequestClose={() => {
-          setVisitorFollowUpModalOpen(false);
-          setSelectedVisitor(null);
-        }}
-        onRequestSubmit={async () => {
-          if (!selectedVisitor) return;
-          try {
-            const sessionId = `${selectedVisitor.date}_${selectedVisitor.serviceType.replace(/\s+/g, "_").toLowerCase()}`;
-            await updateVisitorFollowUp.mutateAsync({
-              sessionId,
-              visitorId: selectedVisitor.id,
-              status: "contacted",
-            });
-            setVisitorFollowUpModalOpen(false);
-            setSelectedVisitor(null);
-          } catch (error) {
-            console.error("Failed to update visitor follow-up:", error);
-          }
-        }}
-      >
-        <p>Update follow-up status for {selectedVisitor?.name}.</p>
-        <Select
-          id="visitor-followup-status"
-          labelText="Follow-Up Status"
-          value={selectedVisitor?.followUpStatus ?? "pending"}
-          onChange={(e) => {
-            if (selectedVisitor) {
-              setSelectedVisitor({
-                ...selectedVisitor,
-                followUpStatus: e.target.value as any,
-              });
-            }
-          }}
-        >
-          <SelectItem value="pending" text="Pending" />
-          <SelectItem value="contacted" text="Contacted" />
-          <SelectItem value="converted" text="Converted" />
-          <SelectItem value="no_interest" text="No Interest" />
-        </Select>
-      </Modal>
+        visitor={selectedVisitor}
+        onClose={handleVisitorFollowUpClose}
+        onSubmit={handleVisitorFollowUpSubmit}
+        onStatusChange={handleVisitorStatusChange}
+      />
     </div>
   );
 };

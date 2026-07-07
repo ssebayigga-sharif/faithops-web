@@ -1,4 +1,3 @@
-import type { CarbonIconType } from "@carbon/icons-react";
 import type { UseQueryResult } from "@tanstack/react-query";
 
 export type EventCalendarView = "month" | "week" | "day" | "agenda";
@@ -70,15 +69,6 @@ export type PermissionRole =
 
 export type PermissionLevel = "Manage" | "View all" | "Approve" | "Finance";
 
-export type EventDetailTab =
-  | "overview"
-  | "attendees"
-  | "volunteers"
-  | "budget"
-  | "media"
-  | "notes"
-  | "reports";
-
 export interface EventRecurrence {
   frequency: EventRecurrenceFrequency;
   rule: string;
@@ -109,12 +99,6 @@ export interface EventCommunicationPlan {
   automations: string[];
 }
 
-export interface EventBudgetLine {
-  item: string;
-  allocated: number;
-  spent: number;
-}
-
 export interface EventMediaAttachment {
   type: "Sermon notes" | "Poster" | "Photo" | "Recording" | "Report" | "Budget";
   name: string;
@@ -138,6 +122,7 @@ export interface ChurchEvent {
   id: string;
   title: string;
   description: string;
+  organizer?: string;
   department: EventDepartment;
   category: EventCategory;
   colorKey: EventColorKey;
@@ -165,27 +150,10 @@ export interface ChurchEvent {
 export interface EventFormDraft {
   title: string;
   description: string;
-  department: EventDepartment;
-  category: EventCategory;
   venue: string;
-  start: string;
-  end: string;
-  recurrenceFrequency: EventRecurrenceFrequency;
+  date: string;
+  organizer: string;
   speaker: string;
-  capacity: number;
-  registrationRequired: boolean;
-  volunteersNeeded: number;
-  budgetAllocated: number;
-  attachments: string;
-  communicationChannels: CommunicationChannel[];
-}
-
-export interface EventMetric {
-  label: string;
-  value: string;
-  meta: string;
-  accent: string;
-  icon: CarbonIconType;
 }
 
 export interface EventTrendPoint {
@@ -210,31 +178,6 @@ export interface EventAnalyticsSnapshot {
   monthlyTrend: EventTrendPoint[];
   attendanceGrowth: EventTrendPoint[];
   departmentActivity: DepartmentActivity[];
-}
-
-export interface EventCalendarViewProps {
-  events: ChurchEvent[];
-  selectedEventId?: string;
-  onSelectEvent: (event: ChurchEvent) => void;
-}
-
-export interface EventAnalyticsBarProps {
-  snapshot: EventAnalyticsSnapshot;
-}
-
-export interface UpcomingEventsFeedProps {
-  events: ChurchEvent[];
-  onSelectEvent: (event: ChurchEvent) => void;
-}
-
-export interface EventManagementTableProps {
-  events: ChurchEvent[];
-  onSelectEvent: (event: ChurchEvent) => void;
-}
-
-export interface MinistryCoordinationPanelProps {
-  events: ChurchEvent[];
-  onSelectEvent: (event: ChurchEvent) => void;
 }
 
 export interface EventDetailsDrawerProps {

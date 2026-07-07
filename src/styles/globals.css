@@ -537,6 +537,26 @@ a {
   gap: 0.5rem;
 }
 
+/* ── Responsive action buttons (like metric-grid) ───────────── */
+@media (max-width: 49rem) {
+  .admin-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+  }
+
+  .admin-actions .cds--btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 30rem) {
+  .admin-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Dashboard: Metric Cards ────────────────────────────────── */
 
 .metric-grid {
@@ -920,16 +940,6 @@ p {
   }
 
   /* ── Members page mobile fixes ────────────────────────────── */
-  .admin-actions {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  .admin-actions .cds--btn {
-    width: 100%;
-    justify-content: center;
-  }
-
   .admin-page__header {
     flex-direction: column;
   }
@@ -1039,15 +1049,6 @@ p {
   .admin-page__header {
     flex-direction: column;
   }
-
-  .admin-actions {
-    width: 100%;
-  }
-
-  .admin-actions .cds--btn {
-    flex: 1;
-    justify-content: center;
-  }
 }
 
 /* Slide-over modal  */
@@ -1086,6 +1087,24 @@ p {
 .events-page .cds--grid {
   padding-right: 0;
   padding-left: 0;
+}
+
+.events-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.events-filters .cds--search-input {
+  width: 100%;
+}
+
+@media (max-width: 49rem) {
+  .events-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .event-section__header {
@@ -1772,5 +1791,88 @@ p {
 @media (max-width: 65.98rem) {
   .events-main-grid .cds--col-lg-11 {
     width: 100%;
+  }
+}
+
+/* ── Attendance Mark Table ──────────────────────────────────── */
+.attendance-mark-table {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.attendance-mark-table .cds--table-container {
+  min-width: 0;
+}
+
+/* Row backgrounds stay as page default — only buttons get colored */
+
+.attendance-mark-table__status-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.attendance-mark-table__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #d0d7de;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #393939;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 120ms ease;
+  white-space: nowrap;
+  min-width: 80px;
+  justify-content: center;
+}
+
+.attendance-mark-table__btn:hover {
+  background: #f4f4f4;
+}
+
+.attendance-mark-table__btn--present.attendance-mark-table__btn--active {
+  background: #198038;
+  border-color: #198038;
+  color: #ffffff;
+}
+
+.attendance-mark-table__btn--absent.attendance-mark-table__btn--active {
+  background: #da1e28;
+  border-color: #da1e28;
+  color: #ffffff;
+}
+
+/* ── Attendance Mark Table Responsive ───────────────────────── */
+@media (max-width: 49rem) {
+  .attendance-mark-table__status-group {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .attendance-mark-table__btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .attendance-mark-table__cell-index,
+  .attendance-mark-table__cell-name,
+  .attendance-mark-table__cell-status {
+    padding: 0.5rem !important;
+  }
+
+  .attendance-mark-table .cds--table-toolbar {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 30rem) {
+  .attendance-mark-table .cds--table-container {
+    overflow-x: auto;
   }
 }

@@ -5,15 +5,15 @@ import { useFadeIn } from "@/features/home/useFadeIn";
 import styles from "../about.module.scss";
 import type { Leader } from "@/features/home/types";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+//  Constants
 const BIO_PREVIEW_LENGTH = 120;
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+//  Props
 interface LeadershipSectionProps {
   leaders: Leader[];
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// Sub-components
 interface LeaderCardProps {
   leader: Leader;
   isExpanded: boolean;
@@ -47,19 +47,12 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
         <div className={styles["leader-card__meta"]}>
           <h3 className={styles["leader-card__name"]}>{leader.name}</h3>
           <p className={styles["leader-card__title"]}>{leader.title}</p>
-          <p className={styles["leader-card__tenure"]}>
-            {leader.yearsServing} years of service
-          </p>
         </div>
       </header>
 
       {/* ── Bio ── */}
       <div className={styles["leader-card__body"]}>
-        <p
-          id={bioId}
-          className={styles["leader-card__bio"]}
-          aria-live="polite"
-        >
+        <p id={bioId} className={styles["leader-card__bio"]} aria-live="polite">
           {isExpanded ? leader.bio : bioPreview}
         </p>
 
@@ -80,15 +73,11 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
   );
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// Component
 const LeadershipSection: React.FC<LeadershipSectionProps> = ({ leaders }) => {
   const ref = useFadeIn();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  /**
-   * Toggle: collapse if already open, expand if closed.
-   * useCallback so LeaderCard receives a stable reference.
-   */
   const handleToggle = useCallback((id: string) => {
     setExpandedId((current) => (current === id ? null : id));
   }, []);
@@ -105,14 +94,9 @@ const LeadershipSection: React.FC<LeadershipSectionProps> = ({ leaders }) => {
             data-animate
             className={`${styles["section-header"]} ${styles["section-header--center"]} ${styles.fadeUp}`}
           >
-            <div className={styles.goldRuleCenter} aria-hidden />
             <h2 id="leadership-heading" className={styles["section-heading"]}>
-              Our Leadership
+              Church Leaders.
             </h2>
-            <p className={styles["section-lead"]}>
-              Servant leaders called to shepherd, teach, and guide our
-              congregation.
-            </p>
           </div>
         </Column>
 

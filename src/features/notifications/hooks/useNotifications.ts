@@ -5,6 +5,8 @@
  * this currently returns an empty notification state.
  */
 import { useEffect, useState, useCallback } from "react";
+import { get, ref } from "firebase/database";
+import { getFirebaseDatabase } from "@/shared/services/firebase";
 import type { ChurchNotification } from "@/features/notifications/types";
 
 interface UseNotificationsReturn {
@@ -23,9 +25,35 @@ export const useNotifications = (): UseNotificationsReturn => {
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
-    setNotifications([]);
-    setUnreadCount(0);
-    setIsLoading(false);
+
+    try {
+      const db = getFirebaseDatabase();
+      const snapshot = await get(ref(db, "/notifications"));
+      const value = snapshot.val() as Record<
+        string,
+        Record<string, ChurchNotification>
+      > | null;
+
+      const nextNotifications = Object.values(value ?? {})
+        .flatMap((recipientGroup) =>
+          Object.entries(recipientGroup ?? {}).map(([id, notification]) => ({
+            ...notification,
+            id,
+          })),
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+
+      setNotifications(nextNotifications);
+      setUnreadCount(nextNotifications.filter((n) => !n.read).length);
+    } catch {
+      setNotifications([]);
+      setUnreadCount(0);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   // Fetch on mount and when uid changes
@@ -33,15 +61,12 @@ export const useNotifications = (): UseNotificationsReturn => {
     refresh();
   }, [refresh]);
 
-  const markRead = useCallback(
-    async (notificationId: string) => {
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
-      );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
-    },
-    [],
-  );
+  const markRead = useCallback(async (notificationId: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+  }, []);
 
   const markAllRead = useCallback(async () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));

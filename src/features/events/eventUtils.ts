@@ -2,7 +2,6 @@ import type {
   ChurchEvent,
   DepartmentActivity,
   EventAnalyticsSnapshot,
-  EventCalendarView,
   EventTrendPoint,
 } from "@/features/events/types";
 
@@ -57,7 +56,7 @@ export function sortEventsByStart(events: ChurchEvent[]): ChurchEvent[] {
 
 export function getUpcomingEvents(
   events: ChurchEvent[],
-  from = new Date("2026-05-20T00:00:00"),
+  from = new Date(),
 ): ChurchEvent[] {
   return sortEventsByStart(
     events.filter((event) => new Date(event.end).getTime() >= from.getTime()),
@@ -70,87 +69,6 @@ export function isSameDay(left: Date, right: Date): boolean {
     left.getMonth() === right.getMonth() &&
     left.getDate() === right.getDate()
   );
-}
-
-export function getEventsForDate(
-  events: ChurchEvent[],
-  date: Date,
-): ChurchEvent[] {
-  return sortEventsByStart(
-    events.filter((event) => isSameDay(new Date(event.start), date)),
-  );
-}
-
-export function getEventsForRange(
-  events: ChurchEvent[],
-  start: Date,
-  end: Date,
-): ChurchEvent[] {
-  return sortEventsByStart(
-    events.filter((event) => {
-      const eventStart = new Date(event.start).getTime();
-      return eventStart >= start.getTime() && eventStart <= end.getTime();
-    }),
-  );
-}
-
-export function getCalendarDays(monthDate: Date): Date[] {
-  const year = monthDate.getFullYear();
-  const month = monthDate.getMonth();
-  const firstOfMonth = new Date(year, month, 1);
-  const start = new Date(firstOfMonth);
-  start.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
-
-  return Array.from({ length: 42 }, (_, index) => {
-    const day = new Date(start);
-    day.setDate(start.getDate() + index);
-    return day;
-  });
-}
-
-export function getWeekDays(anchor: Date): Date[] {
-  const start = new Date(anchor);
-  start.setDate(anchor.getDate() - anchor.getDay());
-
-  return Array.from({ length: 7 }, (_, index) => {
-    const day = new Date(start);
-    day.setDate(start.getDate() + index);
-    return day;
-  });
-}
-
-export function getCalendarTitle(
-  view: EventCalendarView,
-  anchor: Date,
-): string {
-  if (view === "day") return formatEventDate(anchor);
-  if (view === "week") {
-    const days = getWeekDays(anchor);
-    return `${formatEventDate(days[0])} - ${formatEventDate(days[6])}`;
-  }
-
-  return new Intl.DateTimeFormat("en-UG", {
-    month: "long",
-    year: "numeric",
-  }).format(anchor);
-}
-
-export function moveCalendarAnchor(
-  view: EventCalendarView,
-  anchor: Date,
-  direction: -1 | 1,
-): Date {
-  const next = new Date(anchor);
-  if (view === "month" || view === "agenda") {
-    next.setMonth(anchor.getMonth() + direction);
-    return next;
-  }
-  if (view === "week") {
-    next.setDate(anchor.getDate() + 7 * direction);
-    return next;
-  }
-  next.setDate(anchor.getDate() + direction);
-  return next;
 }
 
 export function getVolunteerParticipationRate(event: ChurchEvent): number {
@@ -288,10 +206,4 @@ export function buildEventAnalyticsSnapshot(
     attendanceGrowth: buildAttendanceGrowth(events),
     departmentActivity,
   };
-}
-
-export function daysUntilEvent(event: ChurchEvent): number {
-  const today = new Date("2026-05-20T00:00:00");
-  const start = new Date(event.start);
-  return Math.ceil((start.getTime() - today.getTime()) / DAY_MS);
 }

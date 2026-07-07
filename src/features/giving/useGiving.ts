@@ -35,12 +35,8 @@ const INITIAL_FORM: GivingFormState = {
   memberId: "",
   memberName: "",
   sabbathDate: getRecentSabbaths(1)[0],
-  method: "cash",
-  frequency: "once",
   entries: {},
   notes: "",
-  recordedBy: "",
-  income: "",
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -55,7 +51,6 @@ export function useGiving() {
     // Auto-populate for members: they give on their own behalf
     memberId: isAdmin ? "" : currentUserId,
     memberName: isAdmin ? "" : currentUserName,
-    recordedBy: currentUserName,
   });
   const [submittedRecord, setSubmittedRecord] = useState<GivingRecord | null>(
     null,
@@ -67,10 +62,11 @@ export function useGiving() {
 
   // Load persisted records on mount
   useEffect(() => {
-    const persisted = loadRecords();
-    if (persisted.length > 0) {
-      setHistory(persisted);
-    }
+    void loadRecords().then((persisted) => {
+      if (persisted.length > 0) {
+        setHistory(persisted);
+      }
+    });
   }, []);
 
   // Filter history: members only see their own records; admins see all
@@ -218,12 +214,8 @@ export function useGiving() {
   // ── Tithe suggestion ──────────────────────────────────────────────────────
 
   const applySuggestedTithe = useCallback(() => {
-    const income = parseFloat(form.income) || 0;
-    if (income > 0) {
-      const tithe = Math.round(income * 0.1);
-      setEntryAmount("tithe", String(tithe));
-    }
-  }, [form.income, setEntryAmount]);
+    setEntryAmount("tithe", "0");
+  }, [setEntryAmount]);
 
   // ── Validation ────────────────────────────────────────────────────────────
 
@@ -231,11 +223,10 @@ export function useGiving() {
     return (
       form.memberName.trim().length > 0 &&
       form.sabbathDate.length > 0 &&
-      form.recordedBy.trim().length > 0 &&
       parsedEntries.length > 0 &&
       totalAmount > 0
     );
-  }, [form, parsedEntries, totalAmount]);
+  }, [form.memberName, form.sabbathDate, parsedEntries.length, totalAmount]);
 
   // ── Submission ────────────────────────────────────────────────────────────
 
@@ -272,7 +263,6 @@ export function useGiving() {
       // Preserve auto-populate for members
       memberId: isAdmin ? "" : currentUserId,
       memberName: isAdmin ? "" : currentUserName,
-      recordedBy: currentUserName,
     };
     setForm(freshForm);
     setSubmittedRecord(null);

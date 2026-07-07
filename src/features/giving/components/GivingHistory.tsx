@@ -23,7 +23,6 @@ import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
 import {
   formatShortDate,
   formatUGX,
-  getFrequencyLabel,
   getTitheFromEntries,
   getOfferingsFromEntries,
   getCategoryLabel,
@@ -49,8 +48,6 @@ const HEADERS = [
   { key: "tithe", header: "Tithe" },
   { key: "offerings", header: "Offerings" },
   { key: "totalAmount", header: "Total" },
-  { key: "method", header: "Method" },
-  { key: "frequency", header: "Frequency" },
   { key: "categories", header: "Categories" },
 ];
 
@@ -112,8 +109,6 @@ function printReceipt(record: GivingRecord): void {
         <div><span class="meta-label">Member</span><span class="meta-value">${record.memberName}</span></div>
         <div><span class="meta-label">Sabbath</span><span class="meta-value">${formatShortDate(record.sabbathDate)}</span></div>
         <div><span class="meta-label">Date recorded</span><span class="meta-value">${formatShortDate(record.date)}</span></div>
-        <div><span class="meta-label">Method</span><span class="meta-value">${record.method.replace(/_/g, " ")}</span></div>
-        <div><span class="meta-label">Frequency</span><span class="meta-value">${getFrequencyLabel(record.frequency)}</span></div>
       </div>
       <hr />
       <h3 style="font-size:0.9rem;margin:0.5rem 0;">Giving breakdown</h3>
@@ -141,7 +136,6 @@ function printReceipt(record: GivingRecord): void {
       </div>
       <hr />
       <div class="footer">
-        <span>Recorded by: ${record.recordedBy}</span>
         <span>Date: ${formatShortDate(record.date)}</span>
       </div>
       <div style="text-align:center;margin-top:1.5rem;">
@@ -201,8 +195,6 @@ export function GivingHistory({
     tithe: formatUGX(getTitheFromEntries(record.entries)),
     offerings: formatUGX(getOfferingsFromEntries(record.entries)),
     totalAmount: formatUGX(record.totalAmount),
-    method: record.method.replace(/_/g, " "),
-    frequency: getFrequencyLabel(record.frequency),
     categories: getCategoryTags(record),
     _raw: record,
   }));

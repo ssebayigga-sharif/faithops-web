@@ -13,29 +13,23 @@ import {
   TableSelectRow,
   TableBatchActions,
   TableBatchAction,
-  Tag,
   OverflowMenu,
   OverflowMenuItem,
   Pagination,
 } from "@carbon/react";
 import { Email, UserFollow, TrashCan } from "@carbon/icons-react";
+import { useNavigate } from "react-router-dom";
 
 import type { Member, SortField } from "@/features/members/types";
-import {
-  formatDate,
-  getStatusColor,
-  getAttendanceColor,
-} from "@/features/members/utils/memberUtils";
+import { formatDate } from "@/features/members/utils/memberUtils";
 
 //  Table column definitions
 
 const HEADERS = [
   { key: "fullName", header: "Member" },
   { key: "id", header: "ID" },
-  { key: "status", header: "Status" },
   { key: "ministries", header: "Ministry" },
-  { key: "cellGroup", header: "Cell Group" },
-  { key: "attendanceRate", header: "Attendance" },
+  { key: "village", header: "Village" },
   { key: "joinedAt", header: "Joined" },
   { key: "actions", header: "" },
 ];
@@ -55,7 +49,7 @@ interface MembersTableProps {
     fullName: string;
     status: string;
     ministries: string;
-    cellGroup: string;
+    village: string;
     attendanceRate: number;
     joinedAt: string;
     _raw: Member;
@@ -65,9 +59,7 @@ interface MembersTableProps {
   filteredCount: number;
   onPageChange: (page: number, pageSize: number) => void;
   onSort: (field: SortField) => void;
-  onSelectMember: (member: Member) => void;
   onDeleteMember: (member: Member) => void;
-  onDeactivateMember: (member: Member) => void;
   onBatchDelete: (members: Member[]) => void;
 }
 
@@ -80,11 +72,11 @@ export function MembersTable({
   filteredCount,
   onPageChange,
   onSort,
-  onSelectMember,
   onDeleteMember,
-  onDeactivateMember,
   onBatchDelete,
 }: MembersTableProps) {
+  const navigate = useNavigate();
+
   if (rows.length === 0) return null;
 
   return (
@@ -168,12 +160,7 @@ export function MembersTable({
                 const selectionProps = getSelectionProps({ row });
 
                 return (
-                  <TableRow
-                    {...getRowProps({ row })}
-                    key={row.id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => raw && onSelectMember(raw)}
-                  >
+                  <TableRow {...getRowProps({ row })} key={row.id}>
                     <TableSelectRow
                       {...selectionProps}
                       onSelect={(e: React.MouseEvent<HTMLInputElement>) => {
@@ -224,70 +211,6 @@ export function MembersTable({
                         );
                       }
 
-                      // Status
-                      if (cell.info.header === "status") {
-                        return (
-                          <TableCell key={cell.id}>
-                            <Tag
-                              type={getStatusColor(cell.value as any)}
-                              size="sm"
-                            >
-                              {cell.value as string}
-                            </Tag>
-                          </TableCell>
-                        );
-                      }
-
-                      // Attendance bar
-                      if (cell.info.header === "attendanceRate") {
-                        const rate = cell.value as number;
-                        const barMap: Record<string, string> = {
-                          green: "#24a148",
-                          teal: "#009d9a",
-                          yellow: "#f1c21b",
-                          red: "#da1e28",
-                        };
-                        const barColor = barMap[getAttendanceColor(rate)];
-                        return (
-                          <TableCell key={cell.id}>
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 8,
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: 60,
-                                  height: 5,
-                                  background: "#f4f4f4",
-                                  borderRadius: 3,
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    width: `${rate}%`,
-                                    height: "100%",
-                                    background: barColor,
-                                    borderRadius: 3,
-                                  }}
-                                />
-                              </div>
-                              <span
-                                style={{
-                                  fontSize: "12px",
-                                  color: barColor,
-                                  fontWeight: 600,
-                                }}
-                              >
-                                {rate}%
-                              </span>
-                            </div>
-                          </TableCell>
-                        );
-                      }
-
                       // Join date
                       if (cell.info.header === "joinedAt") {
                         return (
@@ -315,15 +238,11 @@ export function MembersTable({
                             <OverflowMenu size="sm" flipped>
                               <OverflowMenuItem
                                 itemText="View Profile"
-                                onClick={() => raw && onSelectMember(raw)}
-                              />
-                              <OverflowMenuItem itemText="Edit Member" />
-                              <OverflowMenuItem itemText="Assign Follow-Up" />
-                              <OverflowMenuItem itemText="Record Attendance" />
-                              <OverflowMenuItem itemText="Add Note" />
-                              <OverflowMenuItem
-                                itemText="Deactivate"
-                                onClick={() => raw && onDeactivateMember(raw)}
+                                onClick={() => {
+                                  if (raw?._firebaseKey) {
+                                    navigate(`/profile/${raw._firebaseKey}`);
+                                  }
+                                }}
                               />
                               <OverflowMenuItem
                                 itemText="Delete Member"

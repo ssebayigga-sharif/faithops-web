@@ -1,12 +1,10 @@
 import type {
   ChurchEvent,
-  CommunicationChannel,
   EventCalendarView,
   EventCategory,
   EventColorKey,
   EventDepartment,
   EventFormDraft,
-  EventRecurrenceFrequency,
 } from "@/features/events/types";
 
 export const EVENT_CALENDAR_VIEWS: EventCalendarView[] = [
@@ -47,21 +45,6 @@ export const EVENT_DEPARTMENTS: EventDepartment[] = [
   "Board",
 ];
 
-export const RECURRENCE_OPTIONS: EventRecurrenceFrequency[] = [
-  "None",
-  "Weekly",
-  "Monthly",
-  "Quarterly",
-  "Annual",
-];
-
-export const COMMUNICATION_CHANNELS: CommunicationChannel[] = [
-  "Email",
-  "SMS",
-  "WhatsApp",
-  "Push",
-];
-
 export const EVENT_CATEGORY_COLOR_KEY: Record<EventCategory, EventColorKey> = {
   "Sabbath Service": "sabbath",
   "Divine Service": "sabbath",
@@ -82,19 +65,10 @@ export const EVENT_CATEGORY_COLOR_KEY: Record<EventCategory, EventColorKey> = {
 export const DEFAULT_EVENT_DRAFT: EventFormDraft = {
   title: "",
   description: "",
-  department: "Pastoral",
-  category: "Sabbath Service",
   venue: "Main sanctuary",
-  start: "2026-05-23T08:30",
-  end: "2026-05-23T13:00",
-  recurrenceFrequency: "Weekly",
+  date: "2026-05-23T08:30",
+  organizer: "",
   speaker: "",
-  capacity: 420,
-  registrationRequired: false,
-  volunteersNeeded: 12,
-  budgetAllocated: 0,
-  attachments: "",
-  communicationChannels: ["Email", "SMS", "WhatsApp"],
 };
 
 export const SDA_EVENTS: ChurchEvent[] = [

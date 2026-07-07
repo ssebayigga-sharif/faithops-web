@@ -1,5 +1,7 @@
 import type { AxiosResponse } from "axios";
 import { firebaseClient } from "@/shared/services/firebase.client";
+import { MemberService } from "@/features/members/services/member.services";
+import { NotificationService } from "@/features/notifications/services/notification.service";
 import type {
   ChurchEvent,
   CommunicationChannel,
@@ -119,6 +121,33 @@ function removeFirebaseKey(
   return payload;
 }
 
+async function notifyMembersAboutEvent(
+  event: Omit<ChurchEvent, "_firebaseKey">,
+): Promise<void> {
+  const members = await MemberService.getAll();
+  if (!members.length) return;
+
+  const eventTitle = event.title?.trim() || "A new event";
+  const locationText = event.venue?.trim() ? ` at ${event.venue}` : "";
+  const body = `${eventTitle} has been added to the church calendar${locationText}.`;
+
+  await Promise.allSettled(
+    members.map((member) => {
+      const recipientUid = member._firebaseKey ?? member.id ?? "";
+      if (!recipientUid) return Promise.resolve();
+
+      return NotificationService.send({
+        type: "announcement",
+        title: "New event created",
+        body,
+        senderUid: "system",
+        senderName: "Church Admin",
+        recipientUid,
+      });
+    }),
+  );
+}
+
 export const EventService = {
   async getAll(): Promise<ChurchEvent[]> {
     const res: AxiosResponse<FirebaseEventMap | null> =
@@ -147,6 +176,8 @@ export const EventService = {
       `${EVENTS_PATH}.json`,
       event,
     );
+
+    await notifyMembersAboutEvent(event);
 
     return normaliseEvent(event, res.data.name);
   },

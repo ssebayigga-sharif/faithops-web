@@ -6,7 +6,6 @@ import {
   formatShortDate,
   formatUGX,
   getCategoryLabel,
-  getFrequencyLabel,
   getOfferingsFromEntries,
   getTitheFromEntries,
 } from "../givingUtils";
@@ -57,24 +56,6 @@ export function GivingReview({
               <span className="giving-review__meta-label">Sabbath date</span>
               <span className="giving-review__meta-value">
                 {formatShortDate(form.sabbathDate)}
-              </span>
-            </Stack>
-            <Stack gap={1}>
-              <span className="giving-review__meta-label">Method</span>
-              <span className="giving-review__meta-value">
-                {form.method.replace(/_/g, " ")}
-              </span>
-            </Stack>
-            <Stack gap={1}>
-              <span className="giving-review__meta-label">Frequency</span>
-              <span className="giving-review__meta-value">
-                {getFrequencyLabel(form.frequency)}
-              </span>
-            </Stack>
-            <Stack gap={1}>
-              <span className="giving-review__meta-label">Recorded by</span>
-              <span className="giving-review__meta-value">
-                {form.recordedBy}
               </span>
             </Stack>
           </Stack>

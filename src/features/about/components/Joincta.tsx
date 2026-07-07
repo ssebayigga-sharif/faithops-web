@@ -4,11 +4,9 @@ import { Button } from "@carbon/react";
 import { ArrowRight, Home } from "@carbon/icons-react";
 import styles from "../about.module.scss";
 
-// ─── Component ────────────────────────────────────────────────────────────────
+//  Component
 const JoinCTA: React.FC = () => (
   <section className={styles["join-cta"]} aria-labelledby="join-cta-heading">
-    {/* Decorative cross */}
-
     <div className={styles["join-cta__inner"]}>
       <h2 id="join-cta-heading" className={styles["join-cta__heading"]}>
         Come Worship With Us This Sabbath
@@ -21,10 +19,6 @@ const JoinCTA: React.FC = () => (
       </p>
 
       <div className={styles["join-cta__actions"]}>
-        {/*
-          Carbon Button used as a React Router Link via the `as` prop.
-          `renderIcon` replaces the old inline <ArrowRight /> usage.
-        */}
         <Button
           as={Link}
           to="/contact"

@@ -10,7 +10,7 @@ import type {
 } from "@/features/giving/types";
 import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
 
-// ─── Formatting ───────────────────────────────────────────────────────────────
+//  Formatting
 
 export function formatUGX(amount: number): string {
   return new Intl.NumberFormat("en-UG", {
@@ -49,13 +49,13 @@ export function formatMonthLabel(month: string): string {
   return date.toLocaleDateString("en-UG", { month: "long", year: "numeric" });
 }
 
-// ─── Tithe calculator ─────────────────────────────────────────────────────────
+//  Tithe calculator
 
 export function calculateSuggestedTithe(income: number): number {
   return Math.round(income * 0.1);
 }
 
-// ─── Receipt number ───────────────────────────────────────────────────────────
+//  Receipt number
 
 export function generateReceiptNumber(): string {
   const date = new Date();
@@ -65,7 +65,7 @@ export function generateReceiptNumber(): string {
   return `KSA-${year}${month}-${rand}`;
 }
 
-// ─── Totals ───────────────────────────────────────────────────────────────────
+//  Totals
 
 export function getTotalFromEntries(entries: GivingEntry[]): number {
   return entries.reduce((sum, e) => sum + (e.amount || 0), 0);
@@ -92,13 +92,13 @@ export function getCategoryTotalFromEntries(
     .reduce((sum, e) => sum + (e.amount || 0), 0);
 }
 
-// ─── Category label lookup ────────────────────────────────────────────────────
+// ─── Category label lookup
 
 export function getCategoryLabel(id: string): string {
   return GIVING_CATEGORIES.find((c) => c.id === id)?.label ?? id;
 }
 
-// ─── Frequency label ─────────────────────────────────────────────────────────
+// ─── Frequency label
 
 const FREQUENCY_LABELS: Record<GivingFrequency, string> = {
   once: "One-time",
@@ -111,7 +111,7 @@ export function getFrequencyLabel(freq: GivingFrequency): string {
   return FREQUENCY_LABELS[freq];
 }
 
-// ─── Monthly summary builder ──────────────────────────────────────────────────
+// ─── Monthly summary builder.
 
 export function buildMonthlySummary(
   records: GivingRecord[],
@@ -201,12 +201,14 @@ export function buildYearlySummary(
 // ─── Category totals for a set of records ─────────────────────────────────────
 
 export function buildCategoryTotals(records: GivingRecord[]): CategoryTotal[] {
-  const totals: Record<GivingCategoryId, number> = {
-    tithe: 0,
-    offering: 0,
-    building_fund: 0,
-    mission_fund: 0,
-  };
+  const totals: Record<GivingCategoryId, number> = {} as Record<
+    GivingCategoryId,
+    number
+  >;
+
+  for (const cat of GIVING_CATEGORIES) {
+    totals[cat.id] = 0;
+  }
 
   for (const record of records) {
     for (const entry of record.entries) {

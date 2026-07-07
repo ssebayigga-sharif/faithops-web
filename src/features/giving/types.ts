@@ -1,8 +1,18 @@
 export type GivingCategoryId =
   | "tithe"
-  | "offering"
-  | "building_fund"
-  | "mission_fund";
+  | "camp_meeting_offering"
+  | "13th_sabbath"
+  | "prime_radio"
+  | "kireka_adventist_hospital"
+  | "sabbath_school"
+  | "thanksgiving"
+  | "divine"
+  | "local_church_building"
+  | "district_project_fund"
+  | "lunch"
+  | "social_and_welfare"
+  | "camp_meeting_expense"
+  | "evangelism";
 
 export type GivingFrequency = "once" | "weekly" | "monthly" | "quarterly";
 
@@ -17,6 +27,7 @@ export interface GivingCategory {
   isTithe: boolean;
   required: boolean;
   color: "blue" | "green" | "amber" | "purple" | "teal" | "coral";
+  group: "trust_fund" | "combined_offerings" | "other_offerings";
 }
 
 export interface GivingEntry {
@@ -26,6 +37,7 @@ export interface GivingEntry {
 }
 
 export interface GivingRecord {
+  _firebaseKey?: string;
   id: string;
   memberId: string;
   memberName: string;
@@ -33,10 +45,10 @@ export interface GivingRecord {
   sabbathDate: string;
   entries: GivingEntry[];
   totalAmount: number;
-  method: GivingMethod;
-  frequency: GivingFrequency;
+  method?: GivingMethod;
+  frequency?: GivingFrequency;
   receiptNumber: string;
-  recordedBy: string;
+  recordedBy?: string;
   notes?: string;
   verified: boolean;
 }
@@ -83,12 +95,12 @@ export interface GivingFormState {
   memberId: string;
   memberName: string;
   sabbathDate: string;
-  method: GivingMethod;
-  frequency: GivingFrequency;
+  method?: GivingMethod;
+  frequency?: GivingFrequency;
   entries: Partial<Record<GivingCategoryId, string>>;
   notes: string;
-  recordedBy: string;
-  income: string;
+  recordedBy?: string;
+  income?: string;
 }
 
 export type GivingStep = "entry" | "review" | "receipt";

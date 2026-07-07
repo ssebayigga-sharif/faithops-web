@@ -1,128 +1,38 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Column,
+  DataTable,
   Grid,
   InlineNotification,
+  Pagination,
+  Search,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tag,
 } from "@carbon/react";
-import { Add, Download, Renew } from "@carbon/icons-react";
+import { Add, Download, Renew, Reset } from "@carbon/icons-react";
 import type { ChurchEvent, EventFormDraft } from "@/features/events/types";
-import { DEFAULT_EVENT_DRAFT, EVENT_CATEGORY_COLOR_KEY } from "../data/eventData";
-import { buildEventAnalyticsSnapshot, getUpcomingEvents } from "../eventUtils";
+import { DEFAULT_EVENT_DRAFT } from "../data/eventData";
+import { formatEventDate, sortEventsByStart } from "../eventUtils";
 import { useCreateEvent, useEvents } from "@/features/events/hooks/useEvent";
-import { EventAnalyticsBar } from "../components/EventAnalyticsBar";
 import { EventDetailsDrawer } from "../components/EventDetailsDrawer";
 import { EventFormDrawer } from "../components/EventFormDrawer";
-import { EventManagementTable } from "../components/EventManagementTable";
-import { MinistryCoordinationPanel } from "../components/MinistryCoordinationPanel";
-import { UpcomingEventsFeed } from "../components/UpcomingEventsFeed";
+import { createEventFromDraft } from "../services/eventFactory";
+import styles from "./EventsPage.module.scss";
 
-function toIsoDateTime(value: string): string {
-  return value.length === 16 ? `${value}:00` : value;
-}
-
-function createEventFromDraft(
-  draft: EventFormDraft,
-): Omit<ChurchEvent, "_firebaseKey"> {
-  const id =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? `EVT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`
-      : `EVT-${Date.now()}`;
-  const attachments = draft.attachments
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  return {
-    id,
-    title: draft.title || "Untitled church event",
-    description:
-      draft.description ||
-      "New event awaiting department planning, attendance setup, and volunteer assignments.",
-    department: draft.department,
-    category: draft.category,
-    colorKey: EVENT_CATEGORY_COLOR_KEY[draft.category],
-    venue: draft.venue,
-    start: toIsoDateTime(draft.start),
-    end: toIsoDateTime(draft.end),
-    recurrence: {
-      frequency: draft.recurrenceFrequency,
-      rule:
-        draft.recurrenceFrequency === "None"
-          ? "One-time event"
-          : `${draft.recurrenceFrequency} recurrence`,
-    },
-    speaker: draft.speaker || "To be assigned",
-    capacity: draft.capacity,
-    registrationRequired: draft.registrationRequired,
-    volunteersNeeded: draft.volunteersNeeded,
-    budgetAllocated: draft.budgetAllocated,
-    budgetSpent: 0,
-    status: draft.volunteersNeeded > 0 ? "Needs volunteers" : "Draft",
-    attendance: {
-      registered: 0,
-      actual: 0,
-      members: 0,
-      visitors: 0,
-      followUpRequired: 0,
-      conversions: 0,
-      baptisms: 0,
-    },
-    volunteers: [
-      {
-        role: "Event coordinator",
-        assignee: "Needed",
-        department: draft.department,
-        status: "Needed",
-        callTime: "TBD",
-      },
-    ],
-    communications: {
-      channels: draft.communicationChannels,
-      rsvpTracking: draft.registrationRequired,
-      automations: [
-        "Reminder 24h before event",
-        "Notify volunteers",
-        "Follow-up after outreach",
-      ],
-    },
-    permissions: [
-      {
-        role: "Department leader",
-        scope: draft.department,
-        level: "Manage",
-      },
-      {
-        role: "Pastor",
-        scope: "Major event approval",
-        level: "Approve",
-      },
-    ],
-    attachments: attachments.map((name) => ({
-      type: "Report",
-      name,
-      owner: draft.department,
-      status: "Draft",
-    })),
-    notes: [
-      "New event created from the operations workspace. Confirm roster, budget, media, and communication plan.",
-    ],
-    reports: [
-      "Awaiting attendance and engagement data.",
-      "Enterprise hooks prepared for QR check-in, livestream, registration, and prediction workflows.",
-    ],
-    enterpriseReadiness: [
-      { label: "QR event check-in", status: "Designed" },
-      { label: "Livestream integration", status: "Planned" },
-      { label: "Ticketing/registration", status: "Designed" },
-      { label: "AI attendance predictions", status: "Planned" },
-      { label: "Ministry engagement scoring", status: "Designed" },
-      { label: "Multi-branch synchronization", status: "Planned" },
-    ],
-  };
-}
+const EVENT_LIST_HEADERS = [
+  { key: "title", header: "Event" },
+  { key: "date", header: "Date" },
+  { key: "venue", header: "Venue" },
+  { key: "status", header: "Status" },
+];
 
 export default function EventsPage() {
   const { events, isLoading, isError, error, refetch } = useEvents();
@@ -136,8 +46,52 @@ export default function EventsPage() {
     subtitle: string;
   } | null>(null);
 
-  const orderedEvents = useMemo(() => getUpcomingEvents(events), [events]);
-  const snapshot = useMemo(() => buildEventAnalyticsSnapshot(events), [events]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const orderedEvents = useMemo(() => sortEventsByStart(events), [events]);
+
+  const filteredEvents = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return orderedEvents;
+    return orderedEvents.filter((event) => {
+      const searchFields = [
+        event.title,
+        event.venue,
+        event.department,
+        event.category,
+        event.speaker,
+        event.start,
+        event.end,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchFields.includes(q);
+    });
+  }, [orderedEvents, searchQuery]);
+
+  useEffect(() => {
+    if (filteredEvents.length === 0) {
+      setCurrentPage(1);
+      return;
+    }
+
+    const lastPage = Math.max(1, Math.ceil(filteredEvents.length / pageSize));
+    if (currentPage > lastPage) {
+      setCurrentPage(lastPage);
+    }
+  }, [currentPage, filteredEvents.length, pageSize]);
+
+  const pagedEvents = useMemo(() => {
+    const safePage = Math.min(
+      Math.max(currentPage, 1),
+      Math.max(1, Math.ceil(filteredEvents.length / pageSize) || 1),
+    );
+    const start = (safePage - 1) * pageSize;
+    return filteredEvents.slice(start, start + pageSize);
+  }, [filteredEvents, currentPage, pageSize]);
 
   function updateDraft<Key extends keyof EventFormDraft>(
     field: Key,
@@ -149,20 +103,29 @@ export default function EventsPage() {
     }));
   }
 
+  useEffect(() => {
+    if (!notice) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => setNotice(null), 5000);
+    return () => window.clearTimeout(timeoutId);
+  }, [notice]);
+
   async function handleCreateEvent() {
     const nextEvent = createEventFromDraft(draft);
 
     try {
       const savedEvent = await createEvent(nextEvent);
+
       setSelectedEvent(savedEvent);
       setDraft(DEFAULT_EVENT_DRAFT);
       setIsCreateOpen(false);
       setNotice({
         kind: "success",
         title: "Event created",
-        subtitle: `${savedEvent.title} was saved to Firebase.`,
+        subtitle: `${savedEvent.title} was saved to the calendar. Members will be notified shortly.`,
       });
-      window.setTimeout(() => setNotice(null), 5000);
     } catch {
       setNotice({
         kind: "error",
@@ -174,24 +137,42 @@ export default function EventsPage() {
     }
   }
 
+  const rows = pagedEvents.map((event) => ({
+    id: event.id,
+    title: event.title,
+    date: formatEventDate(event.start),
+    venue: event.venue,
+    status:
+      new Date(event.end).getTime() < Date.now() ? "Completed" : "Upcoming",
+    _raw: event,
+  }));
+
+  const rowLookup = useMemo(
+    () => new Map(rows.map((row) => [row.id, row])),
+    [rows],
+  );
+
   return (
-    <Stack className="admin-page events-page" gap={5}>
-      <Stack className="admin-page__inner" gap={5}>
+    <Stack className={`${styles.page} admin-page events-page`} gap={5}>
+      <Stack className={`${styles.inner} admin-page__inner`} gap={5}>
         <Stack
           as="header"
-          className="admin-page__header"
+          className={`${styles.header} admin-page__header`}
           orientation="horizontal"
           gap={5}
         >
           <Stack gap={2}>
             <h1 className="admin-page__title">SDA Events Operations</h1>
             <p className="admin-page__subtitle">
-              Sabbath programs, evangelism, Pathfinder, AY, board governance,
-              attendance, volunteers, media, and recurring ministry schedules.
+              Upcoming church events and programs.
             </p>
           </Stack>
 
-          <Stack className="admin-actions" orientation="horizontal" gap={3}>
+          <Stack
+            className={`${styles.headerActions} admin-actions`}
+            orientation="horizontal"
+            gap={3}
+          >
             <Button
               kind="ghost"
               renderIcon={Renew}
@@ -202,7 +183,7 @@ export default function EventsPage() {
               Refresh
             </Button>
             <Button kind="secondary" renderIcon={Download} size="md">
-              Export
+              Download
             </Button>
             <Button
               kind="primary"
@@ -245,42 +226,131 @@ export default function EventsPage() {
           />
         )}
 
-        <EventAnalyticsBar snapshot={snapshot} />
+        <Grid fullWidth withRowGap>
+          <Column sm={4} md={8} lg={16}>
+            <div className={styles.filterBar}>
+              <div className={styles.searchBox}>
+                <Search
+                  id="event-search"
+                  labelText="Search events"
+                  placeholder="Search by name, venue, or date…"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  size="md"
+                />
+              </div>
+              {searchQuery && (
+                <Button
+                  kind="ghost"
+                  renderIcon={Reset}
+                  size="md"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setCurrentPage(1);
+                  }}
+                >
+                  Reset
+                </Button>
+              )}
+            </div>
 
-        <Grid className="events-main-grid" fullWidth withRowGap>
-          <Column sm={4} md={8} lg={11}>
-            <UpcomingEventsFeed
-              events={orderedEvents}
-              onSelectEvent={setSelectedEvent}
-            />
+            <DataTable rows={rows} headers={EVENT_LIST_HEADERS} isSortable>
+              {({
+                rows: tableRows,
+                headers,
+                getTableProps,
+                getHeaderProps,
+                getRowProps,
+              }) => (
+                <TableContainer className={styles.tableContainer}>
+                  <Table {...getTableProps()} size="md">
+                    <TableHead>
+                      <TableRow>
+                        {headers.map((header) => (
+                          <TableHeader
+                            {...getHeaderProps({ header })}
+                            key={header.key}
+                          >
+                            {header.header}
+                          </TableHeader>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {tableRows.map((row) => {
+                        const raw = row.id
+                          ? rowLookup.get(row.id)?._raw
+                          : undefined;
+
+                        return (
+                          <TableRow
+                            {...getRowProps({ row })}
+                            key={row.id}
+                            className="event-table__row"
+                            onClick={() => raw && setSelectedEvent(raw)}
+                          >
+                            {row.cells.map((cell) => {
+                              if (cell.info.header === "title") {
+                                return (
+                                  <TableCell key={cell.id}>
+                                    <strong>{cell.value as string}</strong>
+                                  </TableCell>
+                                );
+                              }
+
+                              if (cell.info.header === "date") {
+                                return (
+                                  <TableCell key={cell.id}>
+                                    <Tag type="blue" size="sm">
+                                      {cell.value as string}
+                                    </Tag>
+                                  </TableCell>
+                                );
+                              }
+
+                              if (cell.info.header === "status") {
+                                const status = cell.value as string;
+                                const statusType =
+                                  status === "Upcoming" ? "green" : "blue";
+                                return (
+                                  <TableCell key={cell.id}>
+                                    <Tag type={statusType} size="sm">
+                                      {status}
+                                    </Tag>
+                                  </TableCell>
+                                );
+                              }
+
+                              return (
+                                <TableCell key={cell.id}>
+                                  {cell.value as string}
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+
+                  <Pagination
+                    className={styles.pagination}
+                    totalItems={filteredEvents.length}
+                    pageSize={pageSize}
+                    pageSizes={[10, 25, 50, 100]}
+                    page={currentPage}
+                    onChange={({ page, pageSize: ps }) => {
+                      setCurrentPage(page);
+                      setPageSize(ps);
+                    }}
+                  />
+                </TableContainer>
+              )}
+            </DataTable>
           </Column>
-        </Grid>
-
-        <EventManagementTable
-          events={orderedEvents}
-          onSelectEvent={setSelectedEvent}
-        />
-
-        <MinistryCoordinationPanel
-          events={orderedEvents}
-          onSelectEvent={setSelectedEvent}
-        />
-
-        <Grid className="events-enterprise-grid" fullWidth withRowGap>
-          {[
-            "QR event check-in",
-            "Livestream integration",
-            "Ticketing and registration",
-            "AI attendance predictions",
-            "Ministry engagement scoring",
-            "Multi-branch synchronization",
-          ].map((feature) => (
-            <Column key={feature} sm={4} md={4} lg={8}>
-              <Tag className="events-enterprise-tag" type="cyan" size="md">
-                {feature}
-              </Tag>
-            </Column>
-          ))}
         </Grid>
       </Stack>
 

@@ -18,23 +18,12 @@ const STATUS_CONFIG = [
     icon: CheckmarkFilled,
     modifier: "present",
   },
-  {
-    key: "late" as const,
-    label: "Late",
-    icon: Time,
-    modifier: "late",
-  },
+
   {
     key: "absent" as const,
     label: "Absent",
     icon: ErrorFilled,
     modifier: "absent",
-  },
-  {
-    key: "excused" as const,
-    label: "Excused",
-    icon: Misuse,
-    modifier: "excused",
   },
 ] as const;
 

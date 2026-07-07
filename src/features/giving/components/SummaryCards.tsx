@@ -6,16 +6,19 @@ import { colors } from "./givingStyles";
 
 const CATEGORY_ACCENTS: Record<GivingCategoryId, string> = {
   tithe: "#0f62fe",
-  offering: "#198038",
-  building_fund: "#f1c21b",
-  mission_fund: "#8a3ffc",
-};
-
-const CATEGORY_ICONS: Record<GivingCategoryId, string> = {
-  tithe: "10%",
-  offering: "🎁",
-  building_fund: "🏗️",
-  mission_fund: "🌍",
+  camp_meeting_offering: "#198038",
+  "13th_sabbath": "#f1c21b",
+  prime_radio: "#8a3ffc",
+  kireka_adventist_hospital: "#009d9a",
+  sabbath_school: "#da1e28",
+  thanksgiving: "#198038",
+  divine: "#0f62fe",
+  local_church_building: "#f1c21b",
+  district_project_fund: "#8a3ffc",
+  lunch: "#009d9a",
+  social_and_welfare: "#da1e28",
+  camp_meeting_expense: "#198038",
+  evangelism: "#0f62fe",
 };
 
 interface SummaryCardsProps {
@@ -46,36 +49,6 @@ export function SummaryCards({
               }}
             >
               <Stack gap={1}>
-                <Stack
-                  orientation="horizontal"
-                  gap={2}
-                  style={{ alignItems: "center" }}
-                >
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      color: colors.textMuted,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                    }}
-                  >
-                    {category.label}
-                  </span>
-                  {category.isTithe && (
-                    <span
-                      style={{
-                        background: "#0f62fe",
-                        color: "#fff",
-                        fontSize: "10px",
-                        padding: "1px 6px",
-                        borderRadius: "10px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {CATEGORY_ICONS[category.id]}
-                    </span>
-                  )}
-                </Stack>
                 <strong
                   style={{
                     fontSize: "22px",

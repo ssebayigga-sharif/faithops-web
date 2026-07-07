@@ -12,7 +12,11 @@ import type {
   MemberGivingRecord,
   MinistryAssignment,
 } from "@/features/members/types";
-import { CELL_GROUPS, MINISTRIES_LIST, formatDate } from "@/features/members/utils/memberUtils";
+import {
+  CELL_GROUPS,
+  MINISTRIES_LIST,
+  formatDate,
+} from "@/features/members/utils/memberUtils";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -63,7 +67,10 @@ export function getAttendanceRate(member: Member): number {
     return member._computed.attendanceRate;
   }
   const records = getAttendanceRecords(member);
-  return percentage(records.filter((r) => r.present).length, records.length);
+  return percentage(
+    records.filter((r) => r.status === "present" || r.status === "late").length,
+    records.length,
+  );
 }
 
 export function getConsecutiveMisses(member: Member): number {
@@ -75,7 +82,7 @@ export function getConsecutiveMisses(member: Member): number {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
   for (const record of sorted) {
-    if (record.present) break;
+    if (record.status === "present" || record.status === "late") break;
     misses += 1;
   }
   return misses;
@@ -122,7 +129,9 @@ export function selectMembershipCounts(members: Member[]) {
 
 export function selectAttendanceMetrics(members: Member[]) {
   const records = members.flatMap(getAttendanceRecords);
-  const presentRecords = records.filter((r) => r.present).length;
+  const presentRecords = records.filter(
+    (r) => r.status === "present" || r.status === "late",
+  ).length;
   const attendanceAverage =
     members.length > 0
       ? Math.round(
@@ -140,7 +149,8 @@ export function selectAttendanceMetrics(members: Member[]) {
         serviceType: record.serviceType,
       };
       existing.total += 1;
-      existing.present += record.present ? 1 : 0;
+      existing.present +=
+        record.status === "present" || record.status === "late" ? 1 : 0;
       acc[record.date] = existing;
       return acc;
     }, {}),

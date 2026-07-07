@@ -1,31 +1,13 @@
 import {
   Button,
-  Checkbox,
   Column,
-  FileUploaderDropContainer,
-  FormGroup,
   Grid,
-  Select,
-  SelectItem,
   Stack,
   TextArea,
   TextInput,
-  Toggle,
 } from "@carbon/react";
 import { SlideOver } from "@/shared/components/ui/SlideOver";
-import type {
-  CommunicationChannel,
-  EventCategory,
-  EventDepartment,
-  EventFormDrawerProps,
-  EventRecurrenceFrequency,
-} from "@/features/events/types";
-import {
-  COMMUNICATION_CHANNELS,
-  EVENT_CATEGORIES,
-  EVENT_DEPARTMENTS,
-  RECURRENCE_OPTIONS,
-} from "../data/eventData";
+import type { EventFormDrawerProps } from "@/features/events/types";
 
 export function EventFormDrawer({
   open,
@@ -35,21 +17,13 @@ export function EventFormDrawer({
   onClose,
   onSubmit,
 }: EventFormDrawerProps) {
-  function updateChannel(channel: CommunicationChannel, checked: boolean) {
-    const channels = checked
-      ? [...new Set([...draft.communicationChannels, channel])]
-      : draft.communicationChannels.filter((item) => item !== channel);
-
-    onChange("communicationChannels", channels);
-  }
-
   return (
     <SlideOver
       open={open}
       onClose={onClose}
       title="Create Event"
       eyebrow="Events"
-      description="Schedule SDA programs with recurrence, responsibilities, communications, media, and approval-ready operational detail."
+      description="Create a simple event entry for your church calendar."
       width="lg"
       footer={
         <>
@@ -67,57 +41,34 @@ export function EventFormDrawer({
           <Column sm={4} md={8} lg={8}>
             <TextInput
               id="event-title"
-              labelText="Event title"
+              labelText="Event name"
               placeholder="e.g. Sabbath Worship and Divine Service"
               value={draft.title}
               onChange={(event) => onChange("title", event.target.value)}
             />
           </Column>
-          <Column sm={4} md={4} lg={4}>
-            <Select
-              id="event-department"
-              labelText="Department"
-              value={draft.department}
-              onChange={(event) =>
-                onChange("department", event.target.value as EventDepartment)
-              }
-            >
-              {EVENT_DEPARTMENTS.map((department) => (
-                <SelectItem
-                  key={department}
-                  value={department}
-                  text={department}
-                />
-              ))}
-            </Select>
-          </Column>
-          <Column sm={4} md={4} lg={4}>
-            <Select
-              id="event-category"
-              labelText="Event type"
-              value={draft.category}
-              onChange={(event) =>
-                onChange("category", event.target.value as EventCategory)
-              }
-            >
-              {EVENT_CATEGORIES.map((category) => (
-                <SelectItem key={category} value={category} text={category} />
-              ))}
-            </Select>
-          </Column>
 
-          <Column sm={4} md={8} lg={16}>
-            <TextArea
-              id="event-description"
-              labelText="Description"
-              rows={4}
-              value={draft.description}
-              onChange={(event) => onChange("description", event.target.value)}
-              placeholder="Purpose, pastoral notes, attendance expectations, and follow-up goals."
+          <Column sm={4} md={8} lg={8}>
+            <TextInput
+              id="event-organizer"
+              labelText="Organiser"
+              placeholder="e.g. Youth department"
+              value={draft.organizer}
+              onChange={(event) => onChange("organizer", event.target.value)}
             />
           </Column>
 
-          <Column sm={4} md={4} lg={4}>
+          <Column sm={4} md={8} lg={8}>
+            <TextInput
+              id="event-speaker"
+              labelText="Speaker"
+              placeholder="e.g. Pr. Daniel Kato"
+              value={draft.speaker}
+              onChange={(event) => onChange("speaker", event.target.value)}
+            />
+          </Column>
+
+          <Column sm={4} md={8} lg={8}>
             <TextInput
               id="event-venue"
               labelText="Venue"
@@ -125,140 +76,25 @@ export function EventFormDrawer({
               onChange={(event) => onChange("venue", event.target.value)}
             />
           </Column>
-          <Column sm={4} md={4} lg={4}>
-            <TextInput
-              id="event-speaker"
-              labelText="Speaker / preacher"
-              value={draft.speaker}
-              onChange={(event) => onChange("speaker", event.target.value)}
-              placeholder="Speaker, preacher, or program lead"
-            />
-          </Column>
-          <Column sm={4} md={4} lg={4}>
-            <TextInput
-              id="event-start"
-              labelText="Start time"
-              type="datetime-local"
-              value={draft.start}
-              onChange={(event) => onChange("start", event.target.value)}
-            />
-          </Column>
-          <Column sm={4} md={4} lg={4}>
-            <TextInput
-              id="event-end"
-              labelText="End time"
-              type="datetime-local"
-              value={draft.end}
-              onChange={(event) => onChange("end", event.target.value)}
-            />
-          </Column>
-
-          <Column sm={4} md={4} lg={4}>
-            <Select
-              id="event-recurrence"
-              labelText="Recurring event settings"
-              value={draft.recurrenceFrequency}
-              onChange={(event) =>
-                onChange(
-                  "recurrenceFrequency",
-                  event.target.value as EventRecurrenceFrequency,
-                )
-              }
-            >
-              {RECURRENCE_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option} text={option} />
-              ))}
-            </Select>
-          </Column>
-          <Column sm={4} md={4} lg={4}>
-            <TextInput
-              id="event-capacity"
-              labelText="Capacity"
-              type="number"
-              min={0}
-              value={draft.capacity}
-              onChange={(event) =>
-                onChange("capacity", Number(event.target.value))
-              }
-            />
-          </Column>
-          <Column sm={4} md={4} lg={4}>
-            <TextInput
-              id="event-volunteers"
-              labelText="Volunteers needed"
-              type="number"
-              min={0}
-              value={draft.volunteersNeeded}
-              onChange={(event) =>
-                onChange("volunteersNeeded", Number(event.target.value))
-              }
-            />
-          </Column>
-          <Column sm={4} md={4} lg={4}>
-            <TextInput
-              id="event-budget"
-              labelText="Budget allocation"
-              type="number"
-              min={0}
-              value={draft.budgetAllocated}
-              onChange={(event) =>
-                onChange("budgetAllocated", Number(event.target.value))
-              }
-            />
-          </Column>
 
           <Column sm={4} md={8} lg={8}>
-            <Toggle
-              id="event-registration"
-              labelText="Registration required"
-              labelA="No"
-              labelB="Yes"
-              toggled={draft.registrationRequired}
-              onToggle={(checked) => onChange("registrationRequired", checked)}
-            />
-          </Column>
-
-          <Column sm={4} md={8} lg={8}>
-            <FormGroup legendText="Communication channels">
-              <Stack className="event-checkbox-grid" gap={3}>
-                {COMMUNICATION_CHANNELS.map((channel) => (
-                  <Checkbox
-                    id={`event-channel-${channel}`}
-                    key={channel}
-                    labelText={channel}
-                    checked={draft.communicationChannels.includes(channel)}
-                    onChange={(_, data) => updateChannel(channel, data.checked)}
-                  />
-                ))}
-              </Stack>
-            </FormGroup>
-          </Column>
-
-          <Column sm={4} md={8} lg={16}>
             <TextInput
-              id="event-attachments"
-              labelText="Attachments / media links"
-              value={draft.attachments}
-              onChange={(event) => onChange("attachments", event.target.value)}
-              placeholder="Sermon notes, posters, recordings, reports, budget links"
+              id="event-date"
+              labelText="Date"
+              type="datetime-local"
+              value={draft.date}
+              onChange={(event) => onChange("date", event.target.value)}
             />
           </Column>
 
           <Column sm={4} md={8} lg={16}>
-            <FileUploaderDropContainer
-              accept={[
-                ".pdf",
-                ".png",
-                ".jpg",
-                ".jpeg",
-                ".docx",
-                ".xlsx",
-                ".mp4",
-              ]}
-              id="event-media-upload"
-              labelText="Drag files here or click to add event media"
-              multiple
-              name="event-media-upload"
+            <TextArea
+              id="event-description"
+              labelText="Simple description"
+              rows={4}
+              value={draft.description}
+              onChange={(event) => onChange("description", event.target.value)}
+              placeholder="A short description for the event."
             />
           </Column>
         </Grid>

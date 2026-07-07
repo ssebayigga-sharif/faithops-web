@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { AttendanceService } from "@/features/attendance/services/attendance.services";
 import {
   syncAttendanceToMembers,
-  syncAttendanceToEvents,
   detectFollowUpCandidates,
   createFollowUpTask,
 } from "@/features/attendance/services/sync.services";
@@ -23,9 +22,11 @@ export const attendanceKeys = {
   memberRecords: (id: string) => ["attendance", "member", id] as const,
   visitors: ["attendance", "visitors"] as const,
   followUpCandidates: ["attendance", "followUpCandidates"] as const,
+  events: ["events"] as const,
 };
 
 // ── Members (fetched from Firebase /members node) ────────────
+// Returns ALL members (not just active) so the attendance list matches the members page
 export function useMembers() {
   return useQuery({
     queryKey: ["members"],
@@ -33,7 +34,21 @@ export function useMembers() {
       const { MemberService } =
         await import("@/features/members/services/member.services");
       const all = await MemberService.getAll();
-      return all.filter((m) => m.status === "active");
+      return all;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// ── Events (fetched from Firebase /events node) ──────────────
+export function useEvents() {
+  return useQuery({
+    queryKey: attendanceKeys.events,
+    queryFn: async () => {
+      const { EventService } =
+        await import("@/features/events/services/event.services");
+      const all = await EventService.getAll();
+      return all;
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -97,16 +112,6 @@ export function useBulkSaveAttendance() {
         payload.rows,
         payload.markedBy,
         payload.serviceType,
-      );
-
-      // 3. Sync attendance to events
-      const totalAttended = payload.rows.filter(
-        (r) => r.status === "present" || r.status === "late",
-      ).length;
-      await syncAttendanceToEvents(
-        payload.date,
-        payload.serviceType,
-        totalAttended,
       );
 
       return session;
@@ -188,7 +193,8 @@ export function useUpdateVisitorFollowUp() {
 
 /**
  * Builds attendance rows from a members list.
- * Filters to active members and maps them to AttendanceRow[].
+ * Includes ALL members (not just active) so the list matches the members page.
+ * Recomputes every time members change so new members appear immediately.
  */
 export function useAttendanceRows(
   members: {
@@ -201,15 +207,13 @@ export function useAttendanceRows(
 ): AttendanceRow[] {
   return useMemo(
     () =>
-      members
-        .filter((m) => m.status === "active")
-        .map((m) => ({
-          memberId: m._firebaseKey ?? m.firstName,
-          memberName: `${m.firstName} ${m.lastName}`,
-          department: m.department ?? "",
-          status: "absent" as AttendanceStatus,
-          notes: "",
-        })),
+      members.map((m) => ({
+        memberId: m._firebaseKey ?? m.firstName,
+        memberName: `${m.firstName} ${m.lastName}`,
+        department: m.department ?? "",
+        status: "absent" as AttendanceStatus,
+        notes: "",
+      })),
     [members],
   );
 }

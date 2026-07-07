@@ -3,7 +3,7 @@ import { Grid, Column, Tile } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { MissionPillar } from "@/features/about/types";
 
-// ─── Static data ──────────────────────────────────────────────────────────────
+//  Static data
 const PILLARS: MissionPillar[] = [
   {
     label: "Our Mission",
@@ -28,7 +28,7 @@ const PILLARS: MissionPillar[] = [
   },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+//  Sub-components
 interface PillarCardProps {
   pillar: MissionPillar;
 }
@@ -44,7 +44,7 @@ const PillarCard: React.FC<PillarCardProps> = ({ pillar }) => (
   </Tile>
 );
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// Component
 const MissionSection: React.FC = () => {
   return (
     <section
@@ -54,7 +54,6 @@ const MissionSection: React.FC = () => {
       <Grid>
         <Column sm={4} md={8} lg={16}>
           <div className={styles["section-header"]}>
-            <div className={styles.goldRule} aria-hidden />
             <h2 id="mission-heading" className={styles["section-heading"]}>
               Mission, Vision &amp; Values
             </h2>

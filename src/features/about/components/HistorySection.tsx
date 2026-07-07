@@ -3,7 +3,7 @@ import { Grid, Column } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { AboutTimelineEvent } from "@/features/about/types";
 
-// ─── Static data ──────────────────────────────────────────────────────────────
+// Static data
 const TIMELINE: AboutTimelineEvent[] = [
   {
     year: "1844",
@@ -23,27 +23,22 @@ const TIMELINE: AboutTimelineEvent[] = [
     detail:
       "Adventist missionaries reach Uganda, establishing schools, clinics, and congregations that form the foundation of our regional church.",
   },
-  {
-    year: "1967",
-    event: "Kampala Central Established",
-    detail:
-      "Our local congregation is planted in Nakasero, Kampala, growing from a small house church into a thriving urban ministry.",
-  },
+
   {
     year: "2010",
     event: "Kampala Campus Expansion",
     detail:
-      "We launch our second campus to serve the growing Nakawa and Kira communities with dedicated pastoral leadership.",
+      "We launch our second campus to serve the growing Kabulengwa communities with dedicated pastoral leadership.",
   },
   {
     year: "Today",
-    event: "Three Campuses, One Mission",
+    event: " One Mission",
     detail:
-      "Kampala Central serves over 1,200 members across three campuses, with robust outreach and health ministry programs throughout Greater Kampala.",
+      "Kampala Central serves over 100 members , with robust outreach and health ministry programs throughout Greater Kampala.",
   },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+//  Sub-components
 interface TimelineRowProps {
   event: AboutTimelineEvent;
   isLast: boolean;
@@ -69,7 +64,7 @@ const TimelineRow: React.FC<TimelineRowProps> = ({ event, isLast }) => (
   </li>
 );
 
-// ─── Component ────────────────────────────────────────────────────────────────
+//  Component
 const HistorySection: React.FC = () => {
   return (
     <section
@@ -79,12 +74,11 @@ const HistorySection: React.FC = () => {
       <Grid>
         <Column sm={4} md={8} lg={16}>
           <div className={styles["section-header"]}>
-            <div className={styles.goldRule} aria-hidden />
             <h2
               id="history-heading"
               className={`${styles["section-heading"]} ${styles["section-heading--light"]}`}
             >
-              Our History
+              Adventists History.
             </h2>
             <p
               className={`${styles["section-lead"]} ${styles["section-lead--muted"]}`}

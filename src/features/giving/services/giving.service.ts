@@ -1,10 +1,12 @@
+import { firebaseClient } from "@/shared/services/firebase.client";
 import type { GivingRecord } from "@/features/giving/types";
 
 const STORAGE_KEY = "faithops_giving_records";
+const GIVING_RECORDS_PATH = "/giving-records";
 
-// ─── LocalStorage persistence ─────────────────────────────────────────────────
+type FirebaseGivingMap = Record<string, GivingRecord>;
 
-export function loadRecords(): GivingRecord[] {
+function readLocalRecords(): GivingRecord[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -15,44 +17,123 @@ export function loadRecords(): GivingRecord[] {
   }
 }
 
-export function saveRecord(record: GivingRecord): void {
+function writeLocalRecords(records: GivingRecord[]): void {
   try {
-    const records = loadRecords();
-    records.unshift(record);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
   } catch (err) {
-    console.error("Failed to save giving record:", err);
+    console.error("Failed to persist giving records locally:", err);
   }
 }
 
-export function deleteRecord(id: string): void {
+function mapFirebaseRecords(data: FirebaseGivingMap | null): GivingRecord[] {
+  if (!data) return [];
+
+  return Object.entries(data)
+    .map(([firebaseKey, value]) => ({
+      ...value,
+      id: value.id || firebaseKey,
+      _firebaseKey: firebaseKey,
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+// ─── Firebase + local fallback persistence ───────────────────────────────────
+
+export async function loadRecords(): Promise<GivingRecord[]> {
   try {
-    const records = loadRecords();
-    const filtered = records.filter((r) => r.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    const res = await firebaseClient.get<FirebaseGivingMap | null>(
+      `${GIVING_RECORDS_PATH}.json`,
+    );
+    const records = mapFirebaseRecords(res.data);
+    if (records.length > 0) {
+      writeLocalRecords(records);
+    }
+    return records;
+  } catch (err) {
+    console.warn("Falling back to local storage for giving records:", err);
+    return readLocalRecords();
+  }
+}
+
+export async function saveRecord(record: GivingRecord): Promise<GivingRecord> {
+  try {
+    const payload = { ...record };
+    delete payload._firebaseKey;
+
+    const res = await firebaseClient.post(
+      `${GIVING_RECORDS_PATH}.json`,
+      payload,
+    );
+    const savedRecord: GivingRecord = {
+      ...record,
+      id: record.id || res.data?.name || `${Date.now()}`,
+      _firebaseKey: res.data?.name,
+    };
+
+    const localRecords = readLocalRecords();
+    writeLocalRecords([
+      savedRecord,
+      ...localRecords.filter((r) => r.id !== savedRecord.id),
+    ]);
+    return savedRecord;
+  } catch (err) {
+    console.error("Failed to save giving record to Firebase:", err);
+    const localRecords = readLocalRecords();
+    const fallbackRecord = { ...record };
+    writeLocalRecords([
+      fallbackRecord,
+      ...localRecords.filter((r) => r.id !== fallbackRecord.id),
+    ]);
+    return fallbackRecord;
+  }
+}
+
+export async function deleteRecord(id: string): Promise<void> {
+  try {
+    const records = await loadRecords();
+    const target = records.find((record) => record.id === id);
+    if (!target?._firebaseKey) {
+      writeLocalRecords(records.filter((record) => record.id !== id));
+      return;
+    }
+
+    await firebaseClient.delete(
+      `${GIVING_RECORDS_PATH}/${target._firebaseKey}.json`,
+    );
+    writeLocalRecords(records.filter((record) => record.id !== id));
   } catch (err) {
     console.error("Failed to delete giving record:", err);
   }
 }
 
-export function updateRecord(updated: GivingRecord): void {
+export async function updateRecord(updated: GivingRecord): Promise<void> {
   try {
-    const records = loadRecords();
-    const index = records.findIndex((r) => r.id === updated.id);
-    if (index !== -1) {
-      records[index] = updated;
+    const records = await loadRecords();
+    const target = records.find((record) => record.id === updated.id);
+    const firebaseKey = target?._firebaseKey ?? updated._firebaseKey;
+
+    if (firebaseKey) {
+      const payload = { ...updated };
+      delete payload._firebaseKey;
+      await firebaseClient.put(
+        `${GIVING_RECORDS_PATH}/${firebaseKey}.json`,
+        payload,
+      );
     } else {
-      records.unshift(updated);
+      await saveRecord(updated);
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+
+    const nextRecords = records.filter((record) => record.id !== updated.id);
+    writeLocalRecords([updated, ...nextRecords]);
   } catch (err) {
     console.error("Failed to update giving record:", err);
   }
 }
 
-export function clearAllRecords(): void {
+export async function clearAllRecords(): Promise<void> {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    await firebaseClient.delete(`${GIVING_RECORDS_PATH}.json`);
+    writeLocalRecords([]);
   } catch (err) {
     console.error("Failed to clear giving records:", err);
   }
@@ -70,7 +151,7 @@ export function searchRecords(
     (r) =>
       r.memberName.toLowerCase().includes(lower) ||
       r.receiptNumber.toLowerCase().includes(lower) ||
-      r.recordedBy.toLowerCase().includes(lower) ||
+      r.recordedBy?.toLowerCase().includes(lower) ||
       r.notes?.toLowerCase().includes(lower),
   );
 }

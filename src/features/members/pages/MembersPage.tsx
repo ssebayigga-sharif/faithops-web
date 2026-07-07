@@ -12,7 +12,6 @@ import {
   useMembers,
   useCreateMember,
   useDeleteMember,
-  usePatchMember,
 } from "@/features/members/hooks/useMember";
 
 // Dynamic imports for code splitting
@@ -21,11 +20,6 @@ const DeleteConfirmModal = lazy(
 );
 const MemberModal = lazy(
   () => import("@/features/members/components/MemberModal"),
-);
-const MemberProfile = lazy(() =>
-  import("@/features/members/components/memberprofile/MemberProfile").then(
-    (m) => ({ default: m.MemberProfile }),
-  ),
 );
 const MemberFiltersBar = lazy(
   () => import("@/features/members/components/MemberFilters"),
@@ -50,10 +44,8 @@ export default function MembersPage() {
   const { members, isLoading, isError, error, refetch } = useMembers();
   const { createMember, isCreating, createError } = useCreateMember();
   const { deleteMember, isDeleting } = useDeleteMember();
-  const patchMutation = usePatchMember();
 
   //  Local UI state
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,7 +84,7 @@ export default function MembersPage() {
         .filter((mn) => mn.active)
         .map((mn) => mn.ministry)
         .join(", ") || "—",
-    cellGroup: m.cellGroup,
+    village: m.cellGroup,
     attendanceRate: m._computed?.attendanceRate ?? 0,
     joinedAt: m.joinedAt,
     _raw: m,
@@ -136,7 +128,6 @@ export default function MembersPage() {
         "Member Removed",
         `${memberToDelete.firstName} ${memberToDelete.lastName} deleted.`,
       );
-      if (selectedMember?.id === memberToDelete.id) setSelectedMember(null);
     } catch {
       notify("error", "Delete Failed", "Could not remove member. Try again.");
     } finally {
@@ -148,24 +139,6 @@ export default function MembersPage() {
   async function handleBatchDelete(toRemove: Member[]) {
     await Promise.all(toRemove.map((m) => deleteMember(m._firebaseKey!)));
     notify("success", "Deleted", `${toRemove.length} member(s) removed.`);
-  }
-
-  // ── Deactivate (PATCH)
-  async function handleDeactivate(member: Member) {
-    if (!member._firebaseKey) return;
-    try {
-      await patchMutation.mutateAsync({
-        firebaseKey: member._firebaseKey,
-        partial: { status: "Inactive" },
-      });
-      notify(
-        "success",
-        "Deactivated",
-        `${member.firstName} ${member.lastName} set to Inactive.`,
-      );
-    } catch {
-      notify("error", "Update Failed", "Could not update member status.");
-    }
   }
 
   const loader = (
@@ -194,16 +167,6 @@ export default function MembersPage() {
               onCloseButtonClick={() => setToast(null)}
             />
           </div>
-        )}
-
-        {/* Profile drawer */}
-        {selectedMember && (
-          <Suspense fallback={loader}>
-            <MemberProfile
-              member={selectedMember}
-              onClose={() => setSelectedMember(null)}
-            />
-          </Suspense>
         )}
 
         {/* Create modal */}
@@ -320,9 +283,7 @@ export default function MembersPage() {
                     setPageSize(size);
                   }}
                   onSort={(field: SortField) => setSort(field)}
-                  onSelectMember={(member) => setSelectedMember(member)}
                   onDeleteMember={(member) => setMemberToDelete(member)}
-                  onDeactivateMember={(member) => handleDeactivate(member)}
                   onBatchDelete={(members) => handleBatchDelete(members)}
                 />
               </Suspense>

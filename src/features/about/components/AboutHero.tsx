@@ -1,17 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Breadcrumb, BreadcrumbItem, Grid, Column } from "@carbon/react";
+import { Grid, Column } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { StatItem } from "@/features/home/types";
 
-// ─── Static data
+// Static data
 const HERO_STATS: StatItem[] = [
-  { value: "1967", label: "Founded" },
-  { value: "1,240+", label: "Members" },
-  { value: "3", label: "Campuses" },
+  { value: "2020", label: "Founded" },
+  { value: "100+", label: "Members" },
 ];
 
-// ─── Sub-components
+//  Sub-components
 interface HeroStatProps {
   stat: StatItem;
 }
@@ -41,12 +39,12 @@ const AboutHero: React.FC = () => (
 
         {/* ── Lead paragraph ── */}
         <p className={styles["about-hero__lead"]}>
-          Kampala Central is a Seventh-day Adventist congregation — a people of
+          Kabulengwa is a Seventh-day Adventist congregation — a people of
           prophecy, united by a shared mission to proclaim God's final message
-          of grace and judgment to East Africa and the world.
+          to the whole world.
         </p>
 
-        {/* ── Stats ── */}
+        {/* Stats */}
         <div
           className={styles["about-hero__stats"]}
           role="list"

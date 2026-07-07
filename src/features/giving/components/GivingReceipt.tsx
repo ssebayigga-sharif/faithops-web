@@ -6,7 +6,6 @@ import {
   formatUGX,
   formatShortDate,
   getCategoryLabel,
-  getFrequencyLabel,
   getTitheFromEntries,
   getOfferingsFromEntries,
 } from "../givingUtils";
@@ -78,18 +77,6 @@ export function GivingReceipt({ record, onNewRecord }: GivingReceiptProps) {
               </span>
               <span className="giving-receipt__meta-value">
                 {formatShortDate(record.sabbathDate)}
-              </span>
-            </Stack>
-            <Stack gap={1}>
-              <span className="giving-receipt__meta-label">Frequency</span>
-              <span className="giving-receipt__meta-value">
-                {getFrequencyLabel(record.frequency)}
-              </span>
-            </Stack>
-            <Stack gap={1}>
-              <span className="giving-receipt__meta-label">Method</span>
-              <span className="giving-receipt__meta-value giving-receipt__meta-value--capitalize">
-                {record.method.replace(/_/g, " ")}
               </span>
             </Stack>
           </Stack>
@@ -179,13 +166,11 @@ export function GivingReceipt({ record, onNewRecord }: GivingReceiptProps) {
             </p>
           </Stack>
 
-          {/* Recorded by */}
           <Stack
             className="giving-receipt__footer"
             orientation="horizontal"
             gap={5}
           >
-            <span>Recorded by: {record.recordedBy}</span>
             <span>Date: {formatShortDate(record.date)}</span>
           </Stack>
         </Tile>

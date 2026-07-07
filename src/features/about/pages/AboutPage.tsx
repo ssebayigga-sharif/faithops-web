@@ -11,11 +11,6 @@ import {
   JoinCTA,
 } from "../index";
 
-/**
- * AboutPage is a pure orchestration component.
- * It owns no local state — all data flows down via props.
- * Each section is independently importable and testable.
- */
 const AboutPage: React.FC = () => (
   <main className={styles.pageEnter} id="main-content">
     <AboutHero />
