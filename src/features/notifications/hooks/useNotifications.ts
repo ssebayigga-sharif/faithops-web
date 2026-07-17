@@ -1,12 +1,6 @@
-/**
- * useNotifications.ts
- *
- * Hook to fetch the currently signed-in profile's notifications from Firebase.
- */
 import { useEffect, useState, useCallback } from "react";
 import type { ChurchNotification } from "@/features/notifications/types";
 import { NotificationService } from "@/features/notifications/services/notification.service";
-import { getSavedProfileUid } from "@/features/profile/hooks/useProfile";
 
 interface UseNotificationsReturn {
   notifications: ChurchNotification[];
@@ -24,7 +18,7 @@ export const useNotifications = (
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const resolvedRecipientUid = recipientUid ?? getSavedProfileUid() ?? "";
+  const resolvedRecipientUid = recipientUid ?? "";
 
   const refresh = useCallback(async () => {
     if (!resolvedRecipientUid) {

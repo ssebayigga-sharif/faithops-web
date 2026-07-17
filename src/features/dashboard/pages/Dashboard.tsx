@@ -124,9 +124,9 @@ export default function Dashboard() {
               kind="primary"
               renderIcon={Add}
               size="md"
-              onClick={() => navigate("/members")}
+              onClick={() => navigate("/profile")}
             >
-              Add Member
+              Create Account
             </Button>
           </Stack>
         </Stack>

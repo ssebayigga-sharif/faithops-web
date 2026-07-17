@@ -2,6 +2,8 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "@/shared/layouts/AppLayout";
 import { SectionPage } from "@/shared/components/SectionPage";
+import { AuthProvider } from "@/features/auth/context/AuthContext";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 
 // ── Lazy-loaded routes (code-split for faster initial render) ────────
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
@@ -25,6 +27,13 @@ const SearchPage = lazy(() => import("@/features/search/pages/SearchPage"));
 const HelpPage = lazy(() => import("@/features/help/components/HelpPage"));
 const ContactPage = lazy(() => import("@/features/contact/page/ContactPage"));
 
+// ── Auth pages ───────────────────────────────────────────────────────
+const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
+const SignUpPage = lazy(() => import("@/features/auth/pages/SignUpPage"));
+const ForgotPasswordPage = lazy(
+  () => import("@/features/auth/pages/ForgotPasswordPage"),
+);
+
 // ── Loading fallback ─────────────────────────────────────────────────
 const PageSpinner = () => (
   <div
@@ -40,38 +49,73 @@ const PageSpinner = () => (
 );
 
 const App = () => (
-  <BrowserRouter>
-    <Suspense fallback={<PageSpinner />}>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route index element={<Navigate replace to="/dashboard" />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="home" element={<HomePage />} />
-          <Route path="about" element={<AboutPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="giving" element={<GivingPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="profile/:uid" element={<OtherProfilePage />} />
-          <Route path="members" element={<MembersPage />} />
-          <Route path="attendance" element={<AttendancePage />} />
-          <Route path="events" element={<EventsPage />} />
-          <Route path="reports" element={<ReportsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="help" element={<HelpPage />} />
+  <AuthProvider>
+    <BrowserRouter>
+      <Suspense fallback={<PageSpinner />}>
+        <Routes>
+          {/* ── Public auth routes (no sidebar/layout) ───────────── */}
           <Route
-            path="privacy"
+            path="/login"
             element={
-              <SectionPage
-                title="Privacy"
-                description="Review privacy commitments and data handling practices for church operations."
-              />
+              <ProtectedRoute requireGuest>
+                <LoginPage />
+              </ProtectedRoute>
             }
           />
-        </Route>
-      </Routes>
-    </Suspense>
-  </BrowserRouter>
+          <Route
+            path="/signup"
+            element={
+              <ProtectedRoute requireGuest>
+                <SignUpPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <ProtectedRoute requireGuest>
+                <ForgotPasswordPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ── Protected app routes (with sidebar/layout) ──────── */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate replace to="/dashboard" />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="home" element={<HomePage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="giving" element={<GivingPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="profile/:uid" element={<OtherProfilePage />} />
+            <Route path="members" element={<MembersPage />} />
+            <Route path="attendance" element={<AttendancePage />} />
+            <Route path="events" element={<EventsPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="search" element={<SearchPage />} />
+            <Route path="help" element={<HelpPage />} />
+            <Route
+              path="privacy"
+              element={
+                <SectionPage
+                  title="Privacy"
+                  description="Review privacy commitments and data handling practices for church operations."
+                />
+              }
+            />
+          </Route>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  </AuthProvider>
 );
 
 export default App;

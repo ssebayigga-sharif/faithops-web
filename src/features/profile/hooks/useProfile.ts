@@ -1,38 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  ProfileService,
-  generateUid,
-} from "@/features/profile/services/profile.services";
+import { ProfileService } from "@/features/profile/services/profile.services";
 import type { ChurchProfile } from "@/features/profile/types";
 import { DEFAULT_PROFILE } from "@/features/profile/data/profile";
 import { useCallback, useMemo } from "react";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 export const profileKeys = {
   one: (uid: string) => ["profile", uid] as const,
 };
 
-// Key to store profile UID in localStorage
-const LOCAL_STORAGE_KEY = "faithops_profile_uid";
-
-/**
- * Helper to get the saved profile UID from local storage
- */
-export function getSavedProfileUid(): string | null {
-  return localStorage.getItem(LOCAL_STORAGE_KEY);
-}
-
-/**
- * Helper to set/save the profile UID in local storage
- */
-export function setSavedProfileUid(uid: string): void {
-  localStorage.setItem(LOCAL_STORAGE_KEY, uid);
-}
-
 export function useProfile(uidInput?: string) {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  // Determine actual UID: input prop -> localStorage -> fallback to empty/null
-  const activeUid = uidInput || getSavedProfileUid() || "";
+  // Determine actual UID: input prop -> Firebase Auth UID -> fallback to empty
+  const activeUid = uidInput || user?.uid || "";
 
   // Query to fetch profile from Firebase
   const { data, isLoading, isError, error } = useQuery<
@@ -56,17 +38,17 @@ export function useProfile(uidInput?: string) {
         throw new Error("First name or email is required to save a profile.");
       }
 
-      // Generate a stable UID if we don't have one
-      const targetUid =
-        updatedProfile.uid || activeUid || generateUid(emailOrName);
+      // Use Firebase Auth UID if available, otherwise fallback
+      const targetUid = updatedProfile.uid || activeUid || user?.uid || "";
+
+      if (!targetUid) {
+        throw new Error("User ID is required to save a profile.");
+      }
 
       const saved = await ProfileService.save(targetUid, {
         ...updatedProfile,
         uid: targetUid,
       });
-
-      // Persist the UID in localStorage so the user can revisit it next time
-      setSavedProfileUid(targetUid);
 
       return saved;
     },

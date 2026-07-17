@@ -13,12 +13,13 @@ import {
   Notification,
   NotificationFilled,
   UserAvatar,
+  Logout,
 } from "@carbon/icons-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { headerNavigationItems } from "@/shared/data/navigation";
 import ChurchIcon from "./ChurchIcon";
 import { useNotifications } from "@/features/notifications/hooks/useNotifications";
-import { getSavedProfileUid } from "@/features/profile/hooks/useProfile";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 type HeaderProps = {
   isSideNavExpanded: boolean;
@@ -27,7 +28,8 @@ type HeaderProps = {
 
 const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
   const navigate = useNavigate();
-  const activeUid = getSavedProfileUid() ?? "";
+  const { user, logout } = useAuth();
+  const activeUid = user?.uid ?? "";
   const { unreadCount, notifications, markRead, refresh } =
     useNotifications(activeUid);
   const [searchValue, setSearchValue] = useState("");
@@ -138,11 +140,21 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
 
         <HeaderGlobalAction
           tooltipAlignment="end"
-          aria-label="User profile"
+          aria-label={user?.displayName || "User profile"}
           onClick={() => navigate("/profile")}
         >
           <UserAvatar size={20} />
         </HeaderGlobalAction>
+
+        {user && (
+          <HeaderGlobalAction
+            tooltipAlignment="end"
+            aria-label="Sign out"
+            onClick={() => logout()}
+          >
+            <Logout size={20} />
+          </HeaderGlobalAction>
+        )}
       </HeaderGlobalBar>
 
       {/* Notifications slide-over panel */}

@@ -1876,3 +1876,99 @@ p {
     overflow-x: auto;
   }
 }
+
+/* ── Auth Pages (Login / Signup / Forgot Password) ──────────── */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cds-background, #eef2f6);
+  padding: 2rem 1rem;
+}
+
+.auth-page__grid {
+  max-width: 64rem;
+  width: 100%;
+}
+
+.auth-page__brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 20rem;
+}
+
+.auth-page__brand h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--cds-text-primary, #161616);
+  margin: 0 0 0.5rem;
+}
+
+.auth-page__tagline {
+  font-size: 1rem;
+  color: var(--cds-text-secondary, #6f6f6f);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.auth-page__card {
+  background: var(--cds-layer-01, #ffffff);
+  border: 1px solid var(--cds-border-subtle-01, #d0d7de);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+}
+
+.auth-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cds-text-primary, #161616);
+  margin: 0 0 0.25rem;
+}
+
+.auth-page__subtitle {
+  font-size: 0.875rem;
+  color: var(--cds-text-secondary, #6f6f6f);
+  margin: 0;
+}
+
+.auth-page__action-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.auth-page__link {
+  color: var(--cds-link-primary, #0f62fe);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.auth-page__link:hover {
+  text-decoration: underline;
+}
+
+.auth-page__submit {
+  width: 100%;
+}
+
+.auth-page__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--cds-text-secondary, #6f6f6f);
+}
+
+@media (max-width: 49rem) {
+  .auth-page__brand {
+    display: none;
+  }
+
+  .auth-page__card {
+    padding: 1.5rem;
+  }
+}
