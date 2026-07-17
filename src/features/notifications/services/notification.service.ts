@@ -1,10 +1,3 @@
-/**
- * notification.service.ts
- *
- * CRUD operations for ChurchNotification, all scoped by recipientUid.
- * Notifications are stored at /notifications/{recipientUid}/{pushKey}.json
- * to guarantee that a user can only see their own notifications.
- */
 import {
   ref,
   push,
@@ -17,15 +10,18 @@ import {
   equalTo,
 } from "firebase/database";
 import { getFirebaseDatabase } from "@/shared/services/firebase";
-import type { ChurchNotification } from "@/features/notifications/types";
+import type {
+  ChurchNotification,
+  EmailDeliveryPayload,
+} from "@/features/notifications/types";
 
 const NOTIFICATIONS_PATH = "/notifications";
+const EMAIL_OUTBOX_PATH = "/emailOutbox";
 
 export const NotificationService = {
-  /**
-   * Send a notification to a specific user by their UID.
-   * The recipientUid must be the Firebase Auth UID of the target profile.
-   */
+  //Send a notification to a specific user by their UID.
+  // The recipientUid must be the Firebase Auth UID of the target profile.
+
   async send(
     notification: Omit<ChurchNotification, "id" | "createdAt" | "read">,
   ): Promise<ChurchNotification> {
@@ -49,9 +45,8 @@ export const NotificationService = {
     return payload;
   },
 
-  /**
-   * Get all notifications for a specific UID, newest first.
-   */
+  // Get all notifications for a specific UID, newest first.
+
   async getAll(recipientUid: string): Promise<ChurchNotification[]> {
     const db = getFirebaseDatabase();
     const snapshot = await get(
@@ -80,9 +75,8 @@ export const NotificationService = {
     return notifications;
   },
 
-  /**
-   * Get unread notification count for a specific UID.
-   */
+  //  Get unread notification count for a specific UID.
+
   async getUnreadCount(recipientUid: string): Promise<number> {
     const db = getFirebaseDatabase();
     const notificationsRef = ref(db, `${NOTIFICATIONS_PATH}/${recipientUid}`);
@@ -98,9 +92,8 @@ export const NotificationService = {
     return Object.keys(snapshot.val()).length;
   },
 
-  /**
-   * Mark a single notification as read.
-   */
+  // Mark a single notification as read.
+
   async markRead(recipientUid: string, notificationId: string): Promise<void> {
     const db = getFirebaseDatabase();
     await update(
@@ -109,9 +102,6 @@ export const NotificationService = {
     );
   },
 
-  /**
-   * Mark all notifications for a recipient as read.
-   */
   async markAllRead(recipientUid: string): Promise<void> {
     const db = getFirebaseDatabase();
     const snapshot = await get(
@@ -128,5 +118,54 @@ export const NotificationService = {
     });
 
     await update(ref(db, `${NOTIFICATIONS_PATH}/${recipientUid}`), updates);
+  },
+
+  async sendEmail(payload: EmailDeliveryPayload): Promise<{
+    status: "sent" | "queued";
+    provider: "webhook" | "outbox";
+  }> {
+    const db = getFirebaseDatabase();
+    const webhookUrl = import.meta.env.VITE_EMAIL_WEBHOOK_URL?.trim();
+    const from =
+      payload.from ??
+      import.meta.env.VITE_EMAIL_FROM?.trim() ??
+      "faithops@church.local";
+
+    // Backend Express route expects "html", not "htmlBody"
+    const emailPayload = {
+      to: payload.to,
+      subject: payload.subject,
+      html: payload.htmlBody,
+    };
+
+    if (webhookUrl) {
+      try {
+        const response = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(emailPayload),
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Email delivery failed with status ${response.status}`,
+          );
+        }
+
+        return { status: "sent", provider: "webhook" };
+      } catch (error) {
+        console.error("Email delivery webhook failed", error);
+      }
+    }
+
+    const outboxRef = push(ref(db, EMAIL_OUTBOX_PATH));
+    await set(outboxRef, {
+      ...emailPayload,
+      status: "queued",
+      createdAt: new Date().toISOString(),
+      provider: "outbox",
+    });
+
+    return { status: "queued", provider: "outbox" };
   },
 };

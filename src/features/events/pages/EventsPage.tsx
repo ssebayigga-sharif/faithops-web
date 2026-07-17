@@ -18,11 +18,10 @@ import {
   Tag,
 } from "@carbon/react";
 import { Add, Download, Renew, Reset } from "@carbon/icons-react";
-import type { ChurchEvent, EventFormDraft } from "@/features/events/types";
+import type { EventFormDraft } from "@/features/events/types";
 import { DEFAULT_EVENT_DRAFT } from "../data/eventData";
 import { formatEventDate, sortEventsByStart } from "../eventUtils";
 import { useCreateEvent, useEvents } from "@/features/events/hooks/useEvent";
-import { EventDetailsDrawer } from "../components/EventDetailsDrawer";
 import { EventFormDrawer } from "../components/EventFormDrawer";
 import { createEventFromDraft } from "../services/eventFactory";
 import styles from "./EventsPage.module.scss";
@@ -38,7 +37,6 @@ export default function EventsPage() {
   const { events, isLoading, isError, error, refetch } = useEvents();
   const { createEvent, isCreating, createError } = useCreateEvent();
   const [draft, setDraft] = useState<EventFormDraft>(DEFAULT_EVENT_DRAFT);
-  const [selectedEvent, setSelectedEvent] = useState<ChurchEvent | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [notice, setNotice] = useState<{
     kind: "success" | "error";
@@ -118,7 +116,6 @@ export default function EventsPage() {
     try {
       const savedEvent = await createEvent(nextEvent);
 
-      setSelectedEvent(savedEvent);
       setDraft(DEFAULT_EVENT_DRAFT);
       setIsCreateOpen(false);
       setNotice({
@@ -144,13 +141,7 @@ export default function EventsPage() {
     venue: event.venue,
     status:
       new Date(event.end).getTime() < Date.now() ? "Completed" : "Upcoming",
-    _raw: event,
   }));
-
-  const rowLookup = useMemo(
-    () => new Map(rows.map((row) => [row.id, row])),
-    [rows],
-  );
 
   return (
     <Stack className={`${styles.page} admin-page events-page`} gap={5}>
@@ -280,59 +271,52 @@ export default function EventsPage() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {tableRows.map((row) => {
-                        const raw = row.id
-                          ? rowLookup.get(row.id)?._raw
-                          : undefined;
-
-                        return (
-                          <TableRow
-                            {...getRowProps({ row })}
-                            key={row.id}
-                            className="event-table__row"
-                            onClick={() => raw && setSelectedEvent(raw)}
-                          >
-                            {row.cells.map((cell) => {
-                              if (cell.info.header === "title") {
-                                return (
-                                  <TableCell key={cell.id}>
-                                    <strong>{cell.value as string}</strong>
-                                  </TableCell>
-                                );
-                              }
-
-                              if (cell.info.header === "date") {
-                                return (
-                                  <TableCell key={cell.id}>
-                                    <Tag type="blue" size="sm">
-                                      {cell.value as string}
-                                    </Tag>
-                                  </TableCell>
-                                );
-                              }
-
-                              if (cell.info.header === "status") {
-                                const status = cell.value as string;
-                                const statusType =
-                                  status === "Upcoming" ? "green" : "blue";
-                                return (
-                                  <TableCell key={cell.id}>
-                                    <Tag type={statusType} size="sm">
-                                      {status}
-                                    </Tag>
-                                  </TableCell>
-                                );
-                              }
-
+                      {tableRows.map((row) => (
+                        <TableRow
+                          {...getRowProps({ row })}
+                          key={row.id}
+                          className="event-table__row"
+                        >
+                          {row.cells.map((cell) => {
+                            if (cell.info.header === "title") {
                               return (
                                 <TableCell key={cell.id}>
-                                  {cell.value as string}
+                                  <strong>{cell.value as string}</strong>
                                 </TableCell>
                               );
-                            })}
-                          </TableRow>
-                        );
-                      })}
+                            }
+
+                            if (cell.info.header === "date") {
+                              return (
+                                <TableCell key={cell.id}>
+                                  <Tag type="blue" size="sm">
+                                    {cell.value as string}
+                                  </Tag>
+                                </TableCell>
+                              );
+                            }
+
+                            if (cell.info.header === "status") {
+                              const status = cell.value as string;
+                              const statusType =
+                                status === "Upcoming" ? "green" : "blue";
+                              return (
+                                <TableCell key={cell.id}>
+                                  <Tag type={statusType} size="sm">
+                                    {status}
+                                  </Tag>
+                                </TableCell>
+                              );
+                            }
+
+                            return (
+                              <TableCell key={cell.id}>
+                                {cell.value as string}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
 
@@ -361,12 +345,6 @@ export default function EventsPage() {
         onChange={updateDraft}
         onClose={() => setIsCreateOpen(false)}
         onSubmit={handleCreateEvent}
-      />
-
-      <EventDetailsDrawer
-        event={selectedEvent}
-        open={!!selectedEvent}
-        onClose={() => setSelectedEvent(null)}
       />
     </Stack>
   );

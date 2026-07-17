@@ -1,13 +1,12 @@
 /**
  * useNotifications.ts
  *
- * Hook to fetch unread count + notifications list. Auth has been removed, so
- * this currently returns an empty notification state.
+ * Hook to fetch the currently signed-in profile's notifications from Firebase.
  */
 import { useEffect, useState, useCallback } from "react";
-import { get, ref } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
 import type { ChurchNotification } from "@/features/notifications/types";
+import { NotificationService } from "@/features/notifications/services/notification.service";
+import { getSavedProfileUid } from "@/features/profile/hooks/useProfile";
 
 interface UseNotificationsReturn {
   notifications: ChurchNotification[];
@@ -18,34 +17,27 @@ interface UseNotificationsReturn {
   refresh: () => Promise<void>;
 }
 
-export const useNotifications = (): UseNotificationsReturn => {
+export const useNotifications = (
+  recipientUid?: string | null,
+): UseNotificationsReturn => {
   const [notifications, setNotifications] = useState<ChurchNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  const resolvedRecipientUid = recipientUid ?? getSavedProfileUid() ?? "";
+
   const refresh = useCallback(async () => {
+    if (!resolvedRecipientUid) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const db = getFirebaseDatabase();
-      const snapshot = await get(ref(db, "/notifications"));
-      const value = snapshot.val() as Record<
-        string,
-        Record<string, ChurchNotification>
-      > | null;
-
-      const nextNotifications = Object.values(value ?? {})
-        .flatMap((recipientGroup) =>
-          Object.entries(recipientGroup ?? {}).map(([id, notification]) => ({
-            ...notification,
-            id,
-          })),
-        )
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-
+      const nextNotifications =
+        await NotificationService.getAll(resolvedRecipientUid);
       setNotifications(nextNotifications);
       setUnreadCount(nextNotifications.filter((n) => !n.read).length);
     } catch {
@@ -54,24 +46,32 @@ export const useNotifications = (): UseNotificationsReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [resolvedRecipientUid]);
 
-  // Fetch on mount and when uid changes
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
-  const markRead = useCallback(async (notificationId: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
-    );
-    setUnreadCount((prev) => Math.max(0, prev - 1));
-  }, []);
+  const markRead = useCallback(
+    async (notificationId: string) => {
+      if (!resolvedRecipientUid) return;
+
+      await NotificationService.markRead(resolvedRecipientUid, notificationId);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n)),
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    },
+    [resolvedRecipientUid],
+  );
 
   const markAllRead = useCallback(async () => {
+    if (!resolvedRecipientUid) return;
+
+    await NotificationService.markAllRead(resolvedRecipientUid);
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     setUnreadCount(0);
-  }, []);
+  }, [resolvedRecipientUid]);
 
   return {
     notifications,

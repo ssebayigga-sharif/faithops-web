@@ -24,3 +24,12 @@ export interface ChurchNotification {
   read: boolean;
   createdAt: string;
 }
+
+export interface EmailDeliveryPayload {
+  to: string;
+  subject: string;
+  htmlBody: string;
+  textBody: string;
+  from?: string;
+  metadata?: Record<string, string>;
+}

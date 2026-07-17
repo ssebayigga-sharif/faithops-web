@@ -1,7 +1,5 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 
-export type EventCalendarView = "month" | "week" | "day" | "agenda";
-
 export type EventDepartment =
   | "Pastoral"
   | "Sabbath School"
@@ -178,12 +176,6 @@ export interface EventAnalyticsSnapshot {
   monthlyTrend: EventTrendPoint[];
   attendanceGrowth: EventTrendPoint[];
   departmentActivity: DepartmentActivity[];
-}
-
-export interface EventDetailsDrawerProps {
-  event: ChurchEvent | null;
-  open: boolean;
-  onClose: () => void;
 }
 
 export interface EventFormDrawerProps {

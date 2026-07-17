@@ -32,22 +32,6 @@ export function formatEventDateTime(iso: string): string {
   return `${formatEventDate(iso)} · ${formatEventTime(iso)}`;
 }
 
-export function formatUGX(amount: number): string {
-  return `UGX ${new Intl.NumberFormat("en-UG").format(amount)}`;
-}
-
-export function getEventDurationLabel(event: ChurchEvent): string {
-  const start = new Date(event.start).getTime();
-  const end = new Date(event.end).getTime();
-  const minutes = Math.max(Math.round((end - start) / 60000), 0);
-  const hours = Math.floor(minutes / 60);
-  const remainder = minutes % 60;
-
-  if (hours === 0) return `${remainder} min`;
-  if (remainder === 0) return `${hours} hr`;
-  return `${hours} hr ${remainder} min`;
-}
-
 export function sortEventsByStart(events: ChurchEvent[]): ChurchEvent[] {
   return [...events].sort(
     (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
@@ -63,30 +47,11 @@ export function getUpcomingEvents(
   );
 }
 
-export function isSameDay(left: Date, right: Date): boolean {
-  return (
-    left.getFullYear() === right.getFullYear() &&
-    left.getMonth() === right.getMonth() &&
-    left.getDate() === right.getDate()
-  );
-}
-
 export function getVolunteerParticipationRate(event: ChurchEvent): number {
   const assigned = event.volunteers.filter(
     (volunteer) => volunteer.status !== "Needed",
   ).length;
   return percentage(assigned, event.volunteersNeeded);
-}
-
-export function getBudgetUsageRate(event: ChurchEvent): number {
-  return percentage(event.budgetSpent, event.budgetAllocated);
-}
-
-export function getAttendanceRate(event: ChurchEvent): number {
-  const denominator = event.registrationRequired
-    ? event.attendance.registered
-    : event.capacity;
-  return percentage(event.attendance.actual, denominator);
 }
 
 export function getEventsThisMonth(

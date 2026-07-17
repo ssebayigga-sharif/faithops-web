@@ -130,13 +130,16 @@ async function notifyMembersAboutEvent(
   const eventTitle = event.title?.trim() || "A new event";
   const locationText = event.venue?.trim() ? ` at ${event.venue}` : "";
   const body = `${eventTitle} has been added to the church calendar${locationText}.`;
+  const subject = `New event: ${eventTitle}`;
+  const htmlBody = `<p>${body}</p><p><strong>Venue:</strong> ${event.venue || "TBD"}</p>`;
+  const textBody = `${body}\nVenue: ${event.venue || "TBD"}`;
 
   await Promise.allSettled(
     members.map((member) => {
       const recipientUid = member._firebaseKey ?? member.id ?? "";
       if (!recipientUid) return Promise.resolve();
 
-      return NotificationService.send({
+      const notificationPromise = NotificationService.send({
         type: "announcement",
         title: "New event created",
         body,
@@ -144,6 +147,21 @@ async function notifyMembersAboutEvent(
         senderName: "Church Admin",
         recipientUid,
       });
+
+      const emailPromise = member.email
+        ? NotificationService.sendEmail({
+            to: member.email,
+            subject,
+            htmlBody,
+            textBody,
+            metadata: {
+              recipientUid,
+              eventTitle,
+            },
+          })
+        : Promise.resolve();
+
+      return Promise.allSettled([notificationPromise, emailPromise]);
     }),
   );
 }
@@ -177,7 +195,8 @@ export const EventService = {
       event,
     );
 
-    await notifyMembersAboutEvent(event);
+    // Fire-and-forget: don't block event creation response on email delivery
+    notifyMembersAboutEvent(event).catch(() => {});
 
     return normaliseEvent(event, res.data.name);
   },

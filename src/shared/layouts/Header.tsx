@@ -18,6 +18,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { headerNavigationItems } from "@/shared/data/navigation";
 import ChurchIcon from "./ChurchIcon";
 import { useNotifications } from "@/features/notifications/hooks/useNotifications";
+import { getSavedProfileUid } from "@/features/profile/hooks/useProfile";
 
 type HeaderProps = {
   isSideNavExpanded: boolean;
@@ -26,7 +27,9 @@ type HeaderProps = {
 
 const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
   const navigate = useNavigate();
-  const { unreadCount, notifications, markRead, refresh } = useNotifications();
+  const activeUid = getSavedProfileUid() ?? "";
+  const { unreadCount, notifications, markRead, refresh } =
+    useNotifications(activeUid);
   const [searchValue, setSearchValue] = useState("");
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -140,7 +143,6 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         >
           <UserAvatar size={20} />
         </HeaderGlobalAction>
-
       </HeaderGlobalBar>
 
       {/* Notifications slide-over panel */}
