@@ -1,4 +1,9 @@
-import { useState, useCallback, useRef, type KeyboardEvent } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  type KeyboardEvent,
+} from "react";
 import {
   Header as CarbonHeader,
   HeaderGlobalAction,
@@ -14,12 +19,17 @@ import {
   NotificationFilled,
   UserAvatar,
   Logout,
+  Send,
+  ReplyAll,
+  SendAlt,
 } from "@carbon/icons-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { headerNavigationItems } from "@/shared/data/navigation";
 import ChurchIcon from "./ChurchIcon";
 import { useNotifications } from "@/features/notifications/hooks/useNotifications";
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { SendMessageModal } from "@/features/notifications/components/SendMessageModal";
+import type { ChurchNotification } from "@/features/notifications/types";
 
 type HeaderProps = {
   isSideNavExpanded: boolean;
@@ -30,13 +40,18 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const activeUid = user?.uid ?? "";
-  const { unreadCount, notifications, markRead, refresh } =
+  const { unreadCount, notifications, markRead, markAllRead, refresh } =
     useNotifications(activeUid);
   const [searchValue, setSearchValue] = useState("");
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
+  const [msgModalOpen, setMsgModalOpen] = useState(false);
+  const [replyTarget, setReplyTarget] = useState<{
+    uid: string;
+    name: string;
+  } | null>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Search ──────────────────────────────────────────────────────────
+  //  Search
 
   const handleSearchChange = useCallback(
     (e: { target: { value: string } }) => {
@@ -69,6 +84,21 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
     setNotifPanelOpen((prev) => !prev);
     if (!notifPanelOpen) refresh();
   }, [notifPanelOpen, refresh]);
+
+  // ── Reply to a message notification
+
+  const handleReply = useCallback((notification: ChurchNotification) => {
+    setReplyTarget({
+      uid: notification.senderUid,
+      name: notification.senderName,
+    });
+    setMsgModalOpen(true);
+  }, []);
+
+  const handleCloseMsgModal = useCallback(() => {
+    setMsgModalOpen(false);
+    setReplyTarget(null);
+  }, []);
 
   return (
     <CarbonHeader
@@ -120,6 +150,14 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
       <HeaderGlobalBar>
         <HeaderGlobalAction
           tooltipAlignment="end"
+          aria-label="Messages"
+          onClick={() => navigate("/messages")}
+        >
+          <SendAlt size={20} />
+        </HeaderGlobalAction>
+
+        <HeaderGlobalAction
+          tooltipAlignment="end"
           aria-label={
             unreadCount > 0
               ? `${unreadCount} unread notifications`
@@ -162,27 +200,76 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         <HeaderPanel aria-label="Notifications panel">
           <div className="app-header__notif-header">
             <strong>Notifications</strong>
-            {notifications.length === 0 && (
-              <span className="app-header__notif-empty">No notifications</span>
+            {notifications.length > 0 && unreadCount > 0 && (
+              <button
+                className="app-header__notif-mark-read"
+                onClick={markAllRead}
+                type="button"
+              >
+                <ReplyAll size={16} />
+                <span>Mark all read</span>
+              </button>
             )}
           </div>
           <SwitcherDivider />
-          <ul className="app-header__notif-list">
-            {notifications.slice(0, 20).map((n) => (
-              <li
-                key={n.id}
-                className={`app-header__notif-item ${!n.read ? "is-unread" : ""}`}
-                onClick={() => !n.read && markRead(n.id)}
-              >
-                <span className="app-header__notif-title">{n.title}</span>
-                <p className="app-header__notif-body">{n.body}</p>
-                <small className="app-header__notif-time">
-                  {new Date(n.createdAt).toLocaleDateString()}
-                </small>
-              </li>
-            ))}
-          </ul>
+          {notifications.length === 0 ? (
+            <div className="app-header__notif-empty">
+              <span>No notifications</span>
+            </div>
+          ) : (
+            <ul className="app-header__notif-list">
+              {notifications.slice(0, 20).map((n) => (
+                <li
+                  key={n.id}
+                  className={`app-header__notif-item ${!n.read ? "is-unread" : ""}`}
+                  onClick={() => !n.read && markRead(n.id)}
+                >
+                  <div className="app-header__notif-content">
+                    {n.type === "message" && n.senderName && (
+                      <small className="app-header__notif-sender">
+                        From: {n.senderName}
+                      </small>
+                    )}
+                    <span className="app-header__notif-title">{n.title}</span>
+                    <p className="app-header__notif-body">{n.body}</p>
+                    <small className="app-header__notif-time">
+                      {new Date(n.createdAt).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </small>
+                  </div>
+                  {n.type === "message" && (
+                    <button
+                      className="app-header__notif-reply-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleReply(n);
+                      }}
+                      type="button"
+                      title={`Reply to ${n.senderName}`}
+                    >
+                      <Send size={14} />
+                      <span>Reply</span>
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </HeaderPanel>
+      )}
+
+      {/* Reply / Send Message Modal */}
+      {replyTarget && (
+        <SendMessageModal
+          open={msgModalOpen}
+          onClose={handleCloseMsgModal}
+          recipientUid={replyTarget.uid}
+          recipientName={replyTarget.name}
+        />
       )}
     </CarbonHeader>
   );

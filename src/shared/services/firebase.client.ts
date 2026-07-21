@@ -40,10 +40,23 @@ export const firebaseClient: AxiosInstance = axios.create({
 
 // ─── Request interceptor — attach auth token when present ────────────────────
 
+import { getFirebaseAuth } from "./firebase";
+
 firebaseClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  async (config: InternalAxiosRequestConfig) => {
     if (AUTH_TOKEN) {
       config.params = { ...config.params, auth: AUTH_TOKEN };
+    } else {
+      try {
+        const auth = getFirebaseAuth();
+        const user = auth.currentUser;
+        if (user) {
+          const token = await user.getIdToken();
+          config.params = { ...config.params, auth: token };
+        }
+      } catch (err) {
+        console.error("Failed to attach ID token to request", err);
+      }
     }
     return config;
   },

@@ -3,7 +3,6 @@ import {
   Finance,
   Group,
   Notification,
-  Report,
   UserFollow,
   UserMultiple,
   WarningAlt,
@@ -19,12 +18,7 @@ import {
   formatEventDateTime,
   getVolunteerParticipationRate,
 } from "@/features/events/eventUtils";
-import {
-  getAttendanceRate,
-  getConsecutiveMisses,
-  getMemberName,
-  percentage,
-} from "../components/dashboardSelectors";
+import { percentage } from "../components/dashboardSelectors";
 import {
   DashboardPanel,
   InsightItem,
@@ -197,109 +191,6 @@ export function NotificationsPanel({
       <Stack className="insight-list" gap={4}>
         {insights.map((insight) => (
           <InsightItem key={insight.title} {...insight} />
-        ))}
-      </Stack>
-    </DashboardPanel>
-  );
-}
-
-// OperationalInsightsPanel
-
-interface OperationalInsightsPanelProps {
-  snapshot: DashboardSnapshot;
-  loading: boolean;
-}
-
-export function OperationalInsightsPanel({
-  snapshot,
-  loading,
-}: OperationalInsightsPanelProps) {
-  return (
-    <DashboardPanel
-      title="Operational Insights"
-      description="Members, ministries, and care workflows that need leadership focus."
-      icon={Report}
-      loading={loading}
-    >
-      <Stack className="ops-list" gap={4}>
-        {snapshot.lowAttendanceMembers.length > 0 ? (
-          snapshot.lowAttendanceMembers.map((member) => (
-            <OperationsRow
-              key={member.id}
-              title={getMemberName(member)}
-              description={`${getAttendanceRate(member)}% attendance · ${getConsecutiveMisses(member)} consecutive misses · ${member.cellGroup}`}
-              tag="Care"
-              tagType="magenta"
-            />
-          ))
-        ) : (
-          <OperationsRow
-            title="No members on the attendance watchlist"
-            description="Attendance risk indicators are within expected range."
-            tag="Healthy"
-            tagType="green"
-          />
-        )}
-      </Stack>
-    </DashboardPanel>
-  );
-}
-
-//  SystemUpdatesPanel
-
-interface SystemUpdatesPanelProps {
-  snapshot: DashboardSnapshot;
-  isError: boolean;
-  loading: boolean;
-}
-
-export function SystemUpdatesPanel({
-  snapshot,
-  isError,
-  loading,
-}: SystemUpdatesPanelProps) {
-  const rows = [
-    {
-      title: "Firebase member sync",
-      description:
-        "Member records, computed profiles, and dashboard aggregates are reading from the shared member service.",
-      tag: isError ? "Check" : "Synced",
-      tagType: isError ? ("red" as const) : ("green" as const),
-    },
-    {
-      title: "Attendance analytics",
-      description: `${snapshot.totalAttendanceRecords.toLocaleString()} attendance records are available for trend reporting.`,
-      tag: "Ready",
-      tagType: "blue" as const,
-    },
-    {
-      title: "Follow-up queue",
-      description: `${snapshot.pendingFollowUps.length.toLocaleString()} open care tasks are visible to operations leaders.`,
-      tag: snapshot.overdueFollowUps.length > 0 ? "Risk" : "Clear",
-      tagType:
-        snapshot.overdueFollowUps.length > 0
-          ? ("red" as const)
-          : ("green" as const),
-    },
-    {
-      title: "Giving summaries",
-      description: `${formatUGX(snapshot.givingTotal)} in giving history is available for reporting.`,
-      tag: "Finance",
-      tagType: "purple" as const,
-    },
-  ];
-
-  return (
-    <DashboardPanel
-      title="System Updates"
-      description="Core workflows and data readiness across the workspace."
-      tagLabel="Online"
-      tagType="green"
-      loading={loading}
-    >
-      <Stack className="ops-list" gap={4}>
-        {rows.map((row) => (
-          <OperationsRow key={row.title} {...row} />
         ))}
       </Stack>
     </DashboardPanel>

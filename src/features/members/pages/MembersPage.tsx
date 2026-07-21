@@ -197,7 +197,6 @@ export default function MembersPage() {
             isLoading={isLoading}
             filteredCount={filteredCount}
             hasActiveFilters={hasActiveFilters}
-            onRefresh={() => refetch()}
             onAddMember={() => setModalOpen(true)}
           />
         </Suspense>

@@ -26,6 +26,9 @@ const SettingsPage = lazy(
 const SearchPage = lazy(() => import("@/features/search/pages/SearchPage"));
 const HelpPage = lazy(() => import("@/features/help/components/HelpPage"));
 const ContactPage = lazy(() => import("@/features/contact/page/ContactPage"));
+const MessagesPage = lazy(
+  () => import("@/features/messages/pages/MessagesPage"),
+);
 
 // ── Auth pages ───────────────────────────────────────────────────────
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
@@ -100,6 +103,7 @@ const App = () => (
             <Route path="events" element={<EventsPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="messages" element={<MessagesPage />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="help" element={<HelpPage />} />
             <Route

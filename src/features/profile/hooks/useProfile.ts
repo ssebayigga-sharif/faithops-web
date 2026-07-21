@@ -69,13 +69,28 @@ export function useProfile(uidInput?: string) {
     [queryClient],
   );
 
-  const profile = useMemo(
-    () => data || { ...DEFAULT_PROFILE, uid: activeUid },
-    [data, activeUid],
-  );
+  const profile = useMemo(() => {
+    if (data) return data;
+
+    // Parse displayName from auth user if no profile in DB
+    const nameParts = (user?.displayName || "").trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    return {
+      ...DEFAULT_PROFILE,
+      uid: activeUid,
+      firstName,
+      lastName,
+      email: user?.email || "",
+    };
+  }, [data, activeUid, user]);
+
+  const exists = !!data;
 
   return {
     profile,
+    exists,
     isLoading: isLoading && !!activeUid,
     isError,
     error: error?.message || null,

@@ -7,6 +7,7 @@ import {
   Group,
   Help,
   Report,
+  Send,
   Settings,
   UserMultiple,
 } from "@carbon/icons-react";
@@ -32,6 +33,12 @@ export const primaryNavigationItems: NavigationItem[] = [
     label: "About",
     description: "Overview, insights, and quick actions",
     icon: Dashboard,
+  },
+  {
+    path: "/messages",
+    label: "Messages",
+    description: "Send and receive messages",
+    icon: Send,
   },
   {
     path: "/members",

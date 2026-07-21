@@ -1,14 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  Button,
-  Column,
-  Grid,
-  InlineNotification,
-  Stack,
-} from "@carbon/react";
-import { Add, Download, Renew } from "@carbon/icons-react";
+import { Button, Column, Grid, InlineNotification, Stack } from "@carbon/react";
+import { Add } from "@carbon/icons-react";
 
 import { formatUGX } from "@/features/members/utils/memberUtils";
 import { useDashboardSnapshot } from "../hooks/useDashboardSnapshots";
@@ -19,8 +11,6 @@ import {
   EventIntelligencePanel,
   MinistryEngagementPanel,
   NotificationsPanel,
-  OperationalInsightsPanel,
-  SystemUpdatesPanel,
 } from "../components/DashboardSections";
 
 function buildMetricCards(
@@ -68,7 +58,6 @@ export default function Dashboard() {
     isLoading,
     isError,
     error,
-    refetch,
     eventSnapshot,
     upcomingEvents,
     todayEvents,
@@ -95,31 +84,11 @@ export default function Dashboard() {
           <Stack gap={2}>
             <h1 className="admin-page__title">Operations Dashboard</h1>
             <p className="admin-page__subtitle">
-              Kabulengwa SDA Church ·{" "}
-              {isLoading
-                ? "Loading live operations data..."
-                : `${snapshot.totalMembers.toLocaleString()} records synced`}
+              Kabulengwa SDA Church · Operations overview
             </p>
           </Stack>
 
           <Stack className="admin-actions" orientation="horizontal" gap={3}>
-            <Button
-              kind="ghost"
-              renderIcon={Renew}
-              size="md"
-              onClick={() => refetch()}
-              disabled={isLoading}
-            >
-              Refresh
-            </Button>
-            <Button
-              kind="secondary"
-              renderIcon={Download}
-              size="md"
-              onClick={() => window.print()}
-            >
-              Export Snapshot
-            </Button>
             <Button
               kind="primary"
               renderIcon={Add}
@@ -181,20 +150,6 @@ export default function Dashboard() {
               todayEvents={todayEvents}
               volunteerShortages={eventVolunteerShortages}
               pendingApprovals={pendingEventApprovals}
-              loading={isLoading}
-            />
-          </Column>
-        </Grid>
-
-        {/* ── Operational Insights + System Updates ── */}
-        <Grid className="dashboard-carbon-grid" fullWidth withRowGap>
-          <Column sm={4} md={8} lg={8}>
-            <OperationalInsightsPanel snapshot={snapshot} loading={isLoading} />
-          </Column>
-          <Column sm={4} md={8} lg={8}>
-            <SystemUpdatesPanel
-              snapshot={snapshot}
-              isError={isError}
               loading={isLoading}
             />
           </Column>

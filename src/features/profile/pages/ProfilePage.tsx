@@ -26,6 +26,7 @@ import styles from "../profile.module.scss";
 export const ProfilePage: React.FC = () => {
   const {
     profile,
+    exists,
     isLoading,
     isSaving,
     error: loadError,
@@ -37,14 +38,16 @@ export const ProfilePage: React.FC = () => {
   // Mode: "view" (default if profile exists) or "edit"
   const [mode, setMode] = useState<"view" | "edit">("view");
 
-  // If no profile exists yet (no activeUid), default to edit mode
+  // If no profile exists yet in the database, default to edit mode
   useEffect(() => {
-    if (!isLoading && !activeUid) {
-      setMode("edit");
-    } else if (!isLoading && activeUid) {
-      setMode("view");
+    if (!isLoading) {
+      if (!exists) {
+        setMode("edit");
+      } else {
+        setMode("view");
+      }
     }
-  }, [isLoading, activeUid]);
+  }, [isLoading, exists]);
 
   const {
     register,

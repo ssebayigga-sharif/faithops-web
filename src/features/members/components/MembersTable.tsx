@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   DataTable,
   Table,
@@ -22,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 import type { Member, SortField } from "@/features/members/types";
 import { formatDate } from "@/features/members/utils/memberUtils";
+import { SendMessageModal } from "@/features/notifications/components/SendMessageModal";
 
 //  Table column definitions
 
@@ -76,6 +78,11 @@ export function MembersTable({
   onBatchDelete,
 }: MembersTableProps) {
   const navigate = useNavigate();
+  const [selectedMemberForMsg, setSelectedMemberForMsg] = useState<{
+    uid?: string;
+    email: string;
+    name: string;
+  } | null>(null);
 
   if (rows.length === 0) return null;
 
@@ -244,6 +251,18 @@ export function MembersTable({
                                   }
                                 }}
                               />
+                              {raw?.email && (
+                                <OverflowMenuItem
+                                  itemText="Send Message"
+                                  onClick={() => {
+                                    setSelectedMemberForMsg({
+                                      uid: raw._firebaseKey,
+                                      email: raw.email,
+                                      name: `${raw.firstName} ${raw.lastName}`,
+                                    });
+                                  }}
+                                />
+                              )}
                               <OverflowMenuItem
                                 itemText="Delete Member"
                                 hasDivider

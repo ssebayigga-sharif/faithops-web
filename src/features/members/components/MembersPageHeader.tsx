@@ -1,12 +1,11 @@
 import { Button } from "@carbon/react";
-import { Add, Download, Renew, Upload } from "@carbon/icons-react";
+import { Add } from "@carbon/icons-react";
 
 interface MembersPageHeaderProps {
   totalCount: number;
   isLoading: boolean;
   filteredCount: number;
   hasActiveFilters: boolean;
-  onRefresh: () => void;
   onAddMember: () => void;
 }
 
@@ -15,7 +14,6 @@ export function MembersPageHeader({
   isLoading,
   filteredCount,
   hasActiveFilters,
-  onRefresh,
   onAddMember,
 }: MembersPageHeaderProps) {
   return (
@@ -43,21 +41,6 @@ export function MembersPageHeader({
       </div>
 
       <div className="admin-actions">
-        <Button
-          kind="ghost"
-          renderIcon={Renew}
-          size="md"
-          onClick={onRefresh}
-          disabled={isLoading}
-        >
-          Refresh
-        </Button>
-        <Button kind="ghost" renderIcon={Upload} size="md">
-          Import CSV
-        </Button>
-        <Button kind="secondary" renderIcon={Download} size="md">
-          Export
-        </Button>
         <Button
           kind="primary"
           renderIcon={Add}

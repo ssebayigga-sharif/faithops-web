@@ -17,7 +17,7 @@ import {
   TableRow,
   Tag,
 } from "@carbon/react";
-import { Add, Download, Renew, Reset } from "@carbon/icons-react";
+import { Add, Reset } from "@carbon/icons-react";
 import type { EventFormDraft } from "@/features/events/types";
 import { DEFAULT_EVENT_DRAFT } from "../data/eventData";
 import { formatEventDate, sortEventsByStart } from "../eventUtils";
@@ -164,18 +164,6 @@ export default function EventsPage() {
             orientation="horizontal"
             gap={3}
           >
-            <Button
-              kind="ghost"
-              renderIcon={Renew}
-              size="md"
-              onClick={() => refetch()}
-              disabled={isLoading}
-            >
-              Refresh
-            </Button>
-            <Button kind="secondary" renderIcon={Download} size="md">
-              Download
-            </Button>
             <Button
               kind="primary"
               renderIcon={Add}
