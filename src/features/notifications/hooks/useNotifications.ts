@@ -37,7 +37,6 @@ export const useNotifications = (
 
   const resolvedRecipientUid = recipientUid ?? "";
 
-  // ── Real-time Firebase listener ────────────────────────────────
   useEffect(() => {
     if (!resolvedRecipientUid) {
       setNotifications([]);
@@ -81,7 +80,6 @@ export const useNotifications = (
     };
   }, [resolvedRecipientUid]);
 
-  // ── Manual refresh (kept for backward compatibility) ──────────
   const refresh = useCallback(async () => {
     if (!resolvedRecipientUid) {
       setNotifications([]);
@@ -104,7 +102,6 @@ export const useNotifications = (
     }
   }, [resolvedRecipientUid]);
 
-  // ── Actions ───────────────────────────────────────────────────
   const markRead = useCallback(
     async (notificationId: string) => {
       if (!resolvedRecipientUid) return;

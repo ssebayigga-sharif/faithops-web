@@ -14,9 +14,7 @@ import {
   updateProfile,
   type User,
 } from "firebase/auth";
-import { getFirebaseAuth } from "@/shared/services/firebase";
-
-// ── Types ────────────────────────────────────────────────────────────────
+import { getFirebaseAuth } from "@/shared/services/firebase";
 
 export interface AuthState {
   user: User | null;
@@ -37,13 +35,9 @@ export interface AuthContextValue extends AuthState {
   logout: () => Promise<void>;
   /** Send a password-reset email */
   resetPassword: (email: string) => Promise<void>;
-}
+}
 
-// ── Context ──────────────────────────────────────────────────────────────
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-// ── Provider ─────────────────────────────────────────────────────────────
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({
@@ -62,16 +56,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     });
     return unsubscribe;
-  }, []);
-
-  // ── Login ────────────────────────────────────────────────────────────
+  }, []);
   const login = async (email: string, password: string): Promise<User> => {
     const auth = getFirebaseAuth();
     const cred = await signInWithEmailAndPassword(auth, email, password);
     return cred.user;
-  };
-
-  // ── Register ─────────────────────────────────────────────────────────
+  };
   const register = async (
     email: string,
     password: string,
@@ -85,15 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     return cred.user;
-  };
-
-  // ── Logout ───────────────────────────────────────────────────────────
+  };
   const logout = async (): Promise<void> => {
     const auth = getFirebaseAuth();
     await signOut(auth);
-  };
-
-  // ── Reset password ───────────────────────────────────────────────────
+  };
   const resetPassword = async (email: string): Promise<void> => {
     const auth = getFirebaseAuth();
     await sendPasswordResetEmail(auth, email);
@@ -108,9 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-// ── Hook ─────────────────────────────────────────────────────────────────
+}
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);

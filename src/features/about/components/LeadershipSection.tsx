@@ -5,7 +5,6 @@ import { useFadeIn } from "@/features/home/useFadeIn";
 import styles from "../about.module.scss";
 import type { Leader } from "@/features/home/types";
 
-//  Constants
 const BIO_PREVIEW_LENGTH = 120;
 
 //  Props
@@ -13,7 +12,6 @@ interface LeadershipSectionProps {
   leaders: Leader[];
 }
 
-// Sub-components
 interface LeaderCardProps {
   leader: Leader;
   isExpanded: boolean;
@@ -34,7 +32,7 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
       aria-label={leader.name}
       data-animate
     >
-      {/* ── Avatar header ── */}
+      
       <header className={styles["leader-card__header"]}>
         <div
           className={styles["leader-card__avatar"]}
@@ -50,7 +48,7 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
         </div>
       </header>
 
-      {/* ── Bio ── */}
+      
       <div className={styles["leader-card__body"]}>
         <p id={bioId} className={styles["leader-card__bio"]} aria-live="polite">
           {isExpanded ? leader.bio : bioPreview}
@@ -73,7 +71,6 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
   );
 };
 
-// Component
 const LeadershipSection: React.FC<LeadershipSectionProps> = ({ leaders }) => {
   const ref = useFadeIn();
   const [expandedId, setExpandedId] = useState<string | null>(null);

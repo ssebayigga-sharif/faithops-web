@@ -18,27 +18,21 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import type { FirebaseApiError } from "@/shared/types";
-
-// ─── Constants ────────────────────────────────────────────────────────────────
+import type { FirebaseApiError } from "@/shared/types";
 
 export const FIREBASE_BASE_URL =
   "https://my-church-9abc5-default-rtdb.firebaseio.com";
 
 // If you add Firebase Auth later, set this env var and the interceptor below
 // will attach ?auth=<token> to every request automatically.
-const AUTH_TOKEN = import.meta.env.VITE_FIREBASE_DB_SECRET ?? "";
-
-// ─── Axios instance ───────────────────────────────────────────────────────────
+const AUTH_TOKEN = import.meta.env.VITE_FIREBASE_DB_SECRET ?? "";
 
 export const firebaseClient: AxiosInstance = axios.create({
   baseURL: FIREBASE_BASE_URL,
   // Firebase REST responses are always JSON
   headers: { "Content-Type": "application/json" },
   timeout: 10_000,
-});
-
-// ─── Request interceptor — attach auth token when present ────────────────────
+});
 
 import { getFirebaseAuth } from "./firebase";
 
@@ -61,16 +55,12 @@ firebaseClient.interceptors.request.use(
     return config;
   },
   (error: AxiosError) => Promise.reject(normaliseError(error)),
-);
-
-// ─── Response interceptor — unwrap data, normalise errors ────────────────────
+);
 
 firebaseClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => Promise.reject(normaliseError(error)),
-);
-
-// ─── Error normalisation ──────────────────────────────────────────────────────
+);
 
 export function normaliseError(error: unknown): FirebaseApiError {
   if (axios.isAxiosError(error)) {

@@ -3,7 +3,6 @@ import { Grid, Column } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { AboutTimelineEvent } from "@/features/about/types";
 
-// Static data
 const TIMELINE: AboutTimelineEvent[] = [
   {
     year: "1844",
@@ -38,7 +37,6 @@ const TIMELINE: AboutTimelineEvent[] = [
   },
 ];
 
-//  Sub-components
 interface TimelineRowProps {
   event: AboutTimelineEvent;
   isLast: boolean;
@@ -64,7 +62,6 @@ const TimelineRow: React.FC<TimelineRowProps> = ({ event, isLast }) => (
   </li>
 );
 
-//  Component
 const HistorySection: React.FC = () => {
   return (
     <section

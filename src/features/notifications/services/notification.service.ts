@@ -9,7 +9,10 @@ import {
   orderByChild,
   equalTo,
 } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
+import {
+  getFirebaseDatabase,
+  getFirebaseAuth,
+} from "@/shared/services/firebase";
 import type {
   ChurchNotification,
   EmailDeliveryPayload,
@@ -19,9 +22,6 @@ const NOTIFICATIONS_PATH = "/notifications";
 const EMAIL_OUTBOX_PATH = "/emailOutbox";
 
 export const NotificationService = {
-  //Send a notification to a specific user by their UID.
-  // The recipientUid must be the Firebase Auth UID of the target profile.
-
   async send(
     notification: Omit<ChurchNotification, "id" | "createdAt" | "read">,
   ): Promise<ChurchNotification> {
@@ -45,8 +45,6 @@ export const NotificationService = {
     return payload;
   },
 
-  // Get all notifications for a specific UID, newest first.
-
   async getAll(recipientUid: string): Promise<ChurchNotification[]> {
     const db = getFirebaseDatabase();
     const snapshot = await get(
@@ -66,7 +64,6 @@ export const NotificationService = {
       }),
     );
 
-    // Sort by createdAt descending (newest first)
     notifications.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -74,8 +71,6 @@ export const NotificationService = {
 
     return notifications;
   },
-
-  //  Get unread notification count for a specific UID.
 
   async getUnreadCount(recipientUid: string): Promise<number> {
     const db = getFirebaseDatabase();
@@ -91,8 +86,6 @@ export const NotificationService = {
 
     return Object.keys(snapshot.val()).length;
   },
-
-  // Mark a single notification as read.
 
   async markRead(recipientUid: string, notificationId: string): Promise<void> {
     const db = getFirebaseDatabase();
@@ -131,7 +124,6 @@ export const NotificationService = {
       import.meta.env.VITE_EMAIL_FROM?.trim() ??
       "faithops@church.local";
 
-    // Backend Express route expects "html", not "htmlBody"
     const emailPayload = {
       to: payload.to,
       subject: payload.subject,
@@ -140,9 +132,22 @@ export const NotificationService = {
 
     if (webhookUrl) {
       try {
+        const auth = getFirebaseAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          console.warn(
+            "sendEmail: No authenticated user — falling back to email outbox",
+          );
+          throw new Error("No authenticated user");
+        }
+        const token = await user.getIdToken();
+
         const response = await fetch(webhookUrl, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(emailPayload),
         });
 

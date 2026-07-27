@@ -1,4 +1,3 @@
-// ─── Core Giving Categories ────────────────────────────────────────────────
 // Simplified to 4 types: Tithe, Offering, Building Fund, Mission Fund
 
 import type {

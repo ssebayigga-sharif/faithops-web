@@ -174,7 +174,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
         </Table>
       </TableContainer>
 
-      {/* ── View session detail modal ─────────────────────── */}
+      
       <Modal
         open={!!viewId}
         modalHeading="Session Detail"
@@ -212,7 +212,7 @@ export const SessionHistoryTable: React.FC<Props> = ({
         )}
       </Modal>
 
-      {/* ── Delete confirmation modal ─────────────────────── */}
+      
       <Modal
         open={!!deleteId}
         danger

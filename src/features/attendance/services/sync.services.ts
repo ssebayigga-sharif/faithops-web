@@ -21,9 +21,7 @@ import type {
   MemberTimelineEvent,
 } from "@/features/members/types";
 
-const MEMBERS_PATH = "/members";
-
-// ─── Sync Attendance → Member Profile ──────────────────────────────────
+const MEMBERS_PATH = "/members";
 
 /**
  * After a bulk save, this function updates each member's attendance array
@@ -73,9 +71,7 @@ export async function syncAttendanceToMembers(
   if (Object.keys(updates).length > 0) {
     await firebaseClient.patch(`/${MEMBERS_PATH}.json`, updates);
   }
-}
-
-// ─── Detect & Create Follow-Up Tasks ────────────────────────────────────
+}
 
 const CONSECUTIVE_MISS_THRESHOLD = 2;
 
@@ -155,9 +151,7 @@ export async function createFollowUpTask(
       date: new Date().toISOString(),
     },
   );
-}
-
-// ─── Sync Attendance → Event Stats ─────────────────────────────────────
+}
 
 const EVENTS_PATH = "/events";
 

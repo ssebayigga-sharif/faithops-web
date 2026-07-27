@@ -13,9 +13,7 @@ import type {
   AttendanceStats,
   VisitorRecord,
 } from "@/features/attendance/types";
-import type { FollowUpCandidate } from "@/features/attendance/services/sync.services";
-
-// ── Query keys ───────────────────────────────────────────────
+import type { FollowUpCandidate } from "@/features/attendance/services/sync.services";
 export const attendanceKeys = {
   sessions: ["attendance", "sessions"] as const,
   sessionRecords: (id: string) => ["attendance", "records", id] as const,
@@ -23,9 +21,7 @@ export const attendanceKeys = {
   visitors: ["attendance", "visitors"] as const,
   followUpCandidates: ["attendance", "followUpCandidates"] as const,
   events: ["events"] as const,
-};
-
-// ── Members (fetched from Firebase /members node) ────────────
+};
 // Returns ALL members (not just active) so the attendance list matches the members page
 export function useMembers() {
   return useQuery({
@@ -38,9 +34,7 @@ export function useMembers() {
     },
     staleTime: 5 * 60 * 1000,
   });
-}
-
-// ── Events (fetched from Firebase /events node) ──────────────
+}
 export function useEvents() {
   return useQuery({
     queryKey: attendanceKeys.events,
@@ -52,35 +46,27 @@ export function useEvents() {
     },
     staleTime: 5 * 60 * 1000,
   });
-}
-
-// ── Sessions list ────────────────────────────────────────────
+}
 export function useSessions() {
   return useQuery({
     queryKey: attendanceKeys.sessions,
     queryFn: AttendanceService.getSessions,
   });
-}
-
-// ── Records for one session ──────────────────────────────────
+}
 export function useSessionRecords(sessionId: string | null) {
   return useQuery({
     queryKey: attendanceKeys.sessionRecords(sessionId ?? ""),
     queryFn: () => AttendanceService.getSessionRecords(sessionId!),
     enabled: !!sessionId,
   });
-}
-
-// ── Records for one member ───────────────────────────────────
+}
 export function useMemberRecords(memberId: string | null) {
   return useQuery({
     queryKey: attendanceKeys.memberRecords(memberId ?? ""),
     queryFn: () => AttendanceService.getMemberRecords(memberId!),
     enabled: !!memberId,
   });
-}
-
-// ── Visitors ─────────────────────────────────────────────────
+}
 export function useVisitors() {
   return useQuery({
     queryKey: attendanceKeys.visitors,
@@ -94,9 +80,7 @@ export function useSessionVisitors(sessionId: string | null) {
     queryFn: () => AttendanceService.getSessionVisitors(sessionId!),
     enabled: !!sessionId,
   });
-}
-
-// ── Bulk save mutation (with sync) ───────────────────────────
+}
 export function useBulkSaveAttendance() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -126,9 +110,7 @@ export function useBulkSaveAttendance() {
       queryClient.invalidateQueries({ queryKey: ["members"] });
     },
   });
-}
-
-// ── Delete session mutation ──────────────────────────────────
+}
 export function useDeleteSession() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -138,9 +120,7 @@ export function useDeleteSession() {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.sessions });
     },
   });
-}
-
-// ── Follow-up detection ──────────────────────────────────────
+}
 export function useFollowUpCandidates() {
   return useQuery({
     queryKey: attendanceKeys.followUpCandidates,
@@ -169,9 +149,7 @@ export function useCreateFollowUpTask() {
       queryClient.invalidateQueries({ queryKey: ["members"] });
     },
   });
-}
-
-// ── Visitor follow-up mutation ───────────────────────────────
+}
 export function useUpdateVisitorFollowUp() {
   const queryClient = useQueryClient();
   return useMutation({

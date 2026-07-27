@@ -35,4 +35,3 @@ export interface StatItem {
   label: string;
   detail?: string;
 }
-

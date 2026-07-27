@@ -90,15 +90,11 @@ export function getCategoryTotalFromEntries(
   return entries
     .filter((e) => e.categoryId === categoryId)
     .reduce((sum, e) => sum + (e.amount || 0), 0);
-}
-
-// ─── Category label lookup
+}
 
 export function getCategoryLabel(id: string): string {
   return GIVING_CATEGORIES.find((c) => c.id === id)?.label ?? id;
-}
-
-// ─── Frequency label
+}
 
 const FREQUENCY_LABELS: Record<GivingFrequency, string> = {
   once: "One-time",
@@ -109,9 +105,7 @@ const FREQUENCY_LABELS: Record<GivingFrequency, string> = {
 
 export function getFrequencyLabel(freq: GivingFrequency): string {
   return FREQUENCY_LABELS[freq];
-}
-
-// ─── Monthly summary builder.
+}
 
 export function buildMonthlySummary(
   records: GivingRecord[],
@@ -148,9 +142,7 @@ export function buildMonthlySummary(
     recordCount: monthRecords.length,
     byCategory,
   };
-}
-
-// ─── Yearly summary builder ───────────────────────────────────────────────────
+}
 
 export function buildYearlySummary(
   records: GivingRecord[],
@@ -196,9 +188,7 @@ export function buildYearlySummary(
     monthlyBreakdown,
     byCategory,
   };
-}
-
-// ─── Category totals for a set of records ─────────────────────────────────────
+}
 
 export function buildCategoryTotals(records: GivingRecord[]): CategoryTotal[] {
   const totals: Record<GivingCategoryId, number> = {} as Record<
@@ -224,9 +214,7 @@ export function buildCategoryTotals(records: GivingRecord[]): CategoryTotal[] {
     amount: totals[cat.id] ?? 0,
     percentage: Math.round(((totals[cat.id] ?? 0) / grandTotal) * 100),
   }));
-}
-
-// ─── Report builder ───────────────────────────────────────────────────────────
+}
 
 export function buildReport(
   records: GivingRecord[],
@@ -257,9 +245,7 @@ export function buildReport(
     records: filtered,
     generatedAt: new Date().toISOString(),
   };
-}
-
-// ─── Available years from records ─────────────────────────────────────────────
+}
 
 export function getAvailableYears(records: GivingRecord[]): string[] {
   const years = new Set<string>();
@@ -277,9 +263,7 @@ export function getAvailableMonths(records: GivingRecord[]): string[] {
     if (month) months.add(month);
   }
   return Array.from(months).sort().reverse();
-}
-
-// ─── Recent Sabbaths ──────────────────────────────────────────────────────────
+}
 
 export function getRecentSabbaths(count = 8): string[] {
   const sabbaths: string[] = [];

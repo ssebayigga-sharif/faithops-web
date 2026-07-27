@@ -42,7 +42,7 @@
   }
 }
 
-/* ── Shared section layout ───────────────────────────────────────────────── */
+/* Shared section layout */
 .churchSection {
   padding: 2.25rem 0;
   background: theme.$background;
@@ -87,7 +87,7 @@
 
 .churchGoldRuleCenter { margin-inline: auto; }
 
-/* ── Shared button overrides ─────────────────────────────────────────────── */
+/* Shared button overrides */
 .churchBtnPrimary {
   transition: none !important;
 
@@ -198,7 +198,7 @@
   }
 }
 
-/* ── Service Tiles ────────────────────────────────────────────────────────── */
+/* Service Tiles */
 .churchServiceTile {
   position: relative;
   border-left: 3px solid var(--church-gold);
@@ -279,7 +279,7 @@
   }
 }
 
-/* ── Ministry Tiles ───────────────────────────────────────────────────────── */
+/* Ministry Tiles */
 .churchMinistries {
   display: flex;
   justify-content: center;
@@ -333,7 +333,7 @@
   }
 }
 
-/* ── Event Cards ──────────────────────────────────────────────────────────── */
+/* Event Cards */
 .churchEvents {
   display: flex;
   align-items: flex-end;

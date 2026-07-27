@@ -28,17 +28,13 @@ import type {
   UseMembersResult,
   UseUpdateMemberResult,
 } from "@/features/members/types";
-import { isFirebaseApiError } from "@/shared/services/firebase.client";
-
-// ─── Query keys ───────────────────────────────────────────────────────────────
+import { isFirebaseApiError } from "@/shared/services/firebase.client";
 // Centralised so invalidation is always consistent.
 
 export const memberKeys = {
   all: ["members"] as const,
   one: (key: string) => ["members", key] as const,
-} as const;
-
-// ─── useMembers — fetch all ───────────────────────────────────────────────────
+} as const;
 
 export function useMembers(): UseMembersResult {
   const { data, isLoading, isError, error, refetch } = useQuery<
@@ -64,9 +60,7 @@ export function useMembers(): UseMembersResult {
     error: errorMsg,
     refetch,
   };
-}
-
-// ─── useCreateMember ──────────────────────────────────────────────────────────
+}
 
 export function useCreateMember(): UseCreateMemberResult {
   const queryClient = useQueryClient();
@@ -115,9 +109,7 @@ export function useCreateMember(): UseCreateMemberResult {
         ? mutation.error.message
         : null,
   };
-}
-
-// ─── useUpdateMember ─────────────────────────────────────────────────────────
+}
 
 export function useUpdateMember(): UseUpdateMemberResult {
   const queryClient = useQueryClient();
@@ -151,9 +143,7 @@ export function useUpdateMember(): UseUpdateMemberResult {
         ? mutation.error.message
         : null,
   };
-}
-
-// ─── usePatchMember — lightweight field update ───────────────────────────────
+}
 
 export function usePatchMember() {
   const queryClient = useQueryClient();
@@ -194,9 +184,7 @@ export function usePatchMember() {
       queryClient.invalidateQueries({ queryKey: memberKeys.all });
     },
   });
-}
-
-// ─── useDeleteMember ─────────────────────────────────────────────────────────
+}
 
 export function useDeleteMember(): UseDeleteMemberResult {
   const queryClient = useQueryClient();

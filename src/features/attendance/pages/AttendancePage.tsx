@@ -12,7 +12,7 @@ import {
   DataTableSkeleton,
   Button,
 } from "@carbon/react";
-import { EventSchedule, List, UserFollow, Police } from "@carbon/icons-react";
+import { EventSchedule, List, Police, UserFollow } from "@carbon/icons-react";
 
 import { StatCards } from "@/features/attendance/components/StatCards";
 import { MarkAttendanceTable } from "@/features/attendance/components/MarkAttendanceTable";
@@ -43,7 +43,6 @@ import type {
   VisitorRowPayload,
   VisitorRecord,
 } from "@/features/attendance/types";
-
 import styles from "@/features/attendance/attendance.module.scss";
 
 const SERVICE_TYPES: ServiceType[] = [
@@ -71,20 +70,15 @@ const isOlderThanTwoMonths = (dateStr: string): boolean => {
 };
 
 export const AttendancePage: React.FC = () => {
-  // ── Session config ────────────────────────────────────────
   const [date, setDate] = useState<Date>(new Date());
   const [serviceType, setServiceType] =
     useState<ServiceType>("Sabbath Programmes");
   const [markedBy, setMarkedBy] = useState("");
-
-  // ── Visitor state ─────────────────────────────────────────
   const [visitorName, setVisitorName] = useState("");
   const [visitorPhone, setVisitorPhone] = useState("");
   const [visitorEmail, setVisitorEmail] = useState("");
   const [visitorNotes, setVisitorNotes] = useState("");
   const [visitors, setVisitors] = useState<VisitorRowPayload[]>([]);
-
-  // ── Data ──────────────────────────────────────────────────
   const { data: members = [], isLoading: membersLoading } = useMembers();
   const { data: sessions = [], isLoading: sessionsLoading } = useSessions();
   const { data: allVisitors = [] } = useVisitors();
@@ -93,25 +87,17 @@ export const AttendancePage: React.FC = () => {
   const createFollowUp = useCreateFollowUpTask();
   const updateVisitorFollowUp = useUpdateVisitorFollowUp();
 
-  // Build session ID for current date+serviceType
   const currentSessionId = useMemo(
     () =>
       `${toIsoDate(date)}_${serviceType.replace(/\s+/g, "_").toLowerCase()}`,
     [date, serviceType],
   );
-
-  // Load existing records if this session was already saved
   const { data: existingRecords = [] } = useSessionRecords(currentSessionId);
-
-  // ── Derived state ─────────────────────────────────────────
   const initialRows = useAttendanceRows(members);
   const [rows, setRows] = useState<AttendanceRow[]>([]);
 
-  // Sync rows whenever members change (new members appear immediately)
-  // OR when existing records are loaded (session was already saved)
   useEffect(() => {
     if (existingRecords.length > 0) {
-      // Merge existing records into rows
       setRows(
         initialRows.map((r) => {
           const existing = existingRecords.find(
@@ -131,7 +117,6 @@ export const AttendancePage: React.FC = () => {
     }
   }, [initialRows, existingRecords]);
 
-  // Build service type options from events + defaults
   const eventServiceTypes = useMemo(() => {
     const categories = new Set<string>();
     events.forEach((ev) => {
@@ -140,22 +125,17 @@ export const AttendancePage: React.FC = () => {
     return [...new Set([...SERVICE_TYPES, ...categories])];
   }, [events]);
 
-  // Auto-select "Sabbath Programmes" if date is Saturday
   useEffect(() => {
-    if (isSaturday(date) && serviceType !== "Sabbath Programmes") {
+    if (isSaturday(date) && serviceType !== "Sabbath Programmes")
       setServiceType("Sabbath Programmes");
-    }
   }, [date, serviceType]);
 
-  // Filter sessions to only show those from the last 2 months
   const recentSessions = useMemo(
     () => sessions.filter((s) => !isOlderThanTwoMonths(s.date)),
     [sessions],
   );
-
   const stats = useAttendanceStats(recentSessions);
 
-  // Build a live session object from current rows for stat cards
   const liveSession =
     rows.length > 0
       ? {
@@ -171,7 +151,6 @@ export const AttendancePage: React.FC = () => {
         }
       : null;
 
-  // ── Row handlers ──────────────────────────────────────────
   const handleRowChange = useCallback(
     (memberId: string, field: keyof AttendanceRow, value: string) => {
       setRows((prev) =>
@@ -187,7 +166,6 @@ export const AttendancePage: React.FC = () => {
     setRows((prev) => prev.map((r) => ({ ...r, status })));
   }, []);
 
-  // ── Visitor handlers ──────────────────────────────────────
   const handleAddVisitor = useCallback(() => {
     if (!visitorName.trim() || !visitorPhone.trim()) return;
     setVisitors((prev) => [
@@ -208,8 +186,6 @@ export const AttendancePage: React.FC = () => {
   const handleRemoveVisitor = useCallback((index: number) => {
     setVisitors((prev) => prev.filter((_, i) => i !== index));
   }, []);
-
-  // ── Save ──────────────────────────────────────────────────
   const saveMutation = useBulkSaveAttendance();
 
   const handleSave = async () => {
@@ -221,21 +197,17 @@ export const AttendancePage: React.FC = () => {
         visitors,
         markedBy: markedBy || "Admin",
       });
-      // After save, keep rows as-is (they stay saved forever)
       setVisitors([]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // ── Follow-up modal state
   const [followUpModalOpen, setFollowUpModalOpen] = useState(false);
-
   const handleAutoFollowUp = async () => {
     setFollowUpModalOpen(true);
   };
 
-  // ── Visitor follow-up modal state
   const [visitorFollowUpModalOpen, setVisitorFollowUpModalOpen] =
     useState(false);
   const [selectedVisitor, setSelectedVisitor] = useState<VisitorRecord | null>(
@@ -246,12 +218,10 @@ export const AttendancePage: React.FC = () => {
     setSelectedVisitor(visitor);
     setVisitorFollowUpModalOpen(true);
   }, []);
-
   const handleVisitorFollowUpClose = useCallback(() => {
     setVisitorFollowUpModalOpen(false);
     setSelectedVisitor(null);
   }, []);
-
   const handleVisitorFollowUpSubmit = useCallback(async () => {
     if (!selectedVisitor) return;
     try {
@@ -340,7 +310,6 @@ export const AttendancePage: React.FC = () => {
             </TabList>
 
             <TabPanels>
-              {/*  Mark attendance */}
               <TabPanel>
                 <Tile style={{ marginBottom: "1.5rem", marginTop: "1.5rem" }}>
                   <SessionConfig
@@ -354,7 +323,6 @@ export const AttendancePage: React.FC = () => {
                   />
                 </Tile>
 
-                {/* Visitor quick-add section */}
                 <Tile style={{ marginBottom: "1rem" }}>
                   <VisitorQuickAdd
                     name={visitorName}
@@ -388,7 +356,6 @@ export const AttendancePage: React.FC = () => {
                 )}
               </TabPanel>
 
-              {/* History */}
               <TabPanel>
                 <div style={{ marginTop: "1.5rem" }}>
                   <SessionHistoryTable
@@ -398,7 +365,6 @@ export const AttendancePage: React.FC = () => {
                 </div>
               </TabPanel>
 
-              {/*  Visitors */}
               <TabPanel>
                 <div style={{ marginTop: "1.5rem" }}>
                   <VisitorsTable
@@ -411,6 +377,7 @@ export const AttendancePage: React.FC = () => {
           </Tabs>
         </Column>
       </Grid>
+
       <FollowUpModal
         open={followUpModalOpen}
         candidates={followUpCandidates}
@@ -437,5 +404,3 @@ export const AttendancePage: React.FC = () => {
     </div>
   );
 };
-
-export default AttendancePage;

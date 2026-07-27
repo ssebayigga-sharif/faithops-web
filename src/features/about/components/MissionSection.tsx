@@ -3,7 +3,6 @@ import { Grid, Column, Tile } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { MissionPillar } from "@/features/about/types";
 
-//  Static data
 const PILLARS: MissionPillar[] = [
   {
     label: "Our Mission",
@@ -28,7 +27,6 @@ const PILLARS: MissionPillar[] = [
   },
 ];
 
-//  Sub-components
 interface PillarCardProps {
   pillar: MissionPillar;
 }
@@ -44,7 +42,6 @@ const PillarCard: React.FC<PillarCardProps> = ({ pillar }) => (
   </Tile>
 );
 
-// Component
 const MissionSection: React.FC = () => {
   return (
     <section

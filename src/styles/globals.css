@@ -17,7 +17,7 @@ a {
   color: inherit;
 }
 
-/* ── App Shell ─────────────────────────────────────────────── */
+/* App Shell */
 
 .app-shell {
   min-height: 100vh;
@@ -129,7 +129,7 @@ a {
   color: #ffffff;
 }
 
-/* ── Sidebar ────────────────────────────────────────────────── */
+/* Sidebar */
 
 .app-sidebar.cds--side-nav {
   border-right: 1px solid var(--cds-border-subtle-01, #d0d7de);
@@ -174,7 +174,7 @@ a {
   font-weight: 600;
 }
 
-/* ── Content area ───────────────────────────────────────────── */
+/* Content area */
 /* Desktop default: sidebar rail (3rem collapsed) or expanded (16rem) */
 
 .app-shell__content {
@@ -220,7 +220,7 @@ a {
   max-width: 100%;
 }
 
-/* ── Footer ─────────────────────────────────────────────────── */
+/* Footer */
 
 .app-shell__footer {
   display: grid;
@@ -366,7 +366,7 @@ a {
   box-shadow: 0 0 0 3px rgba(36, 161, 72, 0.16);
 }
 
-/* ── Generic utilities ──────────────────────────────────────── */
+/* Generic utilities */
 
 .hero-card,
 .page-placeholder {
@@ -474,7 +474,7 @@ a {
   padding: 1rem;
 }
 
-/* ── Members filters ───────────────────────────────────────── */
+/* Members filters */
 .members-filters {
   display: flex;
   align-items: center;
@@ -492,7 +492,7 @@ a {
   flex-shrink: 0;
 }
 
-/* ── Admin page shared ──────────────────────────────────────── */
+/* Admin page shared */
 
 .admin-page {
   min-height: 100%;
@@ -939,7 +939,7 @@ p {
     padding: 1rem 1rem 0;
   }
 
-  /* ── Members page mobile fixes ────────────────────────────── */
+  /* Members page mobile fixes */
   .admin-page__header {
     flex-direction: column;
   }
@@ -999,45 +999,6 @@ p {
     align-items: flex-start;
     flex-direction: column;
   }
-
-  .admin-page__inner {
-    padding: 1rem;
-  }
-
-  .admin-page__title {
-    font-size: 1.125rem;
-  }
-
-  .slide-over__panel {
-    width: 100vw;
-  }
-
-  .slide-over__footer {
-    flex-direction: column-reverse;
-  }
-
-  .slide-over__footer .cds--btn {
-    width: 100%;
-    max-width: none;
-  }
-
-  .insight-item {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .metric-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .dashboard-analytics__summary {
-    grid-template-columns: 1fr;
-  }
-
-  .bar-list__meta {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
 }
 
 /* ── Responsive: Small mobile (≤ 30rem) ─────────────────────── */
@@ -1048,6 +1009,54 @@ p {
 
   .admin-page__header {
     flex-direction: column;
+  }
+}
+
+/* ── Responsive Tables: Scroll on mobile ────────────────────── */
+@media (max-width: 49rem) {
+  .cds--table-container {
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .cds--table-toolbar {
+    overflow-x: auto;
+  }
+
+  /* Ensure pagination doesn't overflow */
+  .cds--pagination {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+/* ── Responsive: Events main grid ───────────────────────────── */
+.events-main-grid .cds--col-lg-11 {
+  min-width: 0;
+}
+
+@media (max-width: 65.98rem) {
+  .events-main-grid .cds--col-lg-11 {
+    width: 100%;
+  }
+}
+
+/* Carbon grid enhancements for responsiveness */
+/* These complement the default Carbon Grid breakpoints */
+
+.dashboard-carbon-grid .cds--col-lg-4,
+.dashboard-carbon-grid .cds--col-lg-6,
+.dashboard-carbon-grid .cds--col-lg-8,
+.dashboard-carbon-grid .cds--col-lg-10 {
+  min-width: 0;
+}
+
+@media (max-width: 65.98rem) {
+  .dashboard-carbon-grid .cds--col-lg-10,
+  .dashboard-carbon-grid .cds--col-lg-8,
+  .dashboard-carbon-grid .cds--col-lg-6 {
+    margin-bottom: 1rem;
   }
 }
 
@@ -1078,7 +1087,7 @@ p {
   padding-bottom: 1.5rem;
 }
 
-/*  Events page  */
+/* Events page */
 
 .events-page {
   min-height: 100%;
@@ -1582,7 +1591,7 @@ p {
   }
 }
 
-/* Attendance Shared Styles  */
+/* Attendance Shared Styles */
 
 .stat-cards {
   display: grid;
@@ -1698,103 +1707,7 @@ p {
   margin: 0;
 }
 
-/* ── Stat Cards Responsive ──────────────────────────────────── */
-
-@media (max-width: 639px) {
-  .stat-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  .stat-cards {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .stat-cards {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-/* ── Responsive Tables: Scroll on mobile ────────────────────── */
-@media (max-width: 49rem) {
-  .cds--table-container {
-    overflow-x: auto;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .cds--table-toolbar {
-    overflow-x: auto;
-  }
-
-  /* Ensure pagination doesn't overflow */
-  .cds--pagination {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-}
-
-/* ── Giving page responsiveness ─────────────────────────────── */
-/* The giving page uses inline styles, so we target the container directly */
-
-.giving-page .cds--tab-content {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-@media (max-width: 65.98rem) {
-  .giving-page .cds--tab-content .cds--grid > .cds--row > .cds--col-lg-12 {
-    padding-right: 0;
-  }
-
-  .giving-page .cds--tab-content .cds--grid > .cds--row > .cds--col-sm-0 {
-    display: none;
-  }
-}
-
-@media (max-width: 49rem) {
-  .giving-page .cds--breadcrumb {
-    flex-wrap: wrap;
-  }
-
-  .giving-page .cds--tab--list {
-    overflow-x: auto;
-  }
-}
-
-/* ── Carbon grid enhancements for responsiveness ─────────────── */
-/* These complement the default Carbon Grid breakpoints */
-
-.dashboard-carbon-grid .cds--col-lg-4,
-.dashboard-carbon-grid .cds--col-lg-6,
-.dashboard-carbon-grid .cds--col-lg-8,
-.dashboard-carbon-grid .cds--col-lg-10 {
-  min-width: 0;
-}
-
-@media (max-width: 65.98rem) {
-  .dashboard-carbon-grid .cds--col-lg-10,
-  .dashboard-carbon-grid .cds--col-lg-8,
-  .dashboard-carbon-grid .cds--col-lg-6 {
-    margin-bottom: 1rem;
-  }
-}
-
-/* ── Responsive: Events main grid ───────────────────────────── */
-.events-main-grid .cds--col-lg-11 {
-  min-width: 0;
-}
-
-@media (max-width: 65.98rem) {
-  .events-main-grid .cds--col-lg-11 {
-    width: 100%;
-  }
-}
-
-/* ── Attendance Mark Table ──────────────────────────────────── */
+/* Attendance Mark Table */
 .attendance-mark-table {
   width: 100%;
   max-width: 100%;
@@ -1848,7 +1761,7 @@ p {
   color: #ffffff;
 }
 
-/* ── Attendance Mark Table Responsive ───────────────────────── */
+/* Attendance Mark Table Responsive */
 @media (max-width: 49rem) {
   .attendance-mark-table__status-group {
     flex-direction: column;
@@ -1877,103 +1790,7 @@ p {
   }
 }
 
-/* ── Auth Pages (Login / Signup / Forgot Password) ──────────── */
-
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cds-background, #eef2f6);
-  padding: 2rem 1rem;
-}
-
-.auth-page__grid {
-  max-width: 64rem;
-  width: 100%;
-}
-
-.auth-page__brand {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem;
-  min-height: 20rem;
-}
-
-.auth-page__brand h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--cds-text-primary, #161616);
-  margin: 0 0 0.5rem;
-}
-
-.auth-page__tagline {
-  font-size: 1rem;
-  color: var(--cds-text-secondary, #6f6f6f);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.auth-page__card {
-  background: var(--cds-layer-01, #ffffff);
-  border: 1px solid var(--cds-border-subtle-01, #d0d7de);
-  padding: 2.5rem 2rem;
-  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
-}
-
-.auth-page__title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--cds-text-primary, #161616);
-  margin: 0 0 0.25rem;
-}
-
-.auth-page__subtitle {
-  font-size: 0.875rem;
-  color: var(--cds-text-secondary, #6f6f6f);
-  margin: 0;
-}
-
-.auth-page__action-row {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.auth-page__link {
-  color: var(--cds-link-primary, #0f62fe);
-  font-size: 0.875rem;
-  text-decoration: none;
-}
-
-.auth-page__link:hover {
-  text-decoration: underline;
-}
-
-.auth-page__submit {
-  width: 100%;
-}
-
-.auth-page__divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--cds-text-secondary, #6f6f6f);
-}
-
-@media (max-width: 49rem) {
-  .auth-page__brand {
-    display: none;
-  }
-
-  .auth-page__card {
-    padding: 1.5rem;
-  }
-}
-
-/* ── Premium Notification Panel Styles ──────────────────────── */
+/* Premium Notification Panel Styles */
 
 .app-header__notif-badge {
   position: absolute;

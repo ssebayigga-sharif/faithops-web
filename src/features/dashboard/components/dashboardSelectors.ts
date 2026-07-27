@@ -16,18 +16,14 @@ import {
   CELL_GROUPS,
   MINISTRIES_LIST,
   formatDate,
-} from "@/features/members/utils/memberUtils";
-
-// ─── Constants ───────────────────────────────────────────────────────────────
+} from "@/features/members/utils/memberUtils";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_SERVICES_COUNT = 6;
 const LOW_ATTENDANCE_THRESHOLD = 45;
 const CONSECUTIVE_MISS_THRESHOLD = 2;
 const DUE_SOON_DAYS = 7;
-const TOP_N = 5;
-
-// ─── Safe accessors ──────────────────────────────────────────────────────────
+const TOP_N = 5;
 
 export function asList<T>(value: T[] | null | undefined): T[] {
   return Array.isArray(value) ? value : [];
@@ -54,9 +50,7 @@ export function getFollowUpTasks(member: Member): FollowUpTask[] {
 
 export function getMinistryAssignments(member: Member): MinistryAssignment[] {
   return asList(member.ministries);
-}
-
-// ─── Computed member metrics ─────────────────────────────────────────────────
+}
 
 export function percentage(part: number, total: number): number {
   return total > 0 ? Math.round((part / total) * 100) : 0;
@@ -93,9 +87,7 @@ export function getTotalGiving(member: Member): number {
     member._computed?.totalGiving ??
     getGivingRecords(member).reduce((sum, g) => sum + g.amount, 0)
   );
-}
-
-// ─── Follow-up predicates ─────────────────────────────────────────────────────
+}
 
 function isOverdue(task: FollowUpTask, today: Date): boolean {
   if (task.status === "done") return false;
@@ -113,9 +105,7 @@ function isDueSoon(task: FollowUpTask, today: Date): boolean {
 
 function getCurrentMonthKey(): string {
   return new Date().toISOString().slice(0, 7);
-}
-
-// ─── Focused selectors (each independently testable) ─────────────────────────
+}
 
 export function selectMembershipCounts(members: Member[]) {
   return {
@@ -244,9 +234,7 @@ export function selectCellGroupHealth(members: Member[]): CellGroupHealth[] {
     .filter((g) => g.count > 0)
     .sort((a, b) => b.average - a.average)
     .slice(0, TOP_N);
-}
-
-// ─── Composed snapshot ────────────────────────────────────────────────────────
+}
 
 export function buildDashboardSnapshot(members: Member[]): DashboardSnapshot {
   return {

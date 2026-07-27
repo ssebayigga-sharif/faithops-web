@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   Grid,
   Column,
@@ -24,6 +24,7 @@ import { useSessions } from "@/features/attendance/hooks/useAttendance";
 import { useMembers } from "@/features/attendance/hooks/useAttendance";
 import { useVisitors } from "@/features/attendance/hooks/useAttendance";
 import { useFollowUpCandidates } from "@/features/attendance/hooks/useAttendance";
+import { useReportStats } from "@/features/reports/components/ReportStats";
 
 import styles from "./reports.module.scss";
 
@@ -34,70 +35,7 @@ export const ReportsPage: React.FC = () => {
   const { data: followUpCandidates = [] } = useFollowUpCandidates();
 
   const isLoading = sessionsLoading || membersLoading;
-
-  // ── Compute aggregate stats ──────────────────────────────
-  const stats = useMemo(() => {
-    const total = sessions.length;
-    if (total === 0) return null;
-
-    const totalPresent = sessions.reduce((s, ses) => s + ses.totalPresent, 0);
-    const totalAbsent = sessions.reduce((s, ses) => s + ses.totalAbsent, 0);
-    const totalLate = sessions.reduce((s, ses) => s + ses.totalLate, 0);
-    const totalExcused = sessions.reduce((s, ses) => s + ses.totalExcused, 0);
-    const totalVisitors = sessions.reduce(
-      (s, ses) => s + (ses.totalVisitors ?? 0),
-      0,
-    );
-    const grandTotal = totalPresent + totalAbsent + totalLate + totalExcused;
-
-    const presentRate = grandTotal
-      ? Math.round((totalPresent / grandTotal) * 100)
-      : 0;
-    const averageAttendance = Math.round(totalPresent / total);
-
-    // Attendance by service type
-    const byService: Record<string, { present: number; total: number }> = {};
-    sessions.forEach((ses) => {
-      if (!byService[ses.serviceType]) {
-        byService[ses.serviceType] = { present: 0, total: 0 };
-      }
-      byService[ses.serviceType].present += ses.totalPresent;
-      byService[ses.serviceType].total +=
-        ses.totalPresent + ses.totalAbsent + ses.totalLate + ses.totalExcused;
-    });
-
-    // Monthly trend
-    const monthly: Record<string, { present: number; total: number }> = {};
-    sessions.forEach((ses) => {
-      const month = ses.date.slice(0, 7); // "2026-06"
-      if (!monthly[month]) {
-        monthly[month] = { present: 0, total: 0 };
-      }
-      monthly[month].present += ses.totalPresent;
-      monthly[month].total +=
-        ses.totalPresent + ses.totalAbsent + ses.totalLate + ses.totalExcused;
-    });
-
-    return {
-      totalSessions: total,
-      totalMembers: members.length,
-      totalVisitors,
-      presentRate,
-      absentRate: grandTotal ? Math.round((totalAbsent / grandTotal) * 100) : 0,
-      lateRate: grandTotal ? Math.round((totalLate / grandTotal) * 100) : 0,
-      averageAttendance,
-      byService,
-      monthly: Object.entries(monthly)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([month, data]) => ({
-          month,
-          present: data.present,
-          total: data.total,
-          rate: data.total ? Math.round((data.present / data.total) * 100) : 0,
-        })),
-      followUpNeeded: followUpCandidates.length,
-    };
-  }, [sessions, members, followUpCandidates]);
+  const stats = useReportStats(sessions, members, followUpCandidates, visitors);
 
   if (isLoading) {
     return (
@@ -125,7 +63,6 @@ export const ReportsPage: React.FC = () => {
 
   return (
     <div className={styles.reportspage}>
-      {/* ── Header ──────────────────────────────────────── */}
       <div className={styles.reportsheader}>
         <Grid>
           <Column lg={16} md={8} sm={4}>
@@ -161,7 +98,6 @@ export const ReportsPage: React.FC = () => {
         </Grid>
       ) : (
         <Grid>
-          {/* ── KPI Cards ──────────────────────────────── */}
           <Column lg={4} md={4} sm={4}>
             <Tile className={styles.reportspage__kpi}>
               <Dashboard size={24} />
@@ -207,7 +143,6 @@ export const ReportsPage: React.FC = () => {
             </Tile>
           </Column>
 
-          {/* ── Breakdown Section ───────────────────────── */}
           <Column lg={8} md={8} sm={4}>
             <div style={{ marginTop: "2rem" }}>
               <h2 className={styles.reportspage__sectionTitle}>
@@ -306,7 +241,6 @@ export const ReportsPage: React.FC = () => {
             </div>
           </Column>
 
-          {/* ── Summary Row ──────────────────────────────── */}
           <Column lg={16} md={8} sm={4}>
             <div style={{ marginTop: "2rem" }}>
               <Tile className={styles.reportspage__summary}>

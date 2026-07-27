@@ -1,0 +1,39 @@
+{
+  "rules": {
+    "profiles": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "members": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["joinedAt"]
+    },
+
+    "events": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["start"]
+    },
+
+    "attendance": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    "notifications": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null"
+      }
+    },
+
+    "emailOutbox": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

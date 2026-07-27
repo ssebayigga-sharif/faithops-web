@@ -1,0 +1,132 @@
+[debug] [2026-07-22T12:55:34.728Z] ----------------------------------------------------------------------
+[debug] [2026-07-22T12:55:34.740Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\DELL\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only database
+[debug] [2026-07-22T12:55:34.742Z] CLI Version:   15.22.4
+[debug] [2026-07-22T12:55:34.742Z] Platform:      win32
+[debug] [2026-07-22T12:55:34.743Z] Node Version:  v22.20.0
+[debug] [2026-07-22T12:55:34.745Z] Detected Agent: unknown
+[debug] [2026-07-22T12:55:34.745Z] Time:          Wed Jul 22 2026 15:55:34 GMT+0300 (East Africa Time)
+[debug] [2026-07-22T12:55:34.746Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-22T12:55:34.756Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-07-22T12:56:48.312Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-22T12:56:48.314Z] > authorizing via signed-in user (sharifsseba@gmail.com)
+[debug] [2026-07-22T12:56:48.315Z] [iam] checking project my-church-9abc5 for permissions ["firebase.projects.get","firebasedatabase.instances.update"]
+[debug] [2026-07-22T12:56:48.320Z] Checked if tokens are valid: false, expires at: 1783457466957
+[debug] [2026-07-22T12:56:48.321Z] Checked if tokens are valid: false, expires at: 1783457466957
+[debug] [2026-07-22T12:56:48.323Z] > refreshing access token with scopes: []
+[debug] [2026-07-22T12:56:48.334Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-07-22T12:56:48.335Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-07-22T12:54:47.038Z] ----------------------------------------------------------------------
+[debug] [2026-07-22T12:54:47.043Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\DELL\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only database
+[debug] [2026-07-22T12:54:47.044Z] CLI Version:   15.22.4
+[debug] [2026-07-22T12:54:47.045Z] Platform:      win32
+[debug] [2026-07-22T12:54:47.045Z] Node Version:  v22.20.0
+[debug] [2026-07-22T12:54:47.046Z] Detected Agent: unknown
+[debug] [2026-07-22T12:54:47.046Z] Time:          Wed Jul 22 2026 15:54:47 GMT+0300 (East Africa Time)
+[debug] [2026-07-22T12:54:47.048Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-22T12:54:47.057Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-07-22T12:56:48.664Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-22T12:56:48.667Z] > authorizing via signed-in user (sharifsseba@gmail.com)
+[debug] [2026-07-22T12:56:48.667Z] [iam] checking project my-church-9abc5 for permissions ["firebase.projects.get","firebasedatabase.instances.update"]
+[debug] [2026-07-22T12:56:48.670Z] Checked if tokens are valid: false, expires at: 1783457466957
+[debug] [2026-07-22T12:56:48.671Z] Checked if tokens are valid: false, expires at: 1783457466957
+[debug] [2026-07-22T12:56:48.672Z] > refreshing access token with scopes: []
+[debug] [2026-07-22T12:56:48.701Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-07-22T12:56:48.701Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-07-22T12:56:49.570Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-07-22T12:56:49.578Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-07-22T12:56:49.571Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-07-22T12:56:49.714Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-07-22T12:56:49.579Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-07-22T12:56:49.748Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions [none]
+[debug] [2026-07-22T12:56:49.748Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions  x-goog-user-project=my-church-9abc5
+[debug] [2026-07-22T12:56:49.749Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions {"permissions":["firebase.projects.get","firebasedatabase.instances.update"]}
+[debug] [2026-07-22T12:56:49.714Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-07-22T12:56:49.888Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions [none]
+[debug] [2026-07-22T12:56:49.888Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions  x-goog-user-project=my-church-9abc5
+[debug] [2026-07-22T12:56:49.889Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions {"permissions":["firebase.projects.get","firebasedatabase.instances.update"]}
+[debug] [2026-07-22T12:56:49.754Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-07-22T12:56:49.754Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-07-22T12:56:52.062Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions 200
+[debug] [2026-07-22T12:56:52.063Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions 200
+[debug] [2026-07-22T12:56:52.062Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions {"permissions":["firebase.projects.get","firebasedatabase.instances.update"]}
+[debug] [2026-07-22T12:56:52.065Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:52.065Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:52.066Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/my-church-9abc5 [none]
+[debug] [2026-07-22T12:56:52.064Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/my-church-9abc5:testIamPermissions {"permissions":["firebase.projects.get","firebasedatabase.instances.update"]}
+[debug] [2026-07-22T12:56:52.066Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:52.066Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:52.070Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/my-church-9abc5 [none]
+[debug] [2026-07-22T12:56:53.214Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/my-church-9abc5 200
+[debug] [2026-07-22T12:56:53.215Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/my-church-9abc5 {"projectId":"my-church-9abc5","projectNumber":"806770499004","displayName":"my-church","name":"projects/my-church-9abc5","resources":{"hostingSite":"my-church-9abc5","realtimeDatabaseInstance":"my-church-9abc5-default-rtdb"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_5f5a9920-f748-4daa-97c3-c81cc0ba8c25"}
+[info] 
+[info] === Deploying to 'my-church-9abc5'...
+[info] 
+[info] i  deploying database 
+[info] i  database: checking rules syntax... 
+[debug] [2026-07-22T12:56:53.244Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:53.245Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:53.246Z] >>> [apiv2][query] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb [none]
+[debug] [2026-07-22T12:56:53.271Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/my-church-9abc5 200
+[debug] [2026-07-22T12:56:53.271Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/my-church-9abc5 {"projectId":"my-church-9abc5","projectNumber":"806770499004","displayName":"my-church","name":"projects/my-church-9abc5","resources":{"hostingSite":"my-church-9abc5","realtimeDatabaseInstance":"my-church-9abc5-default-rtdb"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_5f5a9920-f748-4daa-97c3-c81cc0ba8c25"}
+[info] 
+[info] === Deploying to 'my-church-9abc5'...
+[info] 
+[info] i  deploying database 
+[info] i  database: checking rules syntax... 
+[debug] [2026-07-22T12:56:53.285Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:53.286Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:53.287Z] >>> [apiv2][query] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb [none]
+[debug] [2026-07-22T12:56:55.108Z] <<< [apiv2][status] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb 200
+[debug] [2026-07-22T12:56:55.108Z] <<< [apiv2][body] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb {"name":"projects/806770499004/locations/us-central1/instances/my-church-9abc5-default-rtdb","project":"projects/806770499004","databaseUrl":"https://my-church-9abc5-default-rtdb.firebaseio.com","type":"DEFAULT_DATABASE","state":"ACTIVE"}
+[debug] [2026-07-22T12:56:55.127Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:55.127Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:55.137Z] >>> [apiv2][query] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json dryRun=true
+[debug] [2026-07-22T12:56:55.138Z] >>> [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json "{\r\n  \"rules\": {\r\n    \"profiles\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null && auth.uid === $uid\"\r\n      }\r\n    },\r\n\r\n    \"members\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"joinedAt\"]\r\n    },\r\n\r\n    \"events\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"start\"]\r\n    },\r\n\r\n    \"attendance\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    },\r\n\r\n    \"notifications\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null\"\r\n      }\r\n    },\r\n\r\n    \"emailOutbox\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    }\r\n  }\r\n}"
+[debug] [2026-07-22T12:56:56.117Z] <<< [apiv2][status] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json 200
+[debug] [2026-07-22T12:56:56.117Z] <<< [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json {"status":"ok"}
+[info] +  database: rules syntax for database my-church-9abc5-default-rtdb is valid 
+[info] i  database: releasing rules... 
+[debug] [2026-07-22T12:56:56.120Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:56.120Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:56.121Z] >>> [apiv2][query] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb [none]
+[debug] [2026-07-22T12:56:56.473Z] <<< [apiv2][status] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb 200
+[debug] [2026-07-22T12:56:56.475Z] <<< [apiv2][status] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb 200
+[debug] [2026-07-22T12:56:56.474Z] <<< [apiv2][body] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb {"name":"projects/806770499004/locations/us-central1/instances/my-church-9abc5-default-rtdb","project":"projects/806770499004","databaseUrl":"https://my-church-9abc5-default-rtdb.firebaseio.com","type":"DEFAULT_DATABASE","state":"ACTIVE"}
+[debug] [2026-07-22T12:56:56.476Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:56.477Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:56.477Z] >>> [apiv2][query] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json dryRun=true
+[debug] [2026-07-22T12:56:56.476Z] <<< [apiv2][body] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb {"name":"projects/806770499004/locations/us-central1/instances/my-church-9abc5-default-rtdb","project":"projects/806770499004","databaseUrl":"https://my-church-9abc5-default-rtdb.firebaseio.com","type":"DEFAULT_DATABASE","state":"ACTIVE"}
+[debug] [2026-07-22T12:56:56.478Z] >>> [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json "{\r\n  \"rules\": {\r\n    \"profiles\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null && auth.uid === $uid\"\r\n      }\r\n    },\r\n\r\n    \"members\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"joinedAt\"]\r\n    },\r\n\r\n    \"events\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"start\"]\r\n    },\r\n\r\n    \"attendance\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    },\r\n\r\n    \"notifications\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null\"\r\n      }\r\n    },\r\n\r\n    \"emailOutbox\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    }\r\n  }\r\n}"
+[debug] [2026-07-22T12:56:56.477Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:56.478Z] Checked if tokens are valid: true, expires at: 1784728608579
+[debug] [2026-07-22T12:56:56.478Z] >>> [apiv2][query] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json 
+[debug] [2026-07-22T12:56:56.479Z] >>> [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json "{\r\n  \"rules\": {\r\n    \"profiles\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null && auth.uid === $uid\"\r\n      }\r\n    },\r\n\r\n    \"members\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"joinedAt\"]\r\n    },\r\n\r\n    \"events\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"start\"]\r\n    },\r\n\r\n    \"attendance\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    },\r\n\r\n    \"notifications\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null\"\r\n      }\r\n    },\r\n\r\n    \"emailOutbox\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    }\r\n  }\r\n}"
+[debug] [2026-07-22T12:56:56.935Z] <<< [apiv2][status] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json 200
+[debug] [2026-07-22T12:56:56.936Z] <<< [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json {"status":"ok"}
+[info] +  database: rules for database my-church-9abc5-default-rtdb released successfully 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/my-church-9abc5/overview
+[debug] [2026-07-22T12:56:57.276Z] <<< [apiv2][status] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json 200
+[debug] [2026-07-22T12:56:57.277Z] <<< [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json {"status":"ok"}
+[info] +  database: rules syntax for database my-church-9abc5-default-rtdb is valid 
+[info] i  database: releasing rules... 
+[debug] [2026-07-22T12:56:57.280Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:57.281Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:57.281Z] >>> [apiv2][query] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb [none]
+[debug] [2026-07-22T12:56:57.653Z] <<< [apiv2][status] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb 200
+[debug] [2026-07-22T12:56:57.654Z] <<< [apiv2][body] GET https://firebasedatabase.googleapis.com/v1beta/projects/my-church-9abc5/locations/-/instances/my-church-9abc5-default-rtdb {"name":"projects/806770499004/locations/us-central1/instances/my-church-9abc5-default-rtdb","project":"projects/806770499004","databaseUrl":"https://my-church-9abc5-default-rtdb.firebaseio.com","type":"DEFAULT_DATABASE","state":"ACTIVE"}
+[debug] [2026-07-22T12:56:57.657Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:57.658Z] Checked if tokens are valid: true, expires at: 1784728608715
+[debug] [2026-07-22T12:56:57.658Z] >>> [apiv2][query] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json 
+[debug] [2026-07-22T12:56:57.659Z] >>> [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json "{\r\n  \"rules\": {\r\n    \"profiles\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null && auth.uid === $uid\"\r\n      }\r\n    },\r\n\r\n    \"members\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"joinedAt\"]\r\n    },\r\n\r\n    \"events\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\",\r\n      \".indexOn\": [\"start\"]\r\n    },\r\n\r\n    \"attendance\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    },\r\n\r\n    \"notifications\": {\r\n      \"$uid\": {\r\n        \".read\": \"auth != null && auth.uid === $uid\",\r\n        \".write\": \"auth != null\"\r\n      }\r\n    },\r\n\r\n    \"emailOutbox\": {\r\n      \".read\": \"auth != null\",\r\n      \".write\": \"auth != null\"\r\n    }\r\n  }\r\n}"
+[debug] [2026-07-22T12:56:58.098Z] <<< [apiv2][status] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json 200
+[debug] [2026-07-22T12:56:58.099Z] <<< [apiv2][body] PUT https://my-church-9abc5-default-rtdb.firebaseio.com/.settings/rules.json {"status":"ok"}
+[info] +  database: rules for database my-church-9abc5-default-rtdb released successfully 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/my-church-9abc5/overview

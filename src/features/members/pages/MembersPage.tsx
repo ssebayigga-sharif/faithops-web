@@ -94,9 +94,7 @@ export default function MembersPage() {
   function notify(kind: "success" | "error", title: string, subtitle: string) {
     setToast({ kind, title, subtitle });
     setTimeout(() => setToast(null), 5000);
-  }
-
-  // ── Create member
+  }
   async function handleCreateMember(member: Member) {
     try {
       const { _computed, _firebaseKey, ...payload } = member as Member & {
@@ -116,9 +114,7 @@ export default function MembersPage() {
       );
       throw new Error(createError ?? "Could not save member.");
     }
-  }
-
-  // ── Delete
+  }
   async function handleDeleteConfirm() {
     if (!memberToDelete?._firebaseKey) return;
     try {
@@ -133,9 +129,7 @@ export default function MembersPage() {
     } finally {
       setMemberToDelete(null);
     }
-  }
-
-  // ── Batch delete
+  }
   async function handleBatchDelete(toRemove: Member[]) {
     await Promise.all(toRemove.map((m) => deleteMember(m._firebaseKey!)));
     notify("success", "Deleted", `${toRemove.length} member(s) removed.`);

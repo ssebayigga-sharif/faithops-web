@@ -3,7 +3,6 @@ import { Grid, Column, Tile } from "@carbon/react";
 import styles from "../about.module.scss";
 import type { Distinctive } from "@/features/about/types";
 
-//  Static data
 const DISTINCTIVES: Distinctive[] = [
   {
     icon: "📖",
@@ -37,7 +36,6 @@ const DISTINCTIVES: Distinctive[] = [
   },
 ];
 
-//  Sub-components
 interface DistinctiveCardProps {
   distinctive: Distinctive;
 }
@@ -49,7 +47,6 @@ const DistinctiveCard: React.FC<DistinctiveCardProps> = ({ distinctive }) => (
   </Tile>
 );
 
-//  Component
 const DistinctivesSection: React.FC = () => {
   return (
     <section

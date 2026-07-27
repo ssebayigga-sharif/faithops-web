@@ -7,32 +7,18 @@ import type {
   Step,
 } from "@/features/members/types";
 import { STEP_LABELS } from "@/features/members/data/members";
-import {
-  CELL_GROUPS,
-  generateMemberId,
-  MINISTRIES_LIST,
-  MINISTRY_ROLES,
-} from "@/features/members/utils/memberUtils";
+import { generateMemberId } from "@/features/members/utils/memberUtils";
 import { Add, TrashCan } from "@carbon/icons-react";
 import {
   Button,
-  RadioButton,
-  DatePicker,
-  DatePickerInput,
-  FormGroup,
   InlineNotification,
-  NumberInput,
   ProgressIndicator,
   ProgressStep,
-  RadioButtonGroup,
-  Select,
-  SelectItem,
-  Stack,
-  Tag,
-  TextInput,
-  Toggle,
 } from "@carbon/react";
 import { SlideOver } from "@/shared/components/ui/SlideOver";
+import { StepPersonalInfo } from "./StepPersonalInfo";
+import { StepChurchInfo } from "./StepChurchInfo";
+import { StepMinistries } from "./StepMinistries";
 import styles from "./MemberModal.module.scss";
 
 const DEFAULT_FORM_VALUES: Partial<MemberFormValues> = {
@@ -65,16 +51,6 @@ function validateStep1(form: Partial<MemberFormValues>): string[] {
   if (!form.cellGroup) errs.push("Cell group is required.");
   if (!form.joinedAt) errs.push("Join date is required.");
   return errs;
-}
-
-function ErrorList({ errors }: { errors: string[] }) {
-  return (
-    <ul className={styles.errorList}>
-      {errors.map((err) => (
-        <li key={err}>{err}</li>
-      ))}
-    </ul>
-  );
 }
 
 const MemberModal = ({
@@ -111,13 +87,10 @@ const MemberModal = ({
     setStep((s) => (s > 0 ? ((s - 1) as Step) : s));
   };
 
-  const addMinistry = () => {
+  const addMinistry = () =>
     setMinistries((prev) => [...prev, { ministry: "Choir", role: "Member" }]);
-  };
-
   const removeMinistry = (i: number) =>
     setMinistries((prev) => prev.filter((_, idx) => idx !== i));
-
   const updateMinistry = (
     i: number,
     key: keyof MiniAssignmentDraft,
@@ -152,10 +125,8 @@ const MemberModal = ({
       );
       return;
     }
-
     const newId = generateMemberId(existingIds);
     const now = new Date().toISOString();
-
     const member: Member = {
       id: newId,
       firstName: form.firstName!,
@@ -189,7 +160,6 @@ const MemberModal = ({
         },
       ],
     };
-
     await onSubmit(member);
     handleClose();
   };
@@ -242,223 +212,15 @@ const MemberModal = ({
         />
       )}
 
-      {/* ── Step 0: Personal Info ── */}
-      {step === 0 && (
-        <Stack gap={5}>
-          <div className={styles.fieldRow}>
-            <TextInput
-              id="firstName"
-              labelText="First Name *"
-              value={form.firstName}
-              onChange={(e) => set("firstName", e.target.value)}
-              placeholder="e.g. Sarah"
-            />
-            <TextInput
-              id="lastName"
-              labelText="Last Name *"
-              value={form.lastName}
-              onChange={(e) => set("lastName", e.target.value)}
-              placeholder="e.g. Nakato"
-            />
-          </div>
-
-          <div className={styles.fieldRow}>
-            <TextInput
-              id="phone"
-              labelText="Phone Number *"
-              value={form.phone}
-              onChange={(e) => set("phone", e.target.value)}
-              placeholder="+256 7XX XXX XXX"
-            />
-            <TextInput
-              id="email"
-              labelText="Email Address"
-              type="email"
-              value={form.email}
-              onChange={(e) => set("email", e.target.value)}
-              placeholder="email@example.com"
-            />
-          </div>
-
-          <div className={styles.fieldRow}>
-            <FormGroup legendText="Gender *">
-              <RadioButtonGroup
-                name="gender"
-                valueSelected={form.gender}
-                onChange={(val) =>
-                  set("gender", val as MemberFormValues["gender"])
-                }
-                orientation="vertical"
-              >
-                <RadioButton labelText="Male" value="male" id="gender-male" />
-                <RadioButton
-                  labelText="Female"
-                  value="female"
-                  id="gender-female"
-                />
-                <RadioButton
-                  labelText="Prefer not to say"
-                  value="prefer_not_to_say"
-                  id="gender-prefer-not-to-say"
-                />
-              </RadioButtonGroup>
-            </FormGroup>
-
-            <NumberInput
-              id="age"
-              label="Age *"
-              value={form.age ?? 0}
-              min={1}
-              max={120}
-              onChange={(_e, { value }) => set("age", Number(value))}
-            />
-          </div>
-
-          <Select
-            id="maritalStatus"
-            labelText="Marital Status"
-            value={form.maritalStatus}
-            onChange={(e) =>
-              set(
-                "maritalStatus",
-                e.target.value as MemberFormValues["maritalStatus"],
-              )
-            }
-          >
-            <SelectItem value="single" text="Single" />
-            <SelectItem value="married" text="Married" />
-            <SelectItem value="widowed" text="Widowed" />
-            <SelectItem value="divorced" text="Divorced" />
-          </Select>
-        </Stack>
-      )}
-
-      {/* ── Step 1: Church Details ── */}
-      {step === 1 && (
-        <Stack gap={5}>
-          <Select
-            id="status"
-            labelText="Member Status *"
-            value={form.status}
-            onChange={(e) =>
-              set("status", e.target.value as MemberFormValues["status"])
-            }
-          >
-            {(
-              [
-                "active",
-                "visitor",
-                "New convert",
-                "Inactive",
-                "Transfered",
-                "Suspended",
-                "Deceased",
-              ] as const
-            ).map((s) => (
-              <SelectItem key={s} value={s} text={s} />
-            ))}
-          </Select>
-
-          <Select
-            id="cellGroup"
-            labelText="Cell Group *"
-            value={form.cellGroup}
-            onChange={(e) => set("cellGroup", e.target.value)}
-          >
-            <SelectItem disabled hidden value="" text="Choose a cell group" />
-            {CELL_GROUPS.map((g) => (
-              <SelectItem key={g} value={g} text={g} />
-            ))}
-          </Select>
-
-          <DatePicker
-            datePickerType="single"
-            value={form.joinedAt ? new Date(form.joinedAt + "T00:00:00") : ""}
-            onChange={([date]) => {
-              if (date) set("joinedAt", date.toISOString().split("T")[0]);
-            }}
-          >
-            <DatePickerInput
-              id="joinedAt"
-              labelText="Date Joined *"
-              placeholder="mm/dd/yyyy"
-            />
-          </DatePicker>
-
-          <Toggle
-            id="baptized"
-            labelText="Baptized (SDA)"
-            toggled={form.baptized}
-            onToggle={(val) => set("baptized", val)}
-            labelA="No"
-            labelB="Yes"
-          />
-        </Stack>
-      )}
-
-      {/* ── Step 2: Ministries ── */}
+      {step === 0 && <StepPersonalInfo form={form} set={set} />}
+      {step === 1 && <StepChurchInfo form={form} set={set} />}
       {step === 2 && (
-        <Stack gap={5}>
-          <p className={styles.helperText}>
-            Assign this member to one or more ministries (optional — can be
-            updated later).
-          </p>
-
-          {ministries.map((m, i) => (
-            <div key={i} className={styles.ministryRow}>
-              <Select
-                id={`min-ministry-${i}`}
-                labelText="Ministry"
-                value={m.ministry}
-                onChange={(e) => updateMinistry(i, "ministry", e.target.value)}
-              >
-                {MINISTRIES_LIST.map((min) => (
-                  <SelectItem key={min} value={min} text={min} />
-                ))}
-              </Select>
-
-              <Select
-                id={`min-role-${i}`}
-                labelText="Role"
-                value={m.role}
-                onChange={(e) => updateMinistry(i, "role", e.target.value)}
-              >
-                {MINISTRY_ROLES.map((r) => (
-                  <SelectItem key={r} value={r} text={r} />
-                ))}
-              </Select>
-
-              <Button
-                kind="ghost"
-                size="md"
-                hasIconOnly
-                renderIcon={TrashCan}
-                iconDescription="Remove"
-                onClick={() => removeMinistry(i)}
-                className={styles.removeButton}
-              />
-            </div>
-          ))}
-
-          <Button
-            kind="tertiary"
-            renderIcon={Add}
-            size="sm"
-            onClick={addMinistry}
-          >
-            Add Ministry Assignment
-          </Button>
-
-          {ministries.length > 0 && (
-            <div className={styles.ministryTags}>
-              {ministries.map((m, i) => (
-                <Tag key={i} type="blue" size="md">
-                  {m.ministry} · {m.role}
-                </Tag>
-              ))}
-            </div>
-          )}
-        </Stack>
+        <StepMinistries
+          ministries={ministries}
+          addMinistry={addMinistry}
+          removeMinistry={removeMinistry}
+          updateMinistry={updateMinistry}
+        />
       )}
     </SlideOver>
   );

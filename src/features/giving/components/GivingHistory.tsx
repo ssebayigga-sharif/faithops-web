@@ -49,9 +49,7 @@ const HEADERS = [
   { key: "offerings", header: "Offerings" },
   { key: "totalAmount", header: "Total" },
   { key: "categories", header: "Categories" },
-];
-
-// ─── Print helper ─────────────────────────────────────────────────────────────
+];
 
 function printReceipt(record: GivingRecord): void {
   const entriesHTML = record.entries

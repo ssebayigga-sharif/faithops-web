@@ -104,7 +104,6 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  // ── Loading state ───────────────────────────────────────────
   if (isLoading) {
     return (
       <div className={styles.profilePageLoading}>
@@ -124,7 +123,7 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className={styles.profilePage}>
-      {/* ── Header ─────────────────────────────────────────── */}
+      
       <div className={styles.profileHeader}>
         <Grid>
           <Column lg={16} md={8} sm={4}>
@@ -188,7 +187,7 @@ export const ProfilePage: React.FC = () => {
         </Grid>
       </div>
 
-      {/* ── Notifications ────────────────────────────────────── */}
+      
       {(loadError || saveError) && (
         <Grid style={{ marginBottom: "1rem" }}>
           <Column lg={16} md={8} sm={4}>
@@ -202,7 +201,7 @@ export const ProfilePage: React.FC = () => {
         </Grid>
       )}
 
-      {/* ── Main Layout ──────────────────────────────────────── */}
+      
       <Grid className={styles.profileGrid}>
         <Column lg={16} md={8} sm={4}>
           <div className={styles.profileSections}>

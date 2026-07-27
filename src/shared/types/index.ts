@@ -37,9 +37,7 @@ export interface FirebaseApiError {
   message: string;
   status: number | null;
   raw: unknown;
-}
-
-// ─── Shared Service Types for Centralized Attendance Tracking ────────────
+}
 
 /**
  * Unified service type across Attendance, Members, and Events modules.

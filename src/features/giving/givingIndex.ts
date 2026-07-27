@@ -1,5 +1,3 @@
-// ─── Giving module public API
-
 export { default as GivingPage } from "./pages/GivingPage";
 export { GivingForm } from "./components/GivingForm";
 export { GivingReview } from "./components/GivingReview";
@@ -25,7 +23,6 @@ export type {
   CategoryTotal,
 } from "@/features/giving/types";
 
-// Constants
 export {
   GIVING_CATEGORIES,
   GIVING_FREQUENCIES,

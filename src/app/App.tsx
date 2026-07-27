@@ -5,7 +5,6 @@ import { SectionPage } from "@/shared/components/SectionPage";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 
-// ── Lazy-loaded routes (code-split for faster initial render) ────────
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
 const HomePage = lazy(() => import("@/features/home/pages/HomePage"));
 const AboutPage = lazy(() => import("@/features/about/pages/AboutPage"));
@@ -30,14 +29,12 @@ const MessagesPage = lazy(
   () => import("@/features/messages/pages/MessagesPage"),
 );
 
-// ── Auth pages ───────────────────────────────────────────────────────
 const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
 const SignUpPage = lazy(() => import("@/features/auth/pages/SignUpPage"));
 const ForgotPasswordPage = lazy(
   () => import("@/features/auth/pages/ForgotPasswordPage"),
 );
 
-// ── Loading fallback ─────────────────────────────────────────────────
 const PageSpinner = () => (
   <div
     style={{
@@ -56,7 +53,6 @@ const App = () => (
     <BrowserRouter>
       <Suspense fallback={<PageSpinner />}>
         <Routes>
-          {/* ── Public auth routes (no sidebar/layout) ───────────── */}
           <Route
             path="/login"
             element={
@@ -82,7 +78,6 @@ const App = () => (
             }
           />
 
-          {/* ── Protected app routes (with sidebar/layout) ──────── */}
           <Route
             element={
               <ProtectedRoute>

@@ -1,18 +1,7 @@
-/**
- * firebase.ts
- *
- * Firebase App initialization with Authentication and Realtime Database.
- */
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth, connectAuthEmulator } from "firebase/auth";
-import {
-  getDatabase,
-  type Database,
-  connectDatabaseEmulator,
-} from "firebase/database";
+import { getDatabase, type Database } from "firebase/database";
 
-//Config
-console.log(import.meta.env.VITE_FIREBASE_API_KEY);
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? "",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? "",
@@ -23,8 +12,6 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID ?? "",
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID ?? "",
 };
-
-//Singleton instances
 
 let app: FirebaseApp | undefined;
 let auth: Auth | undefined;

@@ -6,9 +6,7 @@ import type {
   MemberStatus,
   Ministry,
   MinistryRole,
-} from "@/features/members/types";
-
-// ─── Compute derived fields
+} from "@/features/members/types";
 
 export function computeMember(member: Member): Member {
   const attendance = Array.isArray(member.attendance) ? member.attendance : [];

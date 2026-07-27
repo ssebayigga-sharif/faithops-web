@@ -74,7 +74,7 @@ export default function Dashboard() {
   return (
     <Stack as="main" className="admin-page dashboard-page">
       <Stack className="admin-page__inner" gap={5}>
-        {/* ── Page header ── */}
+        
         <Stack
           as="header"
           className="admin-page__header"
@@ -100,7 +100,7 @@ export default function Dashboard() {
           </Stack>
         </Stack>
 
-        {/* ── Error banner ── */}
+        
         {isError && (
           <InlineNotification
             kind="error"
@@ -112,7 +112,7 @@ export default function Dashboard() {
           />
         )}
 
-        {/* ── Metric cards row ── */}
+        
         <Grid
           as="section"
           className="dashboard-carbon-grid"
@@ -126,7 +126,7 @@ export default function Dashboard() {
           ))}
         </Grid>
 
-        {/* ── Analytics + Notifications ── */}
+        
         <Grid className="dashboard-carbon-grid" fullWidth withRowGap>
           <Column sm={4} md={8} lg={10}>
             <AnalyticsPanel
@@ -141,7 +141,7 @@ export default function Dashboard() {
           </Column>
         </Grid>
 
-        {/* ── Event Intelligence ── */}
+        
         <Grid className="dashboard-carbon-grid" fullWidth withRowGap>
           <Column sm={4} md={8} lg={16}>
             <EventIntelligencePanel
@@ -155,7 +155,7 @@ export default function Dashboard() {
           </Column>
         </Grid>
 
-        {/* ── Ministry Engagement + Cell Group Health ── */}
+        
         <Grid className="dashboard-carbon-grid" fullWidth withRowGap>
           <Column sm={4} md={8} lg={8}>
             <MinistryEngagementPanel snapshot={snapshot} loading={isLoading} />

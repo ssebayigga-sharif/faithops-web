@@ -65,7 +65,6 @@ interface MembersTableProps {
   onBatchDelete: (members: Member[]) => void;
 }
 
-//  Component
 
 export function MembersTable({
   rows,

@@ -8,7 +8,6 @@ interface BeliefsSectionProps {
   beliefs: BeliefItem[];
 }
 
-//  Sub-components
 interface BeliefTitleProps {
   belief: BeliefItem;
 }
@@ -39,7 +38,6 @@ const BeliefContent: React.FC<BeliefContentProps> = ({ belief }) => (
   </div>
 );
 
-//  Component
 const BeliefsSection: React.FC<BeliefsSectionProps> = ({ beliefs }) => {
   return (
     <section

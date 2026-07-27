@@ -1,7 +1,3 @@
-/**
- * notifications/types.ts
- */
-
 export type NotificationType =
   | "message"
   | "event_reminder"

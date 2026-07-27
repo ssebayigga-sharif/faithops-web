@@ -1,9 +1,3 @@
-/**
- * OtherProfilePage.tsx
- *
- * Displays a read-only view of another member's profile, fetched by UID
- * from the URL parameter. Search results link here.
- */
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ref, get, child } from "firebase/database";

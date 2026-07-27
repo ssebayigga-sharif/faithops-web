@@ -4,7 +4,7 @@
  * clear typography hierarchy) and minimal animation as requested.
  */
 
-/* ─── Shared Section Utilities ────────────────────────────────────────────── */
+/* Shared Section Utilities */
 .sectionWhite {
   background: var(--cds-background, #ffffff);
   color: var(--cds-text-primary, #161616);
@@ -97,7 +97,7 @@
   }
 }
 
-/* ─── AboutHero ───────────────────────────────────────────────────────────── */
+/* AboutHero */
 .about-hero {
   background: var(--church-navy, #0f1e36);
   padding: 5rem 0;
@@ -207,7 +207,7 @@
   margin-top: var(--cds-spacing-02, 0.25rem);
 }
 
-/* ─── MissionSection (Pillar cards) ──────────────────────────────────────── */
+/* MissionSection (Pillar cards) */
 .mission-section {
   padding: 4.5rem 0;
 }
@@ -266,7 +266,7 @@
   line-height: 1.4;
 }
 
-/* ─── HistorySection (Timeline) ──────────────────────────────────────────── */
+/* HistorySection (Timeline) */
 .history-section {
   padding: 4.5rem 0;
 }
@@ -345,7 +345,7 @@
   max-width: 600px;
 }
 
-/* ─── DistinctivesSection ────────────────────────────────────────────────── */
+/* DistinctivesSection */
 .distinctives-section {
   padding: 4.5rem 0;
 }
@@ -385,7 +385,7 @@
   margin: 0;
 }
 
-/* ─── BeliefsSection ─────────────────────────────────────────────────────── */
+/* BeliefsSection */
 .beliefs-section {
   padding: 4.5rem 0;
 }
@@ -456,7 +456,7 @@
   margin-top: var(--cds-spacing-07, 2rem);
 }
 
-/* ─── LeadershipSection ──────────────────────────────────────────────────── */
+/* LeadershipSection */
 .leadership-section {
   padding: 4.5rem 0;
 }
@@ -561,7 +561,7 @@
   }
 }
 
-/* ─── JoinCTA ─────────────────────────────────────────────────────────────── */
+/* JoinCTA */
 .join-cta {
   background: var(--church-navy, #0f1e36);
   padding: 5rem var(--cds-spacing-06, 1.5rem);

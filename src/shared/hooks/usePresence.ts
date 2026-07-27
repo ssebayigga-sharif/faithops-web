@@ -9,8 +9,8 @@ import {
 import { getFirebaseDatabase } from "@/shared/services/firebase";
 import { useAuth } from "@/features/auth/context/AuthContext";
 
-/** Mount once near the app root. Marks the user online while connected,
- *  and lets Firebase itself flip it offline the instant the socket drops. */
+// Mount once near the app root. Marks the user online while connected,
+//  and lets Firebase itself flip it offline the instant the socket drops.
 export function usePresence() {
   const { user } = useAuth();
 

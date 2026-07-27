@@ -35,9 +35,7 @@ function mapFirebaseRecords(data: FirebaseGivingMap | null): GivingRecord[] {
       _firebaseKey: firebaseKey,
     }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-}
-
-// ─── Firebase + local fallback persistence ───────────────────────────────────
+}
 
 export async function loadRecords(): Promise<GivingRecord[]> {
   try {
@@ -137,9 +135,7 @@ export async function clearAllRecords(): Promise<void> {
   } catch (err) {
     console.error("Failed to clear giving records:", err);
   }
-}
-
-// ─── Search / filter helpers ──────────────────────────────────────────────────
+}
 
 export function searchRecords(
   records: GivingRecord[],

@@ -115,4 +115,3 @@ export const STATS: StatItem[] = [
     detail: "A weekly memorial of creation and redemption",
   },
 ];
-

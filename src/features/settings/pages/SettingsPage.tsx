@@ -41,7 +41,7 @@ export default function SettingsPage() {
   return (
     <Stack className="admin-page settings-page" gap={5}>
       <Stack className="admin-page__inner" gap={5}>
-        {/* ── Page Header ── */}
+        
         <Stack as="header" className="admin-page__header" gap={2}>
           <Stack
             orientation="horizontal"
@@ -76,7 +76,7 @@ export default function SettingsPage() {
           </Stack>
         </Stack>
 
-        {/* ── Notification banner ── */}
+        
         {showNotification && (
           <InlineNotification
             kind="success"
@@ -88,7 +88,7 @@ export default function SettingsPage() {
         )}
 
         <Grid fullWidth withRowGap>
-          {/* ── Visual Theme Section ── */}
+          
           <Column sm={4} md={8} lg={8}>
             <Tile className="dashboard-section" style={{ height: "100%" }}>
               <Stack gap={5}>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
             </Tile>
           </Column>
 
-          {/* ── Workspace Identity Section ── */}
+          
           <Column sm={4} md={8} lg={8}>
             <Tile className="dashboard-section" style={{ height: "100%" }}>
               <Stack gap={5}>
@@ -249,7 +249,7 @@ export default function SettingsPage() {
           </Column>
         </Grid>
 
-        {/* ── Additional Guidance Tile ── */}
+        
         <Tile
           className="dashboard-section"
           style={{

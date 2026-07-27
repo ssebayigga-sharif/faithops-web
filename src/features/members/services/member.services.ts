@@ -1,13 +1,9 @@
 import { AxiosResponse } from "axios";
 import { firebaseClient } from "@/shared/services/firebase.client";
 import { computeMember } from "@/features/members/utils/memberUtils";
-import type { Member } from "@/features/members/types";
+import type { Member } from "@/features/members/types";
 
-// ─── Firebase node path ───────────────────────────────────────────────────────
-
-const MEMBERS_PATH = "/members";
-
-// ─── Utility: convert Firebase map → Member[] ────────────────────────────────
+const MEMBERS_PATH = "/members";
 
 type FirebaseMap = Record<string, Omit<Member, "_computed">>;
 
@@ -17,9 +13,7 @@ function mapToMembers(data: FirebaseMap | null): Member[] {
   return Object.entries(data).map(([_pushKey, raw]) =>
     computeMember({ ...raw, _firebaseKey: _pushKey } as Member),
   );
-}
-
-// ─── Service ─────────────────────────────────────────────────────────────────
+}
 
 export const MemberService = {
   //GET /members.json

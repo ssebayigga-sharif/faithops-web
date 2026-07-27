@@ -4,7 +4,6 @@ import { Button } from "@carbon/react";
 import { ArrowRight, Home } from "@carbon/icons-react";
 import styles from "../about.module.scss";
 
-//  Component
 const JoinCTA: React.FC = () => (
   <section className={styles["join-cta"]} aria-labelledby="join-cta-heading">
     <div className={styles["join-cta__inner"]}>

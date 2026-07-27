@@ -25,9 +25,7 @@ import type {
 const SESSIONS_PATH = "/attendance/sessions";
 const RECORDS_PATH = "/attendance/records";
 const MEMBER_INDEX_PATH = "/attendance/memberIndex";
-const VISITORS_PATH = "/attendance/visitors";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const VISITORS_PATH = "/attendance/visitors";
 
 type FirebaseMap<T> = Record<string, T>;
 
@@ -41,12 +39,9 @@ const toArray = <T>(data: FirebaseMap<T> | null): T[] =>
 export const buildSessionId = (
   date: string,
   serviceType: ServiceType,
-): string => `${date}_${serviceType.replace(/\s+/g, "_").toLowerCase()}`;
+): string => `${date}_${serviceType.replace(/\s+/g, "_").toLowerCase()}`;
 
-// ─── Service ──────────────────────────────────────────────────────────────────
-
-export const AttendanceService = {
-  // ── Sessions ──────────────────────────────────────────────
+export const AttendanceService = {
 
   /** GET /attendance/sessions.json — all sessions, newest first */
   async getSessions(): Promise<AttendanceSession[]> {
@@ -63,9 +58,7 @@ export const AttendanceService = {
       `${SESSIONS_PATH}/${sessionId}.json`,
     );
     return data ?? null;
-  },
-
-  // ── Records ───────────────────────────────────────────────
+  },
 
   /** GET /attendance/records/{sessionId}.json */
   async getSessionRecords(sessionId: string): Promise<AttendanceRecord[]> {
@@ -83,9 +76,7 @@ export const AttendanceService = {
         `${MEMBER_INDEX_PATH}/${memberId}.json`,
       );
     return toArray(data).sort((a, b) => b.date.localeCompare(a.date));
-  },
-
-  // ── Visitors ──────────────────────────────────────────────
+  },
 
   /** GET /attendance/visitors.json — all visitors across all sessions */
   async getAllVisitors(): Promise<VisitorRecord[]> {
@@ -107,9 +98,7 @@ export const AttendanceService = {
         `${VISITORS_PATH}/${sessionId}.json`,
       );
     return toArray(data);
-  },
-
-  // ── Bulk Save ─────────────────────────────────────────────
+  },
 
   /**
    * Saves an entire attendance session atomically:
@@ -204,9 +193,7 @@ export const AttendanceService = {
     ]);
 
     return session;
-  },
-
-  // ── Visitor Follow-up ─────────────────────────────────────
+  },
 
   /** PATCH /attendance/visitors/{sessionId}/{visitorId}.json */
   async updateVisitorFollowUp(
@@ -218,9 +205,7 @@ export const AttendanceService = {
       `${VISITORS_PATH}/${sessionId}/${visitorId}.json`,
       { followUpStatus: status },
     );
-  },
-
-  // ── Delete ────────────────────────────────────────────────
+  },
 
   /** DELETE /attendance/sessions/{sessionId}.json + records + visitors */
   async deleteSession(sessionId: string): Promise<void> {
