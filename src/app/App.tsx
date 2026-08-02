@@ -7,10 +7,11 @@ import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 
 const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
 const HomePage = lazy(() => import("@/features/home/pages/HomePage"));
-const AboutPage = lazy(() => import("@/features/about/pages/AboutPage"));
 const MembersPage = lazy(() => import("@/features/members/pages/MembersPage"));
-const AttendancePage = lazy(
-  () => import("@/features/attendance/pages/AttendancePage"),
+const AttendancePage = lazy(() =>
+  import("@/features/attendance/pages/AttendancePage").then((m) => ({
+    default: m.AttendancePage,
+  })),
 );
 const EventsPage = lazy(() => import("@/features/events/pages/EventsPage"));
 const GivingPage = lazy(() => import("@/features/giving/pages/GivingPage"));
@@ -88,7 +89,6 @@ const App = () => (
             <Route index element={<Navigate replace to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="home" element={<HomePage />} />
-            <Route path="about" element={<AboutPage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="giving" element={<GivingPage />} />
             <Route path="profile" element={<ProfilePage />} />

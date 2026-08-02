@@ -29,18 +29,6 @@ export const primaryNavigationItems: NavigationItem[] = [
     icon: Dashboard,
   },
   {
-    path: "/about",
-    label: "About",
-    description: "Overview, insights, and quick actions",
-    icon: Dashboard,
-  },
-  {
-    path: "/messages",
-    label: "Messages",
-    description: "Send and receive messages",
-    icon: Send,
-  },
-  {
     path: "/members",
     label: "Members",
     description: "Member records, profiles, and groups",
@@ -93,7 +81,7 @@ export const administrationNavigationItems: NavigationItem[] = [
   },
 ];
 
-export const headerNavigationItems = primaryNavigationItems.slice(0, 6);
+export const headerNavigationItems = primaryNavigationItems.slice(0, 7);
 
 export const footerNavigationItems = primaryNavigationItems
   .slice(0, 7)

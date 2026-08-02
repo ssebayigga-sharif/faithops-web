@@ -17,7 +17,7 @@ let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
 let database: Database | undefined;
 
-function getFirebaseApp(): FirebaseApp {
+export function getFirebaseApp(): FirebaseApp {
   if (!app) {
     app = initializeApp(firebaseConfig);
   }
