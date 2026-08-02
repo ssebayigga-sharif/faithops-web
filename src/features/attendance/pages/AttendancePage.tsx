@@ -14,15 +14,15 @@ import {
 } from "@carbon/react";
 import { EventSchedule, List, Police, UserFollow } from "@carbon/icons-react";
 
-import { StatCards } from "../components/StatCards";
-import { MarkAttendanceTable } from "../components/MarkAttendanceTable";
-import { SessionHistoryTable } from "../components/SessionHistoryTable";
-import { VisitorsTable } from "../components/VisitorsTable";
-import { FollowUpModal } from "../components/FollowUpModal";
-import { SessionConfig } from "../components/SessionConfig";
-import { VisitorQuickAdd } from "../components/VisitorQuickAdd";
-import { VisitorList } from "../components/VisitorList";
-import { VisitorFollowUpModal } from "../components/VisitorFollowUpModal";
+import { StatCards } from "@/features/attendance/components/StatCards";
+import { MarkAttendanceTable } from "@/features/attendance/components/MarkAttendanceTable";
+import { SessionHistoryTable } from "@/features/attendance/components/SessionHistoryTable";
+import { VisitorsTable } from "@/features/attendance/components/VisitorsTable";
+import { FollowUpModal } from "@/features/attendance/components/FollowUpModal";
+import { SessionConfig } from "@/features/attendance/components/SessionConfig";
+import { VisitorQuickAdd } from "@/features/attendance/components/VisitorQuickAdd";
+import { VisitorList } from "@/features/attendance/components/VisitorList";
+import { VisitorFollowUpModal } from "@/features/attendance/components/VisitorFollowUpModal";
 import {
   useMembers,
   useSessions,
@@ -35,15 +35,15 @@ import {
   useUpdateVisitorFollowUp,
   useEvents,
   useSessionRecords,
-} from "../hooks/useAttendance";
+} from "@/features/attendance/hooks/useAttendance";
 import type {
   AttendanceRow,
   AttendanceStatus,
   ServiceType,
   VisitorRowPayload,
   VisitorRecord,
-} from "../types";
-import styles from "../attendance.module.scss";
+} from "@/features/attendance/types";
+import styles from "@/features/attendance/attendance.module.scss";
 
 const SERVICE_TYPES: ServiceType[] = [
   "Sabbath Programmes",
