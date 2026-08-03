@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   administrationNavigationItems,
   primaryNavigationItems,
-} from "@/shared/data/navigation";
+} from "../data/navigation";
 
 type SidebarProps = {
   isExpanded: boolean;

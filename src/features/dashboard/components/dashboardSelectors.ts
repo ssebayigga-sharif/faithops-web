@@ -4,19 +4,19 @@ import type {
   FollowUpWithMember,
   MinistryEngagement,
   ServiceAttendance,
-} from "@/features/dashboard/types";
+} from "../types";
 import type {
   FollowUpTask,
   Member,
   MemberAttendanceRecord,
   MemberGivingRecord,
   MinistryAssignment,
-} from "@/features/members/types";
+} from "../../members/types";
 import {
   CELL_GROUPS,
   MINISTRIES_LIST,
   formatDate,
-} from "@/features/members/utils/memberUtils";
+} from "../../members/utils/memberUtils";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RECENT_SERVICES_COUNT = 6;

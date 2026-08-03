@@ -5,7 +5,7 @@ import {
   SelectItem,
   TextInput,
 } from "@carbon/react";
-import type { ServiceType } from "@/features/attendance/types";
+import type { ServiceType } from "../types";
 
 interface SessionConfigProps {
   date: Date;

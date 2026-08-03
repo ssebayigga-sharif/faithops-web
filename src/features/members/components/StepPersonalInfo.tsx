@@ -8,7 +8,7 @@ import {
   Stack,
   TextInput,
 } from "@carbon/react";
-import type { MemberFormValues } from "@/features/members/types";
+import type { MemberFormValues } from "../types";
 import styles from "./MemberModal.module.scss";
 
 interface StepPersonalInfoProps {

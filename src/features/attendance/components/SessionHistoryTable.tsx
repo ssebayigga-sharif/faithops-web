@@ -16,11 +16,11 @@ import {
   DataTableSkeleton,
 } from "@carbon/react";
 import { TrashCan, View } from "@carbon/icons-react";
-import type { AttendanceSession as Session } from "@/features/attendance/types";
+import type { AttendanceSession as Session } from "../types";
 import {
   useSessionRecords,
   useDeleteSession,
-} from "@/features/attendance/hooks/useAttendance";
+} from "../hooks/useAttendance";
 
 interface Props {
   sessions: Session[];

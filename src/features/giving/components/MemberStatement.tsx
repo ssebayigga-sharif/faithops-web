@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Button, Stack, TextInput, Tile } from "@carbon/react";
 import { Download, Search } from "@carbon/icons-react";
-import type { GivingRecord } from "@/features/giving/types";
+import type { GivingRecord } from "../types";
 import {
   formatUGX,
   formatShortDate,

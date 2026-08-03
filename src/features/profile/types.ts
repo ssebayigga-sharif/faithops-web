@@ -4,7 +4,7 @@ import type {
   MembershipStatus,
   BaptismStatus,
   ChurchRole,
-} from "@/shared/types";
+} from "../../shared/types";
 
 export interface EmergencyContact {
   name: string;

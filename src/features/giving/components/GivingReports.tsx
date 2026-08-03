@@ -19,8 +19,8 @@ import type {
   YearlySummary,
   MonthlySummary,
   GivingReport,
-} from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+} from "../types";
+import { GIVING_CATEGORIES } from "../data/giving";
 import {
   formatUGX,
   formatMonthLabel,

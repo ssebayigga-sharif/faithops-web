@@ -7,8 +7,8 @@
  * church-size datasets of hundreds to low thousands of records).
  */
 import { ref, get, child } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
-import type { ChurchProfile } from "@/features/profile/types";
+import { getFirebaseDatabase } from "../../../shared/services/firebase";
+import type { ChurchProfile } from "../../profile/types";
 
 export interface SearchResult {
   uid: string;

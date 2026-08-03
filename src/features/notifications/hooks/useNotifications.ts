@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ref, onValue, off } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
-import type { ChurchNotification } from "@/features/notifications/types";
-import { NotificationService } from "@/features/notifications/services/notification.service";
+import { getFirebaseDatabase } from "../../../shared/services/firebase";
+import type { ChurchNotification } from "../types";
+import { NotificationService } from "../services/notification.service";
 
 const NOTIFICATIONS_PATH = "/notifications";
 

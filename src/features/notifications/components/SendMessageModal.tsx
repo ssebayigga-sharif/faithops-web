@@ -8,9 +8,9 @@ import {
   Toggle,
 } from "@carbon/react";
 import { NotificationService } from "../services/notification.service";
-import { useAuth } from "@/features/auth/context/AuthContext";
-import { useProfile } from "@/features/profile/hooks/useProfile";
-import { SearchService } from "@/features/search/services/search.service";
+import { useAuth } from "../../auth/context/AuthContext";
+import { useProfile } from "../../profile/hooks/useProfile";
+import { SearchService } from "../../search/services/search.service";
 
 interface SendMessageModalProps {
   open: boolean;

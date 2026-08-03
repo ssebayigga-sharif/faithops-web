@@ -22,10 +22,10 @@ import {
   SendAlt,
 } from "@carbon/icons-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { headerNavigationItems } from "@/shared/data/navigation";
+import { headerNavigationItems } from "../data/navigation";
 import ChurchIcon from "./ChurchIcon";
-import { useAuth } from "@/features/auth/context/AuthContext";
-import { useNotifications } from "@/features/notifications/hooks/useNotifications";
+import { useAuth } from "../../features/auth/context/AuthContext";
+import { useNotifications } from "../../features/notifications/hooks/useNotifications";
 import { HeaderNotifications } from "./HeaderNotifications";
 
 type HeaderProps = {

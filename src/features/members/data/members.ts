@@ -22,8 +22,8 @@ export type {
   SortState,
   StaffNote,
   Step,
-} from "@/features/members/types";
-export type { Gender, MaritalStatus } from "@/shared/types";
+} from "../types";
+export type { Gender, MaritalStatus } from "../../../shared/types";
 
 export const STEP_LABELS = [
   "Personal Info",

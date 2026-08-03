@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { Grid, Column, InlineNotification } from "@carbon/react";
 import styles from "../homepage.module.scss";
-import { useEvents } from "@/features/events/hooks/useEvent";
-import { getUpcomingEvents } from "@/features/events/eventUtils";
+import { useEvents } from "../../events/hooks/useEvent";
+import { getUpcomingEvents } from "../../events/eventUtils";
 import EventCard from "./EventCard";
 
 const EventsSection: React.FC = () => {

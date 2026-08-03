@@ -5,8 +5,8 @@ import styles from "../homepage.module.scss";
 import {
   formatEventDate,
   formatEventTime,
-} from "@/features/events/eventUtils";
-import type { ChurchEvent } from "@/features/events/types";
+} from "../../events/eventUtils";
+import type { ChurchEvent } from "../../events/types";
 
 const EventCard: React.FC<{ event: ChurchEvent; index: number }> = ({
   event,

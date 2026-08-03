@@ -21,13 +21,13 @@ export type {
   YearlySummary,
   GivingReport,
   CategoryTotal,
-} from "@/features/giving/types";
+} from "./types";
 
 export {
   GIVING_CATEGORIES,
   GIVING_FREQUENCIES,
   GIVING_METHODS,
-} from "@/features/giving/data/giving";
+} from "./data/giving";
 
 // Utils
 export {

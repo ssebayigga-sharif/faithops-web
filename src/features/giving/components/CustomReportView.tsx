@@ -1,6 +1,6 @@
 import { Button, Column, Grid, Stack, Tile } from "@carbon/react";
 import { Download } from "@carbon/icons-react";
-import type { GivingReport } from "@/features/giving/types";
+import type { GivingReport } from "../types";
 import { formatUGX, formatShortDate } from "../givingUtils";
 import { colors } from "./givingStyles";
 

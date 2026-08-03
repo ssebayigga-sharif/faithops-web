@@ -1,7 +1,7 @@
 import type {
   ServiceType as SharedServiceType,
   AttendanceStatus as SharedAttendanceStatus,
-} from "@/shared/types";
+} from "../../shared/types";
 
 // Re-export shared types for local convenience
 export type AttendanceStatus = SharedAttendanceStatus;

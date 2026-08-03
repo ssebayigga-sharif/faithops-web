@@ -4,9 +4,9 @@ import {
   useQueryClient,
   type UseQueryResult,
 } from "@tanstack/react-query";
-import type { ChurchEvent, UseCreateEventResult, UseEventsResult } from "@/features/events/types";
-import { EventService } from "@/features/events/services/event.services";
-import { isFirebaseApiError } from "@/shared/services/firebase.client";
+import type { ChurchEvent, UseCreateEventResult, UseEventsResult } from "../types";
+import { EventService } from "../services/event.services";
+import { isFirebaseApiError } from "../../../shared/services/firebase.client";
 
 export const eventKeys = {
   all: ["events"] as const,

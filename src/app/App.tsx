@@ -1,39 +1,39 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import AppLayout from "@/shared/layouts/AppLayout";
-import { SectionPage } from "@/shared/components/SectionPage";
-import { AuthProvider } from "@/features/auth/context/AuthContext";
-import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import AppLayout from "../shared/layouts/AppLayout";
+import { SectionPage } from "../shared/components/SectionPage";
+import { AuthProvider } from "../features/auth/context/AuthContext";
+import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 
-const Dashboard = lazy(() => import("@/features/dashboard/pages/Dashboard"));
-const HomePage = lazy(() => import("@/features/home/pages/HomePage"));
-const MembersPage = lazy(() => import("@/features/members/pages/MembersPage"));
+const Dashboard = lazy(() => import("../features/dashboard/pages/Dashboard"));
+const HomePage = lazy(() => import("../features/home/pages/HomePage"));
+const MembersPage = lazy(() => import("../features/members/pages/MembersPage"));
 const AttendancePage = lazy(() =>
-  import("@/features/attendance/pages/AttendancePage").then((m) => ({
+  import("../features/attendance/pages/AttendancePage").then((m) => ({
     default: m.AttendancePage,
   })),
 );
-const EventsPage = lazy(() => import("@/features/events/pages/EventsPage"));
-const GivingPage = lazy(() => import("@/features/giving/pages/GivingPage"));
-const ReportsPage = lazy(() => import("@/features/reports/pages/ReportsPage"));
-const ProfilePage = lazy(() => import("@/features/profile/pages/ProfilePage"));
+const EventsPage = lazy(() => import("../features/events/pages/EventsPage"));
+const GivingPage = lazy(() => import("../features/giving/pages/GivingPage"));
+const ReportsPage = lazy(() => import("../features/reports/pages/ReportsPage"));
+const ProfilePage = lazy(() => import("../features/profile/pages/ProfilePage"));
 const OtherProfilePage = lazy(
-  () => import("@/features/profile/pages/OtherProfilePage"),
+  () => import("../features/profile/pages/OtherProfilePage"),
 );
 const SettingsPage = lazy(
-  () => import("@/features/settings/pages/SettingsPage"),
+  () => import("../features/settings/pages/SettingsPage"),
 );
-const SearchPage = lazy(() => import("@/features/search/pages/SearchPage"));
-const HelpPage = lazy(() => import("@/features/help/components/HelpPage"));
-const ContactPage = lazy(() => import("@/features/contact/page/ContactPage"));
+const SearchPage = lazy(() => import("../features/search/pages/SearchPage"));
+const HelpPage = lazy(() => import("../features/help/components/HelpPage"));
+const ContactPage = lazy(() => import("../features/contact/page/ContactPage"));
 const MessagesPage = lazy(
-  () => import("@/features/messages/pages/MessagesPage"),
+  () => import("../features/messages/pages/MessagesPage"),
 );
 
-const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
-const SignUpPage = lazy(() => import("@/features/auth/pages/SignUpPage"));
+const LoginPage = lazy(() => import("../features/auth/pages/LoginPage"));
+const SignUpPage = lazy(() => import("../features/auth/pages/SignUpPage"));
 const ForgotPasswordPage = lazy(
-  () => import("@/features/auth/pages/ForgotPasswordPage"),
+  () => import("../features/auth/pages/ForgotPasswordPage"),
 );
 
 const PageSpinner = () => (

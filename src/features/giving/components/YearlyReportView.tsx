@@ -1,7 +1,7 @@
 import { Button, Column, Grid, Stack, Tile } from "@carbon/react";
 import { DocumentPdf } from "@carbon/icons-react";
-import type { YearlySummary } from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+import type { YearlySummary } from "../types";
+import { GIVING_CATEGORIES } from "../data/giving";
 import { formatUGX, formatMonthLabel } from "../givingUtils";
 import { colors } from "./givingStyles";
 

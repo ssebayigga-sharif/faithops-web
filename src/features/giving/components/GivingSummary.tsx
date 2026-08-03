@@ -7,8 +7,8 @@ import {
   Stack,
   Tile,
 } from "@carbon/react";
-import type { GivingRecord, MonthlySummary } from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+import type { GivingRecord, MonthlySummary } from "../types";
+import { GIVING_CATEGORIES } from "../data/giving";
 import {
   formatUGX,
   formatMonthLabel,

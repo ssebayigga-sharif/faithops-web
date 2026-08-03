@@ -18,8 +18,8 @@ import {
   Button,
 } from "@carbon/react";
 import { DocumentExport } from "@carbon/icons-react";
-import type { GivingRecord } from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+import type { GivingRecord } from "../types";
+import { GIVING_CATEGORIES } from "../data/giving";
 import {
   formatShortDate,
   formatUGX,

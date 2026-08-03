@@ -1,9 +1,9 @@
 import React from "react";
 import { Grid, Column, Tile } from "@carbon/react";
 import styles from "../homepage.module.scss";
-import { SERVICE_TIMES } from "@/features/home/data/home";
+import { SERVICE_TIMES } from "../data/home";
 import { SITE_CONFIG } from "../data/site";
-import type { ServiceTime } from "@/features/home/types";
+import type { ServiceTime } from "../types";
 
 const ServiceTimes: React.FC = () => (
     <section

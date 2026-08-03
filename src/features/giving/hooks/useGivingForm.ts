@@ -5,7 +5,7 @@ import type {
   GivingFormState,
   GivingStep,
   GivingRecord,
-} from "@/features/giving/types";
+} from "../types";
 import {
   getOfferingsFromEntries,
   getTitheFromEntries,

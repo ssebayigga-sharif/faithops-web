@@ -3,7 +3,7 @@ import type {
   GivingRecord,
   YearlySummary,
   MonthlySummary,
-} from "@/features/giving/types";
+} from "../types";
 import {
   buildYearlySummary,
   buildMonthlySummary,

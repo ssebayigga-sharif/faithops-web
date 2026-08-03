@@ -1,5 +1,5 @@
-import { firebaseClient } from "@/shared/services/firebase.client";
-import type { GivingRecord } from "@/features/giving/types";
+import { firebaseClient } from "../../../shared/services/firebase.client";
+import type { GivingRecord } from "../types";
 
 const STORAGE_KEY = "faithops_giving_records";
 const GIVING_RECORDS_PATH = "/giving-records";

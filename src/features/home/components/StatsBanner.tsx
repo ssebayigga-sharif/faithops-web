@@ -1,8 +1,8 @@
 import React from "react";
 import { Grid, Column } from "@carbon/react";
 import styles from "../homepage.module.scss";
-import { STATS } from "@/features/home/data/home";
-import type { StatItem } from "@/features/home/types";
+import { STATS } from "../data/home";
+import type { StatItem } from "../types";
 
 const StatsBanner: React.FC = () => (
     <section

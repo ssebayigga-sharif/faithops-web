@@ -3,7 +3,7 @@ import type { UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type { ProfileFormValues } from "../types";
-import type { Gender, MaritalStatus, MembershipStatus, BaptismStatus } from "@/shared/types";
+import type { Gender, MaritalStatus, MembershipStatus, BaptismStatus } from "../../../shared/types";
 
 // Define the validation schema using Zod
 // Type-aligned exactly to ProfileFormValues

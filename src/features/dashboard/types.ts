@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { CarbonIconType } from "@carbon/icons-react";
-import type { Member, FollowUpTask, MemberAttendanceRecord, Ministry } from "@/features/members/types";
-import type { ChurchEvent, EventAnalyticsSnapshot } from "@/features/events/types";
+import type { Member, FollowUpTask, MemberAttendanceRecord, Ministry } from "../members/types";
+import type { ChurchEvent, EventAnalyticsSnapshot } from "../events/types";
 
 export type DashboardTagType =
   | "green"

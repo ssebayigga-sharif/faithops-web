@@ -20,11 +20,11 @@ import {
   Group,
   UserFollow,
 } from "@carbon/icons-react";
-import { useSessions } from "@/features/attendance/hooks/useAttendance";
-import { useMembers } from "@/features/attendance/hooks/useAttendance";
-import { useVisitors } from "@/features/attendance/hooks/useAttendance";
-import { useFollowUpCandidates } from "@/features/attendance/hooks/useAttendance";
-import { useReportStats } from "@/features/reports/components/ReportStats";
+import { useSessions } from "../../attendance/hooks/useAttendance";
+import { useMembers } from "../../attendance/hooks/useAttendance";
+import { useVisitors } from "../../attendance/hooks/useAttendance";
+import { useFollowUpCandidates } from "../../attendance/hooks/useAttendance";
+import { useReportStats } from "../components/ReportStats";
 
 import styles from "./reports.module.scss";
 

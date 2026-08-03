@@ -17,7 +17,7 @@ import { CheckmarkFilled, ErrorFilled, Save } from "@carbon/icons-react";
 import type {
   AttendanceRow,
   AttendanceStatus,
-} from "@/features/attendance/types";
+} from "../types";
 
 interface Props {
   rows: AttendanceRow[];

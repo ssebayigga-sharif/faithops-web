@@ -1,19 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { AttendanceService } from "@/features/attendance/services/attendance.services";
+import { AttendanceService } from "../services/attendance.services";
 import {
   syncAttendanceToMembers,
   detectFollowUpCandidates,
   createFollowUpTask,
-} from "@/features/attendance/services/sync.services";
+} from "../services/sync.services";
 import type {
   AttendanceRow,
   AttendanceStatus,
   BulkSavePayload,
   AttendanceStats,
   VisitorRecord,
-} from "@/features/attendance/types";
-import type { FollowUpCandidate } from "@/features/attendance/services/sync.services";
+} from "../types";
+import type { FollowUpCandidate } from "../services/sync.services";
 export const attendanceKeys = {
   sessions: ["attendance", "sessions"] as const,
   sessionRecords: (id: string) => ["attendance", "records", id] as const,
@@ -28,7 +28,7 @@ export function useMembers() {
     queryKey: ["members"],
     queryFn: async () => {
       const { MemberService } =
-        await import("@/features/members/services/member.services");
+        await import("../../members/services/member.services");
       const all = await MemberService.getAll();
       return all;
     },
@@ -40,7 +40,7 @@ export function useEvents() {
     queryKey: attendanceKeys.events,
     queryFn: async () => {
       const { EventService } =
-        await import("@/features/events/services/event.services");
+        await import("../../events/services/event.services");
       const all = await EventService.getAll();
       return all;
     },

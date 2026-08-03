@@ -10,16 +10,16 @@
  * the individual feature data stores.
  */
 
-import { firebaseClient } from "@/shared/services/firebase.client";
-import { MemberService } from "@/features/members/services/member.services";
+import { firebaseClient } from "../../../shared/services/firebase.client";
+import { MemberService } from "../../members/services/member.services";
 import type {
   AttendanceRecord,
   AttendanceRow,
-} from "@/features/attendance/types";
+} from "../types";
 import type {
   MemberAttendanceRecord,
   MemberTimelineEvent,
-} from "@/features/members/types";
+} from "../../members/types";
 
 const MEMBERS_PATH = "/members";
 

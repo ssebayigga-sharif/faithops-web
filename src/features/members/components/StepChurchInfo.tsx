@@ -6,8 +6,8 @@ import {
   Stack,
   Toggle,
 } from "@carbon/react";
-import type { MemberFormValues } from "@/features/members/types";
-import { CELL_GROUPS } from "@/features/members/utils/memberUtils";
+import type { MemberFormValues } from "../types";
+import { CELL_GROUPS } from "../utils/memberUtils";
 import styles from "./MemberModal.module.scss";
 
 interface StepChurchInfoProps {

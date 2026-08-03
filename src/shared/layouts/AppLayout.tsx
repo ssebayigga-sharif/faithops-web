@@ -4,8 +4,8 @@ import { Content, Theme } from "@carbon/react";
 import Footer from "./Footer";
 import Header from "./Header";
 import Sidebar from "./sidebar";
-import { useIsMobileNav } from "@/shared/hooks/useIsMobileNav";
-import { useAppTheme } from "@/shared/hooks/useTheme";
+import { useIsMobileNav } from "../hooks/useIsMobileNav";
+import { useAppTheme } from "../hooks/useTheme";
 
 const AppLayout = () => {
   const isMobileNav = useIsMobileNav();

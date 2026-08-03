@@ -9,7 +9,7 @@ import {
   TableContainer,
   Tag,
 } from "@carbon/react";
-import type { VisitorRecord } from "@/features/attendance/types";
+import type { VisitorRecord } from "../types";
 
 interface VisitorsTableProps {
   visitors: VisitorRecord[];

@@ -1,4 +1,4 @@
-import type { ChurchProfile } from "@/features/profile/types";
+import type { ChurchProfile } from "../types";
 
 /**
  * Default empty profile.

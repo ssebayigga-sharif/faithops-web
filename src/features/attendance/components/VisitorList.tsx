@@ -1,6 +1,6 @@
 import { Button } from "@carbon/react";
 import { Police } from "@carbon/icons-react";
-import type { VisitorRowPayload } from "@/features/attendance/types";
+import type { VisitorRowPayload } from "../types";
 
 interface VisitorListProps {
   visitors: VisitorRowPayload[];

@@ -1,4 +1,4 @@
-import type { EventFormDraft } from "@/features/events/types";
+import type { EventFormDraft } from "../types";
 
 export const DEFAULT_EVENT_DRAFT: EventFormDraft = {
   title: "",

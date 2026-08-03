@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Column, Grid, InlineNotification, Stack } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
 
-import { formatUGX } from "@/features/members/utils/memberUtils";
+import { formatUGX } from "../../members/utils/memberUtils";
 import { useDashboardSnapshot } from "../hooks/useDashboardSnapshots";
 import { MetricCard } from "../components/DashboardPrimitives";
 import {

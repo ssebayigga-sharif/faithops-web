@@ -5,7 +5,7 @@
  * they live here instead. If your About page already has its own data
  * file, merge these in there and delete this file.
  */
-import type { Leader, BeliefItem } from "@/features/home/types";
+import type { Leader, BeliefItem } from "../types";
 
 export const LEADERS: Leader[] = [
   {

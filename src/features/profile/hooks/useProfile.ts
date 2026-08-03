@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ProfileService } from "@/features/profile/services/profile.services";
-import type { ChurchProfile } from "@/features/profile/types";
-import { DEFAULT_PROFILE } from "@/features/profile/data/profile";
+import { ProfileService } from "../services/profile.services";
+import type { ChurchProfile } from "../types";
+import { DEFAULT_PROFILE } from "../data/profile";
 import { useCallback, useMemo } from "react";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "../../auth/context/AuthContext";
 
 export const profileKeys = {
   one: (uid: string) => ["profile", uid] as const,

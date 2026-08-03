@@ -1,6 +1,6 @@
 import { Column, Grid, Stack, Tile } from "@carbon/react";
-import type { GivingCategoryId } from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+import type { GivingCategoryId } from "../types";
+import { GIVING_CATEGORIES } from "../data/giving";
 import { formatUGX } from "../givingUtils";
 import { colors } from "./givingStyles";
 

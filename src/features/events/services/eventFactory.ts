@@ -1,4 +1,4 @@
-import type { ChurchEvent, EventFormDraft } from "@/features/events/types";
+import type { ChurchEvent, EventFormDraft } from "../types";
 
 function toIsoDateTime(value: string): string {
   return value.length === 16 ? `${value}:00` : value;

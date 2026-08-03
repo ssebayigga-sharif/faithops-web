@@ -20,15 +20,15 @@ import {
   UseQueryResult,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { MemberService } from "@/features/members/services/member.services";
+import { MemberService } from "../services/member.services";
 import type {
   Member,
   UseCreateMemberResult,
   UseDeleteMemberResult,
   UseMembersResult,
   UseUpdateMemberResult,
-} from "@/features/members/types";
-import { isFirebaseApiError } from "@/shared/services/firebase.client";
+} from "../types";
+import { isFirebaseApiError } from "../../../shared/services/firebase.client";
 // Centralised so invalidation is always consistent.
 
 export const memberKeys = {

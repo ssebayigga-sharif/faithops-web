@@ -6,35 +6,35 @@ import {
   Stack,
 } from "@carbon/react";
 
-import type { Member, SortField } from "@/features/members/types";
-import { useMemberFilters } from "@/features/members/hooks/useMemberFilter";
+import type { Member, SortField } from "../types";
+import { useMemberFilters } from "../hooks/useMemberFilter";
 import {
   useMembers,
   useCreateMember,
   useDeleteMember,
-} from "@/features/members/hooks/useMember";
+} from "../hooks/useMember";
 
 // Dynamic imports for code splitting
 const DeleteConfirmModal = lazy(
-  () => import("@/features/members/components/DeleteMember"),
+  () => import("../components/DeleteMember"),
 );
 const MemberModal = lazy(
-  () => import("@/features/members/components/MemberModal"),
+  () => import("../components/MemberModal"),
 );
 const MemberFiltersBar = lazy(
-  () => import("@/features/members/components/MemberFilters"),
+  () => import("../components/MemberFilters"),
 );
 const MembersPageHeader = lazy(
-  () => import("@/features/members/components/MembersPageHeader"),
+  () => import("../components/MembersPageHeader"),
 );
 const MembersStatsCards = lazy(
-  () => import("@/features/members/components/MembersStatsCards"),
+  () => import("../components/MembersStatsCards"),
 );
 const MembersTable = lazy(
-  () => import("@/features/members/components/MembersTable"),
+  () => import("../components/MembersTable"),
 );
 const MembersEmptyState = lazy(
-  () => import("@/features/members/components/MembersEmptyState"),
+  () => import("../components/MembersEmptyState"),
 );
 
 //  Main page

@@ -3,7 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import {
   SearchService,
   type SearchResult,
-} from "@/features/search/services/search.service";
+} from "../services/search.service";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();

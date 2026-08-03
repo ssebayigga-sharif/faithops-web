@@ -4,7 +4,7 @@ import type {
   GivingCategory,
   GivingFrequency,
   GivingMethod,
-} from "@/features/giving/types";
+} from "../types";
 
 export type {
   GivingCategory,
@@ -16,7 +16,7 @@ export type {
   MonthlySummary,
   YearlySummary,
   GivingReport,
-} from "@/features/giving/types";
+} from "../types";
 
 export const GIVING_CATEGORIES: GivingCategory[] = [
   {

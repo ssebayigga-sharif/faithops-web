@@ -1,5 +1,5 @@
 import type { UseQueryResult } from "@tanstack/react-query";
-import type { Gender, MaritalStatus, ServiceType } from "@/shared/types";
+import type { Gender, MaritalStatus, ServiceType } from "../../shared/types";
 
 export type MemberStatus =
   | "active"

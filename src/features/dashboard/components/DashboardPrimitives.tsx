@@ -15,7 +15,7 @@ import type {
   OperationsRowProps,
   ProgressRowProps,
   DashboardTagType,
-} from "@/features/dashboard/types";
+} from "../types";
 
 // Helpers
 

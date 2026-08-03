@@ -1,5 +1,5 @@
-import type { NavItem } from "@/shared/types";
-import type { ServiceTime, HomeMinistry, StatItem } from "@/features/home/types";
+import type { NavItem } from "../../../shared/types";
+import type { ServiceTime, HomeMinistry, StatItem } from "../types";
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Home", path: "/" },

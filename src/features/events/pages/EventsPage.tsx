@@ -18,10 +18,10 @@ import {
   Tag,
 } from "@carbon/react";
 import { Add, Reset } from "@carbon/icons-react";
-import type { EventFormDraft } from "@/features/events/types";
+import type { EventFormDraft } from "../types";
 import { DEFAULT_EVENT_DRAFT } from "../data/eventData";
 import { formatEventDate, sortEventsByStart } from "../eventUtils";
-import { useCreateEvent, useEvents } from "@/features/events/hooks/useEvent";
+import { useCreateEvent, useEvents } from "../hooks/useEvent";
 import { EventFormDrawer } from "../components/EventFormDrawer";
 import { createEventFromDraft } from "../services/eventFactory";
 import styles from "./EventsPage.module.scss";

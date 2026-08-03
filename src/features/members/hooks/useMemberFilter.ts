@@ -3,7 +3,7 @@ import type {
   Member,
   MemberFilters,
   SortState,
-} from "@/features/members/types";
+} from "../types";
 import {
   sortMembers,
   filterMembers,

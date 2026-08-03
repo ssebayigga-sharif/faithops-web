@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import { HeaderPanel, SwitcherDivider } from "@carbon/react";
 import { ReplyAll, Send } from "@carbon/icons-react";
-import { useNotifications } from "@/features/notifications/hooks/useNotifications";
-import { useAuth } from "@/features/auth/context/AuthContext";
-import type { ChurchNotification } from "@/features/notifications/types";
+import { useNotifications } from "../../features/notifications/hooks/useNotifications";
+import { useAuth } from "../../features/auth/context/AuthContext";
+import type { ChurchNotification } from "../../features/notifications/types";
 
 type HeaderNotificationsProps = {
   open: boolean;

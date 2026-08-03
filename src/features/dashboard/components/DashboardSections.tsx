@@ -11,13 +11,13 @@ import { Grid, Column, Stack } from "@carbon/react";
 import type {
   ChurchEvent,
   EventAnalyticsSnapshot,
-} from "@/features/events/types";
-import type { DashboardSnapshot } from "@/features/dashboard/types";
-import { formatDate, formatUGX } from "@/features/members/utils/memberUtils";
+} from "../../events/types";
+import type { DashboardSnapshot } from "../types";
+import { formatDate, formatUGX } from "../../members/utils/memberUtils";
 import {
   formatEventDateTime,
   getVolunteerParticipationRate,
-} from "@/features/events/eventUtils";
+} from "../../events/eventUtils";
 import { percentage } from "../components/dashboardSelectors";
 import {
   DashboardPanel,

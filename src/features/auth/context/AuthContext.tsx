@@ -14,7 +14,7 @@ import {
   updateProfile,
   type User,
 } from "firebase/auth";
-import { getFirebaseAuth } from "@/shared/services/firebase";
+import { getFirebaseAuth } from "../../../shared/services/firebase";
 
 export interface AuthState {
   user: User | null;

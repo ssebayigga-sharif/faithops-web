@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  CheckmarkFilled,
-  Time,
-  ErrorFilled,
-  Misuse,
-} from "@carbon/icons-react";
-import type { AttendanceSession } from "@/features/attendance/types";
+import { CheckmarkFilled, ErrorFilled } from "@carbon/icons-react";
+import type { AttendanceSession } from "../types";
 
 interface Props {
   session: AttendanceSession | null;

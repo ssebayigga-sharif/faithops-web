@@ -12,11 +12,11 @@ import {
 import {
   getFirebaseDatabase,
   getFirebaseAuth,
-} from "@/shared/services/firebase";
+} from "../../../shared/services/firebase";
 import type {
   ChurchNotification,
   EmailDeliveryPayload,
-} from "@/features/notifications/types";
+} from "../types";
 
 const NOTIFICATIONS_PATH = "/notifications";
 const EMAIL_OUTBOX_PATH = "/emailOutbox";

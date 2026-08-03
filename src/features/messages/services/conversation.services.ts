@@ -8,7 +8,7 @@ import {
   runTransaction,
   type DataSnapshot,
 } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
+import { getFirebaseDatabase } from "../../../shared/services/firebase";
 import { EmailNotificationService } from "./emailNotification.services";
 import type {
   ConversationParticipant,

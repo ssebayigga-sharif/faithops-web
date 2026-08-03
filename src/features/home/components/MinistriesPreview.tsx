@@ -2,8 +2,8 @@ import React from "react";
 import { Grid, Column, Tile } from "@carbon/react";
 import { User } from "@carbon/icons-react";
 import styles from "../homepage.module.scss";
-import { MINISTRIES } from "@/features/home/data/home";
-import type { HomeMinistry } from "@/features/home/types";
+import { MINISTRIES } from "../data/home";
+import type { HomeMinistry } from "../types";
 
 const MinistriesPreview: React.FC = () => (
   <section

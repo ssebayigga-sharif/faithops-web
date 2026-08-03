@@ -1,6 +1,6 @@
 import type { AxiosResponse } from "axios";
-import { firebaseClient } from "@/shared/services/firebase.client";
-import type { ChurchProfile } from "@/features/profile/types";
+import { firebaseClient } from "../../../shared/services/firebase.client";
+import type { ChurchProfile } from "../types";
 
 const PROFILES_PATH = "/profiles";
 

@@ -21,9 +21,9 @@ import {
 import { Email, UserFollow, TrashCan } from "@carbon/icons-react";
 import { useNavigate } from "react-router-dom";
 
-import type { Member, SortField } from "@/features/members/types";
-import { formatDate } from "@/features/members/utils/memberUtils";
-import { SendMessageModal } from "@/features/notifications/components/SendMessageModal";
+import type { Member, SortField } from "../types";
+import { formatDate } from "../utils/memberUtils";
+import { SendMessageModal } from "../../notifications/components/SendMessageModal";
 
 //  Table column definitions
 

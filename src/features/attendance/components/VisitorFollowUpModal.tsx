@@ -1,5 +1,5 @@
 import { Modal, Select, SelectItem } from "@carbon/react";
-import type { VisitorRecord } from "@/features/attendance/types";
+import type { VisitorRecord } from "../types";
 
 interface VisitorFollowUpModalProps {
   open: boolean;

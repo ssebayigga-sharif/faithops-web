@@ -5,9 +5,9 @@ import type {
   MemberModalProps,
   MiniAssignmentDraft,
   Step,
-} from "@/features/members/types";
-import { STEP_LABELS } from "@/features/members/data/members";
-import { generateMemberId } from "@/features/members/utils/memberUtils";
+} from "../types";
+import { STEP_LABELS } from "../data/members";
+import { generateMemberId } from "../utils/memberUtils";
 import { Add, TrashCan } from "@carbon/icons-react";
 import {
   Button,
@@ -15,7 +15,7 @@ import {
   ProgressIndicator,
   ProgressStep,
 } from "@carbon/react";
-import { SlideOver } from "@/shared/components/ui/SlideOver";
+import { SlideOver } from "../../../shared/components/ui/SlideOver";
 import { StepPersonalInfo } from "./StepPersonalInfo";
 import { StepChurchInfo } from "./StepChurchInfo";
 import { StepMinistries } from "./StepMinistries";

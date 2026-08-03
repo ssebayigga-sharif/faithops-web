@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ref, get, child } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
+import { getFirebaseDatabase } from "../../../shared/services/firebase";
 import {
   Button,
   TextArea,
@@ -9,13 +9,13 @@ import {
   InlineNotification,
 } from "@carbon/react";
 import { Send, ChatLaunch } from "@carbon/icons-react";
-import { useAuth } from "@/features/auth/context/AuthContext";
-import { useProfile } from "@/features/profile/hooks/useProfile";
-import { SlideOver } from "@/shared/components/ui/SlideOver";
+import { useAuth } from "../../auth/context/AuthContext";
+import { useProfile } from "../../profile/hooks/useProfile";
+import { SlideOver } from "../../../shared/components/ui/SlideOver";
 import { ConversationService } from "../services/conversation.services";
 import { useConversations } from "../hook/useConversations";
 import { useMessages } from "../hook/useMessages";
-import type { ChurchProfile } from "@/features/profile/types";
+import type { ChurchProfile } from "../../profile/types";
 import type { MemberListItem } from "../types/types";
 import styles from "./messagepage.module.scss";
 

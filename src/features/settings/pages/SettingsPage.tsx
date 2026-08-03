@@ -18,7 +18,7 @@ import {
   ColorPalette,
   Help,
 } from "@carbon/icons-react";
-import { useAppTheme, CarbonTheme } from "@/shared/hooks/useTheme";
+import { useAppTheme, CarbonTheme } from "../../../shared/hooks/useTheme";
 
 export default function SettingsPage() {
   const { theme, setTheme, isDarkMode, toggleDarkMode } = useAppTheme();

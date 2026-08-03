@@ -6,8 +6,8 @@ import {
   TextArea,
   TextInput,
 } from "@carbon/react";
-import { SlideOver } from "@/shared/components/ui/SlideOver";
-import type { EventFormDrawerProps } from "@/features/events/types";
+import { SlideOver } from "../../../shared/components/ui/SlideOver";
+import type { EventFormDrawerProps } from "../types";
 
 export function EventFormDrawer({
   open,

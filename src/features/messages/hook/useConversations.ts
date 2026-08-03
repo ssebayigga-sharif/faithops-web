@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAuth } from "../../auth/context/AuthContext";
 import { ConversationService } from "../services/conversation.services";
 import type { ConversationPreview } from "../types/types";
 

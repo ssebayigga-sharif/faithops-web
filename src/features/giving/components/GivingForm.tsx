@@ -8,8 +8,8 @@ import {
 import type {
   GivingCategoryId,
   GivingFormState,
-} from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+} from "../types";
+import { GIVING_CATEGORIES } from "../data/giving";
 import { formatUGX } from "../givingUtils";
 import { colors, sectionDesc, tileSection } from "../components/givingStyles";
 

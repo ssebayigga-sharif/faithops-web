@@ -11,7 +11,7 @@
  *   /attendance/visitors/{sessionId}.json        → { visitorId: VisitorRecord }
  */
 
-import { firebaseClient } from "@/shared/services/firebase.client";
+import { firebaseClient } from "../../../shared/services/firebase.client";
 import type {
   AttendanceRecord,
   AttendanceSession,
@@ -20,7 +20,7 @@ import type {
   BulkSavePayload,
   VisitorRecord,
   VisitorRowPayload,
-} from "@/features/attendance/types";
+} from "../types";
 
 const SESSIONS_PATH = "/attendance/sessions";
 const RECORDS_PATH = "/attendance/records";

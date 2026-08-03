@@ -18,7 +18,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
-import type { FirebaseApiError } from "@/shared/types";
+import type { FirebaseApiError } from "../types";
 
 export const FIREBASE_BASE_URL =
   "https://my-church-9abc5-default-rtdb.firebaseio.com";

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
-import { firebaseClient } from "@/shared/services/firebase.client";
-import { computeMember } from "@/features/members/utils/memberUtils";
-import type { Member } from "@/features/members/types";
+import { firebaseClient } from "../../../shared/services/firebase.client";
+import { computeMember } from "../utils/memberUtils";
+import type { Member } from "../types";
 
 const MEMBERS_PATH = "/members";
 

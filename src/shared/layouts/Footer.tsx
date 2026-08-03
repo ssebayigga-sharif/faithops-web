@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import {
   administrationNavigationItems,
   footerNavigationItems,
-} from "@/shared/data/navigation";
+} from "../data/navigation";
 
 const currentYear = new Date().getFullYear();
 

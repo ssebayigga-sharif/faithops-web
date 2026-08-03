@@ -1,10 +1,10 @@
 import { Add, TrashCan } from "@carbon/icons-react";
 import { Button, Select, SelectItem, Stack, Tag } from "@carbon/react";
-import type { MiniAssignmentDraft } from "@/features/members/types";
+import type { MiniAssignmentDraft } from "../types";
 import {
   MINISTRIES_LIST,
   MINISTRY_ROLES,
-} from "@/features/members/utils/memberUtils";
+} from "../utils/memberUtils";
 import styles from "./MemberModal.module.scss";
 
 interface StepMinistriesProps {

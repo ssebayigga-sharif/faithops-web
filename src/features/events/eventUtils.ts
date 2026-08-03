@@ -3,7 +3,7 @@ import type {
   DepartmentActivity,
   EventAnalyticsSnapshot,
   EventTrendPoint,
-} from "@/features/events/types";
+} from "./types";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

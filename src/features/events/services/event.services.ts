@@ -1,7 +1,7 @@
 import type { AxiosResponse } from "axios";
-import { firebaseClient } from "@/shared/services/firebase.client";
-import { MemberService } from "@/features/members/services/member.services";
-import { NotificationService } from "@/features/notifications/services/notification.service";
+import { firebaseClient } from "../../../shared/services/firebase.client";
+import { MemberService } from "../../members/services/member.services";
+import { NotificationService } from "../../notifications/services/notification.service";
 import type {
   ChurchEvent,
   CommunicationChannel,
@@ -13,7 +13,7 @@ import type {
   EventRecurrence,
   EventStatus,
   EventVolunteerAssignment,
-} from "@/features/events/types";
+} from "../types";
 
 const EVENTS_PATH = "/events";
 

@@ -11,9 +11,9 @@ import {
   Settings,
   UserMultiple,
 } from "@carbon/icons-react";
-import type { NavigationItem } from "@/shared/types";
+import type { NavigationItem } from "../types";
 
-export type { NavigationItem } from "@/shared/types";
+export type { NavigationItem } from "../types";
 
 export const primaryNavigationItems: NavigationItem[] = [
   {

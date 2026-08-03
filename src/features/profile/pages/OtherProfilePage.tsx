@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ref, get, child } from "firebase/database";
-import { getFirebaseDatabase } from "@/shared/services/firebase";
-import type { ChurchProfile } from "@/features/profile/types";
+import { getFirebaseDatabase } from "../../../shared/services/firebase";
+import type { ChurchProfile } from "../types";
 import { ArrowLeft, Send } from "@carbon/icons-react";
 import { Grid, Column, Loading, Button } from "@carbon/react";
-import { useAuth } from "@/features/auth/context/AuthContext";
-import { SendMessageModal } from "@/features/notifications/components/SendMessageModal";
+import { useAuth } from "../../auth/context/AuthContext";
+import { SendMessageModal } from "../../notifications/components/SendMessageModal";
 
 const OtherProfilePage = () => {
   const { uid } = useParams<{ uid: string }>();

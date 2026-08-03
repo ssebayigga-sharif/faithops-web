@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import type { GivingRecord } from "@/features/giving/types";
+import type { GivingRecord } from "../types";
 import {
   searchRecords,
   filterRecordsByDateRange,

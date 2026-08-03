@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import type { ChurchEvent, EventAnalyticsSnapshot } from "@/features/events/types";
-import type { DashboardSnapshot, UseDashboardSnapshotReturn } from "@/features/dashboard/types";
-import { useMembers } from "@/features/members/hooks/useMember";
-import { useEvents } from "@/features/events/hooks/useEvent";
+import type { ChurchEvent, EventAnalyticsSnapshot } from "../../events/types";
+import type { DashboardSnapshot, UseDashboardSnapshotReturn } from "../types";
+import { useMembers } from "../../members/hooks/useMember";
+import { useEvents } from "../../events/hooks/useEvent";
 import {
   buildEventAnalyticsSnapshot,
   getUpcomingEvents,
-} from "@/features/events/eventUtils";
+} from "../../events/eventUtils";
 import {
   asList,
   buildDashboardSnapshot,

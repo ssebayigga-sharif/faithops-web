@@ -3,7 +3,7 @@ import type {
   AttendanceSession,
   AttendanceMember,
   VisitorRecord,
-} from "@/features/attendance/types";
+} from "../../attendance/types";
 
 export interface ReportStats {
   totalSessions: number;

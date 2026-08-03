@@ -9,7 +9,7 @@ import {
   TableCell,
   Tag,
 } from "@carbon/react";
-import type { FollowUpCandidate } from "@/features/attendance/services/sync.services";
+import type { FollowUpCandidate } from "../services/sync.services";
 
 interface FollowUpModalProps {
   open: boolean;

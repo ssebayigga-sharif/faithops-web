@@ -7,8 +7,8 @@ import type {
   CategoryTotal,
   GivingReport,
   GivingCategoryId,
-} from "@/features/giving/types";
-import { GIVING_CATEGORIES } from "@/features/giving/data/giving";
+} from "./types";
+import { GIVING_CATEGORIES } from "./data/giving";
 
 //  Formatting
 

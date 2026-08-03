@@ -1,5 +1,5 @@
 import { InlineLoading } from "@carbon/react";
-import type { Member } from "@/features/members/types";
+import type { Member } from "../types";
 
 interface MembersStatsCardsProps {
   members: Member[];
