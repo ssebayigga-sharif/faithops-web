@@ -99,6 +99,7 @@ const App = () => (
             <Route path="reports" element={<ReportsPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="messages" element={<MessagesPage />} />
+            <Route path="messages/:conversationId" element={<MessagesPage />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="help" element={<HelpPage />} />
             <Route

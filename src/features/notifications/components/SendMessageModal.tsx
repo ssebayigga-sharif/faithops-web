@@ -7,7 +7,9 @@ import {
   Loading,
   Toggle,
 } from "@carbon/react";
+import { useNavigate } from "react-router-dom";
 import { NotificationService } from "../services/notification.service";
+import { ConversationService } from "../../messages/services/conversation.services";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useProfile } from "../../profile/hooks/useProfile";
 import { SearchService } from "../../search/services/search.service";
@@ -29,6 +31,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
 }) => {
   const { user } = useAuth();
   const { profile: senderProfile } = useProfile();
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -37,6 +40,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
   const [resolvedUid, setResolvedUid] = useState<string | null>(null);
   const [resolvedEmail, setResolvedEmail] = useState<string>("");
   const [resolvedName, setResolvedName] = useState<string>("");
+  const [resolvedPhotoUrl, setResolvedPhotoUrl] = useState<string>("");
   const [sendEmailFallback, setSendEmailFallback] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -55,6 +59,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
         setResolvedUid(recipientUid);
         setResolvedEmail(recipientEmail || "");
         setResolvedName(recipientName);
+        setResolvedPhotoUrl("");
         setSendEmailFallback(false);
         setManualRecipientEmail("");
         setIsLookupByEmail(false);
@@ -72,6 +77,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               setResolvedUid(match.uid);
               setResolvedEmail(recipientEmail);
               setResolvedName(recipientName);
+              setResolvedPhotoUrl(match.profilePhotoUrl || "");
               setSendEmailFallback(false);
             } else {
               setResolvedUid(null);
@@ -91,6 +97,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
         setResolvedUid(null);
         setResolvedEmail("");
         setResolvedName("");
+        setResolvedPhotoUrl("");
         setSendEmailFallback(false);
         setManualRecipientEmail("");
         setIsLookupByEmail(false);
@@ -105,6 +112,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
       setIsLookupByEmail(false);
       setResolvedEmail("");
       setResolvedName("");
+      setResolvedPhotoUrl("");
     }
   }, [open, recipientUid, recipientEmail, recipientName]);
 
@@ -130,6 +138,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
         setResolvedName(
           [match.firstName, match.lastName].filter(Boolean).join(" ") || email,
         );
+        setResolvedPhotoUrl(match.profilePhotoUrl || "");
         setSendEmailFallback(false);
       } else {
         setResolvedUid(null);
@@ -150,8 +159,8 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !body.trim()) {
-      setError("Please enter a subject and message content.");
+    if (!body.trim()) {
+      setError("Please enter message content.");
       return;
     }
     if (!user) {
@@ -172,20 +181,63 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
         "Church Member";
 
       if (resolvedUid && !sendEmailFallback) {
-        // Send in-app direct message
-        await NotificationService.send({
+        // Build participant objects for ConversationService
+        const senderInfo = {
+          uid: user.uid,
+          fullName: senderName,
+          email: senderProfile?.email || user.email || "",
+          photoUrl: senderProfile?.profilePhotoUrl || "",
+        };
+
+        const recipientInfo = {
+          uid: resolvedUid,
+          fullName: resolvedName || recipientName,
+          email: resolvedEmail,
+          photoUrl: resolvedPhotoUrl,
+        };
+
+        // Create or open the conversation thread, then send the message
+        const conversationId =
+          await ConversationService.getOrCreateConversation(
+            senderInfo,
+            recipientInfo,
+          );
+
+        // Combine subject + body into the message text
+        const messageText = title.trim()
+          ? `${title.trim()}\n\n${body.trim()}`
+          : body.trim();
+
+        await ConversationService.sendMessage(
+          conversationId,
+          senderInfo,
+          resolvedUid,
+          messageText,
+        );
+
+        // Also send a supplementary notification for the bell icon
+        void NotificationService.send({
           type: "message",
-          title: title.trim(),
+          title: title.trim() || "New message",
           body: body.trim(),
           senderUid: user.uid,
           senderName,
           recipientUid: resolvedUid,
         });
+
+        setSuccess(true);
+        setTitle("");
+        setBody("");
+        setTimeout(() => {
+          setSuccess(false);
+          onClose();
+          navigate(`/messages/${conversationId}`);
+        }, 1200);
       } else if (resolvedEmail) {
-        // Send email message fallback
+        // Send email message fallback for unregistered members
         await NotificationService.sendEmail({
           to: resolvedEmail,
-          subject: title.trim(),
+          subject: title.trim() || "Message from FaithOps",
           textBody: body.trim(),
           htmlBody: `
             <div style="font-family: sans-serif; padding: 24px; color: #161616; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px;">
@@ -196,19 +248,19 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
             </div>
           `,
         });
+
+        setSuccess(true);
+        setTitle("");
+        setBody("");
+        setTimeout(() => {
+          setSuccess(false);
+          onClose();
+        }, 1500);
       } else {
         throw new Error(
           "Unable to deliver message: no recipient email address found.",
         );
       }
-
-      setSuccess(true);
-      setTitle("");
-      setBody("");
-      setTimeout(() => {
-        setSuccess(false);
-        onClose();
-      }, 1500);
     } catch (err: any) {
       setError(err?.message || "Failed to send message. Please try again.");
     } finally {
@@ -240,7 +292,6 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
       primaryButtonDisabled={
         isSending ||
         isSearching ||
-        !title.trim() ||
         !body.trim() ||
         success ||
         (showRecipientInput ? !manualRecipientEmail.trim() : !canSend)
@@ -304,7 +355,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
               title={`Sending to: ${displayName}`}
               subtitle={
                 resolvedEmail
-                  ? `via ${sendEmailFallback ? "email" : "in-app message"}`
+                  ? `via ${sendEmailFallback ? "email" : "conversation thread"}`
                   : ""
               }
               lowContrast
@@ -338,12 +389,11 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
 
           <TextInput
             id="msg-title"
-            labelText="Subject"
+            labelText="Subject (optional)"
             placeholder="Enter message subject"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isSending || success}
-            required
           />
 
           <TextArea

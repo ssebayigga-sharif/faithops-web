@@ -182,6 +182,10 @@ export interface EventFormDrawerProps {
   open: boolean;
   draft: EventFormDraft;
   isSubmitting?: boolean;
+  title?: string;
+  description?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
   onChange: <Key extends keyof EventFormDraft>(
     field: Key,
     value: EventFormDraft[Key],

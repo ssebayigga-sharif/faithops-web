@@ -15,29 +15,73 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableSelectAll,
+  TableSelectRow,
   Tag,
 } from "@carbon/react";
-import { Add, Reset } from "@carbon/icons-react";
-import type { EventFormDraft } from "../types";
+import { Add, Edit, Reset, TrashCan } from "@carbon/icons-react";
+import type { ChurchEvent, EventFormDraft } from "../types";
 import { DEFAULT_EVENT_DRAFT } from "../data/eventData";
 import { formatEventDate, sortEventsByStart } from "../eventUtils";
-import { useCreateEvent, useEvents } from "../hooks/useEvent";
+import {
+  useCreateEvent,
+  useDeleteEvent,
+  useEvents,
+  usePatchEvent,
+} from "../hooks/useEvent";
 import { EventFormDrawer } from "../components/EventFormDrawer";
-import { createEventFromDraft } from "../services/eventFactory";
+import {
+  createEventFromDraft,
+  createEventPatchFromDraft,
+  eventToFormDraft,
+} from "../services/eventFactory";
 import styles from "./EventsPage.module.scss";
 
 const EVENT_LIST_HEADERS = [
   { key: "title", header: "Event" },
   { key: "date", header: "Date" },
   { key: "venue", header: "Venue" },
+  { key: "organizer", header: "Organiser" },
+  { key: "speaker", header: "Speaker" },
   { key: "status", header: "Status" },
+  { key: "actions", header: "" },
 ];
 
+function getEventRowId(event: ChurchEvent): string {
+  return event._firebaseKey ?? event.id;
+}
+
+function isPersistedEvent(
+  event: ChurchEvent | undefined,
+): event is ChurchEvent & { _firebaseKey: string } {
+  return Boolean(event?._firebaseKey && event._firebaseKey !== "__optimistic__");
+}
+
+function getEventDisplayStatus(event: ChurchEvent): string {
+  if (!isPersistedEvent(event)) return "Saving";
+  if (new Date(event.end).getTime() < Date.now()) return "Completed";
+  return event.status === "Approved" ? "Upcoming" : event.status;
+}
+
+function getStatusTagType(status: string) {
+  if (status === "Upcoming") return "green";
+  if (status === "Completed") return "blue";
+  if (status === "Saving") return "gray";
+  if (status === "Needs volunteers") return "purple";
+  if (status === "Pending approval") return "teal";
+  return "gray";
+}
+
 export default function EventsPage() {
-  const { events, isLoading, isError, error, refetch } = useEvents();
+  const { events, isLoading, isError, error } = useEvents();
   const { createEvent, isCreating, createError } = useCreateEvent();
+  const patchEvent = usePatchEvent();
+  const deleteEvent = useDeleteEvent();
   const [draft, setDraft] = useState<EventFormDraft>(DEFAULT_EVENT_DRAFT);
+  const [editDraft, setEditDraft] =
+    useState<EventFormDraft>(DEFAULT_EVENT_DRAFT);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<ChurchEvent | null>(null);
   const [notice, setNotice] = useState<{
     kind: "success" | "error";
     title: string;
@@ -91,11 +135,26 @@ export default function EventsPage() {
     return filteredEvents.slice(start, start + pageSize);
   }, [filteredEvents, currentPage, pageSize]);
 
+  const pagedEventByRowId = useMemo(
+    () => new Map(pagedEvents.map((event) => [getEventRowId(event), event])),
+    [pagedEvents],
+  );
+
   function updateDraft<Key extends keyof EventFormDraft>(
     field: Key,
     value: EventFormDraft[Key],
   ) {
     setDraft((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  }
+
+  function updateEditDraft<Key extends keyof EventFormDraft>(
+    field: Key,
+    value: EventFormDraft[Key],
+  ) {
+    setEditDraft((current) => ({
       ...current,
       [field]: value,
     }));
@@ -134,13 +193,138 @@ export default function EventsPage() {
     }
   }
 
+  function handleStartEdit(event: ChurchEvent) {
+    if (!isPersistedEvent(event)) {
+      setNotice({
+        kind: "error",
+        title: "Event still saving",
+        subtitle: "Wait for Firebase to finish saving before editing it.",
+      });
+      return;
+    }
+
+    setEditingEvent(event);
+    setEditDraft(eventToFormDraft(event));
+  }
+
+  async function handleUpdateEvent() {
+    if (!editingEvent || !isPersistedEvent(editingEvent)) {
+      setNotice({
+        kind: "error",
+        title: "Event update unavailable",
+        subtitle: "This event is missing its Firebase key.",
+      });
+      return;
+    }
+
+    try {
+      await patchEvent.mutateAsync({
+        firebaseKey: editingEvent._firebaseKey,
+        partial: createEventPatchFromDraft(editDraft, editingEvent),
+      });
+
+      setEditingEvent(null);
+      setEditDraft(DEFAULT_EVENT_DRAFT);
+      setNotice({
+        kind: "success",
+        title: "Event updated",
+        subtitle: `${editDraft.title || editingEvent.title} was updated on the events page.`,
+      });
+    } catch (err) {
+      setNotice({
+        kind: "error",
+        title: "Event update failed",
+        subtitle:
+          err instanceof Error
+            ? err.message
+            : "Could not update this event. Check Firebase rules and your network connection.",
+      });
+    }
+  }
+
+  async function handleDeleteEvent(event: ChurchEvent) {
+    if (!isPersistedEvent(event)) {
+      setNotice({
+        kind: "error",
+        title: "Event still saving",
+        subtitle: "Wait for Firebase to finish saving before deleting it.",
+      });
+      return;
+    }
+
+    if (!window.confirm(`Delete "${event.title}" from the events page?`)) {
+      return;
+    }
+
+    try {
+      await deleteEvent.mutateAsync(event._firebaseKey);
+      setNotice({
+        kind: "success",
+        title: "Event deleted",
+        subtitle: `${event.title} was removed from the events page.`,
+      });
+    } catch (err) {
+      setNotice({
+        kind: "error",
+        title: "Event delete failed",
+        subtitle:
+          err instanceof Error
+            ? err.message
+            : "Could not delete this event. Check Firebase rules and your network connection.",
+      });
+    }
+  }
+
+  async function handleDeleteSelected(rowIds: string[]) {
+    const selectedEvents = rowIds
+      .map((rowId) => pagedEventByRowId.get(rowId))
+      .filter(isPersistedEvent);
+
+    if (!selectedEvents.length) {
+      setNotice({
+        kind: "error",
+        title: "No saved events selected",
+        subtitle: "Only events already saved in Firebase can be deleted.",
+      });
+      return;
+    }
+
+    if (!window.confirm(`Delete ${selectedEvents.length} selected event(s)?`)) {
+      return;
+    }
+
+    try {
+      await Promise.all(
+        selectedEvents.map((event) =>
+          deleteEvent.mutateAsync(event._firebaseKey),
+        ),
+      );
+      setNotice({
+        kind: "success",
+        title: "Selected events deleted",
+        subtitle: `${selectedEvents.length} event(s) were removed from the events page.`,
+      });
+    } catch (err) {
+      setNotice({
+        kind: "error",
+        title: "Selected delete failed",
+        subtitle:
+          err instanceof Error
+            ? err.message
+            : "Could not delete the selected events. Check Firebase rules and your network connection.",
+      });
+    }
+  }
+
   const rows = pagedEvents.map((event) => ({
-    id: event.id,
+    id: getEventRowId(event),
     title: event.title,
     date: formatEventDate(event.start),
     venue: event.venue,
-    status:
-      new Date(event.end).getTime() < Date.now() ? "Completed" : "Upcoming",
+    organizer: event.organizer ?? "Church office",
+    speaker: event.speaker,
+    status: getEventDisplayStatus(event),
+    actions: "",
   }));
 
   return (
@@ -243,11 +427,32 @@ export default function EventsPage() {
                 getTableProps,
                 getHeaderProps,
                 getRowProps,
+                getSelectionProps,
+                selectedRows,
               }) => (
                 <TableContainer className={styles.tableContainer}>
+                  {selectedRows.length > 0 && (
+                    <div className={styles.selectionActions}>
+                      <span>{selectedRows.length} selected</span>
+                      <Button
+                        kind="danger--ghost"
+                        size="sm"
+                        renderIcon={TrashCan}
+                        onClick={() =>
+                          handleDeleteSelected(
+                            selectedRows.map((row) => row.id),
+                          )
+                        }
+                      >
+                        Delete selected
+                      </Button>
+                    </div>
+                  )}
+
                   <Table {...getTableProps()} size="md">
                     <TableHead>
                       <TableRow>
+                        <TableSelectAll {...getSelectionProps()} />
                         {headers.map((header) => (
                           <TableHeader
                             {...getHeaderProps({ header })}
@@ -259,52 +464,110 @@ export default function EventsPage() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {tableRows.map((row) => (
-                        <TableRow
-                          {...getRowProps({ row })}
-                          key={row.id}
-                          className="event-table__row"
-                        >
-                          {row.cells.map((cell) => {
-                            if (cell.info.header === "title") {
+                      {tableRows.map((row) => {
+                        const rawEvent = pagedEventByRowId.get(row.id);
+                        const selectionProps = getSelectionProps({ row });
+                        const canManage = isPersistedEvent(rawEvent);
+
+                        return (
+                          <TableRow
+                            {...getRowProps({ row })}
+                            key={row.id}
+                            className="event-table__row"
+                          >
+                            <TableSelectRow
+                              {...selectionProps}
+                              onSelect={(
+                                event: React.MouseEvent<HTMLInputElement>,
+                              ) => {
+                                event.stopPropagation();
+                                selectionProps.onSelect(event);
+                              }}
+                            />
+
+                            {row.cells.map((cell) => {
+                              if (cell.info.header === "title") {
+                                return (
+                                  <TableCell key={cell.id}>
+                                    <div className="event-table__title">
+                                      {cell.value as string}
+                                    </div>
+                                    {rawEvent?.description && (
+                                      <div className="event-table__meta">
+                                        {rawEvent.description}
+                                      </div>
+                                    )}
+                                  </TableCell>
+                                );
+                              }
+
+                              if (cell.info.header === "date") {
+                                return (
+                                  <TableCell key={cell.id}>
+                                    <Tag type="blue" size="sm">
+                                      {cell.value as string}
+                                    </Tag>
+                                  </TableCell>
+                                );
+                              }
+
+                              if (cell.info.header === "status") {
+                                const status = cell.value as string;
+                                return (
+                                  <TableCell key={cell.id}>
+                                    <Tag
+                                      type={getStatusTagType(status)}
+                                      size="sm"
+                                    >
+                                      {status}
+                                    </Tag>
+                                  </TableCell>
+                                );
+                              }
+
+                              if (cell.info.header === "actions") {
+                                return (
+                                  <TableCell
+                                    key={cell.id}
+                                    onClick={(event) => event.stopPropagation()}
+                                  >
+                                    <div className={styles.rowActions}>
+                                      <Button
+                                        kind="ghost"
+                                        size="sm"
+                                        hasIconOnly
+                                        renderIcon={Edit}
+                                        iconDescription="Edit event"
+                                        disabled={!canManage}
+                                        onClick={() =>
+                                          rawEvent && handleStartEdit(rawEvent)
+                                        }
+                                      />
+                                      <Button
+                                        kind="ghost"
+                                        size="sm"
+                                        hasIconOnly
+                                        renderIcon={TrashCan}
+                                        iconDescription="Delete event"
+                                        disabled={!canManage}
+                                        onClick={() =>
+                                          rawEvent && handleDeleteEvent(rawEvent)
+                                        }
+                                      />
+                                    </div>
+                                  </TableCell>
+                                );
+                              }
+
                               return (
                                 <TableCell key={cell.id}>
-                                  <strong>{cell.value as string}</strong>
+                                  {cell.value as string}
                                 </TableCell>
                               );
-                            }
-
-                            if (cell.info.header === "date") {
-                              return (
-                                <TableCell key={cell.id}>
-                                  <Tag type="blue" size="sm">
-                                    {cell.value as string}
-                                  </Tag>
-                                </TableCell>
-                              );
-                            }
-
-                            if (cell.info.header === "status") {
-                              const status = cell.value as string;
-                              const statusType =
-                                status === "Upcoming" ? "green" : "blue";
-                              return (
-                                <TableCell key={cell.id}>
-                                  <Tag type={statusType} size="sm">
-                                    {status}
-                                  </Tag>
-                                </TableCell>
-                              );
-                            }
-
-                            return (
-                              <TableCell key={cell.id}>
-                                {cell.value as string}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
-                      ))}
+                            })}
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
 
@@ -333,6 +596,22 @@ export default function EventsPage() {
         onChange={updateDraft}
         onClose={() => setIsCreateOpen(false)}
         onSubmit={handleCreateEvent}
+      />
+
+      <EventFormDrawer
+        open={Boolean(editingEvent)}
+        draft={editDraft}
+        isSubmitting={patchEvent.isPending}
+        title="Edit Event"
+        description="Update the selected event details."
+        submitLabel="Save changes"
+        submittingLabel="Saving..."
+        onChange={updateEditDraft}
+        onClose={() => {
+          setEditingEvent(null);
+          setEditDraft(DEFAULT_EVENT_DRAFT);
+        }}
+        onSubmit={handleUpdateEvent}
       />
     </Stack>
   );

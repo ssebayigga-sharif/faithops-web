@@ -1,11 +1,32 @@
 {
   "rules": {
-    "profiles": {
+    "conversations": {
+      "$conversationId": {
+        ".read": "auth != null && data.child('participants').child(auth.uid).exists()",
+        ".write": "auth != null && (!data.exists() || data.child('participants').child(auth.uid).exists())"
+      }
+    },
+
+    "userConversations": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null"
+      }
+    },
+
+    "presence": {
+      "$uid": {
+        ".read": "auth != null",
         ".write": "auth != null && auth.uid === $uid"
       }
     },
+
+   "profiles": {
+  ".read": "auth != null",
+  "$uid": {
+    ".write": "auth != null && auth.uid === $uid"
+  }
+},
 
     "members": {
       ".read": "auth != null",

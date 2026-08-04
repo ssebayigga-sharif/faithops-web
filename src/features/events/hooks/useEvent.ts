@@ -2,7 +2,6 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
-  type UseQueryResult,
 } from "@tanstack/react-query";
 import type { ChurchEvent, UseCreateEventResult, UseEventsResult } from "../types";
 import { EventService } from "../services/event.services";
@@ -107,6 +106,36 @@ export function usePatchEvent() {
         old.map((event) =>
           event._firebaseKey === firebaseKey ? { ...event, ...partial } : event,
         ),
+      );
+
+      return { previous };
+    },
+
+    onError: (_err, _vars, context) => {
+      const ctx = context as { previous?: ChurchEvent[] };
+      if (ctx?.previous) {
+        queryClient.setQueryData(eventKeys.all, ctx.previous);
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: eventKeys.all });
+    },
+  });
+}
+
+export function useDeleteEvent() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, unknown, string>({
+    mutationFn: (firebaseKey) => EventService.remove(firebaseKey),
+
+    onMutate: async (firebaseKey) => {
+      await queryClient.cancelQueries({ queryKey: eventKeys.all });
+      const previous = queryClient.getQueryData<ChurchEvent[]>(eventKeys.all);
+
+      queryClient.setQueryData<ChurchEvent[]>(eventKeys.all, (old = []) =>
+        old.filter((event) => event._firebaseKey !== firebaseKey),
       );
 
       return { previous };

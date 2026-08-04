@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { ref, get, child } from "firebase/database";
 import { getFirebaseDatabase } from "../../../shared/services/firebase";
 import {
@@ -22,18 +23,29 @@ import styles from "./messagepage.module.scss";
 const MessagesPage = () => {
   const { user } = useAuth();
   const { profile: senderProfile } = useProfile();
+  const { conversationId: routeConversationId } = useParams<{
+    conversationId?: string;
+  }>();
+  const navigate = useNavigate();
   const { conversations, isLoading: isLoadingConversations } =
     useConversations();
 
   const [activeConversationId, setActiveConversationId] = useState<
     string | null
-  >(null);
+  >(routeConversationId ?? null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [allMembers, setAllMembers] = useState<MemberListItem[]>([]);
   const [memberSearch, setMemberSearch] = useState("");
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Sync state if route parameter changes
+  useEffect(() => {
+    if (routeConversationId) {
+      setActiveConversationId(routeConversationId);
+    }
+  }, [routeConversationId]);
 
   const { messages, isLoading: isLoadingMessages } =
     useMessages(activeConversationId);
@@ -94,12 +106,13 @@ const MessagesPage = () => {
   const handleSelectConversation = useCallback(
     (conversationId: string) => {
       setActiveConversationId(conversationId);
+      navigate(`/messages/${conversationId}`, { replace: true });
       setError(null);
       if (user?.uid) {
         ConversationService.markConversationRead(conversationId, user.uid);
       }
     },
-    [user?.uid],
+    [user?.uid, navigate],
   );
 
   const handleStartConversation = useCallback(
@@ -338,10 +351,14 @@ const MessagesPage = () => {
               role="button"
               tabIndex={0}
               className={styles.pickerItem}
-              onClick={() => handleStartConversation(member)}
+              onClick={(e) => {
+                (e.currentTarget as HTMLElement).blur();
+                handleStartConversation(member);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
+                  (e.currentTarget as HTMLElement).blur();
                   handleStartConversation(member);
                 }
               }}

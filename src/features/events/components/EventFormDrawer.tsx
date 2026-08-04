@@ -13,6 +13,10 @@ export function EventFormDrawer({
   open,
   draft,
   isSubmitting = false,
+  title = "Create Event",
+  description = "Create a simple event entry for your church calendar.",
+  submitLabel = "Create event",
+  submittingLabel = "Creating...",
   onChange,
   onClose,
   onSubmit,
@@ -21,9 +25,9 @@ export function EventFormDrawer({
     <SlideOver
       open={open}
       onClose={onClose}
-      title="Create Event"
+      title={title}
       eyebrow="Events"
-      description="Create a simple event entry for your church calendar."
+      description={description}
       width="lg"
       footer={
         <>
@@ -31,7 +35,7 @@ export function EventFormDrawer({
             Cancel
           </Button>
           <Button onClick={onSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create event"}
+            {isSubmitting ? submittingLabel : submitLabel}
           </Button>
         </>
       }

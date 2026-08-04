@@ -5,7 +5,7 @@ import {
   push,
   onValue,
   off,
-  runTransaction,
+  increment,
   type DataSnapshot,
 } from "firebase/database";
 import { getFirebaseDatabase } from "../../../shared/services/firebase";
@@ -143,18 +143,11 @@ export const ConversationService = {
         lastMessage,
       [`userConversations/${recipientUid}/${conversationId}/updatedAt`]:
         timestamp,
+      [`userConversations/${recipientUid}/${conversationId}/unreadCount`]:
+        increment(1),
     };
 
     await update(ref(db), updates);
-
-    // Atomic increment — safe even if multiple people message this user at once.
-    await runTransaction(
-      ref(
-        db,
-        `userConversations/${recipientUid}/${conversationId}/unreadCount`,
-      ),
-      (current: number | null) => (current ?? 0) + 1,
-    );
 
     void EmailNotificationService.notifyMessage(
       conversationId,

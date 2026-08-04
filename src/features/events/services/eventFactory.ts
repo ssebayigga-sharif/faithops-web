@@ -1,18 +1,37 @@
 import type { ChurchEvent, EventFormDraft } from "../types";
 
 function toIsoDateTime(value: string): string {
-  return value.length === 16 ? `${value}:00` : value;
+  const trimmed = value.trim();
+  if (!trimmed) return new Date().toISOString();
+  return trimmed.length === 16 ? `${trimmed}:00` : trimmed;
 }
 
 function getEventWindow(dateValue: string) {
   const base = toIsoDateTime(dateValue);
-  const start = base;
-  const end = new Date(base).getTime() + 1000 * 60 * 60;
+  const startTime = new Date(base).getTime();
+  const safeStart = Number.isNaN(startTime) ? Date.now() : startTime;
+  const start = Number.isNaN(startTime) ? new Date(safeStart).toISOString() : base;
+  const end = safeStart + 1000 * 60 * 60;
 
   return {
     start,
     end: new Date(end).toISOString(),
   };
+}
+
+function toDateTimeLocalValue(value: string): string {
+  if (!value) return "";
+
+  const isLocalDateTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value);
+  if (isLocalDateTime && !value.endsWith("Z")) {
+    return value.slice(0, 16);
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+
+  const localDate = new Date(parsed.getTime() - parsed.getTimezoneOffset() * 60000);
+  return localDate.toISOString().slice(0, 16);
 }
 
 export function createEventFromDraft(
@@ -68,5 +87,42 @@ export function createEventFromDraft(
     notes: ["Created from the simple event form."],
     reports: [],
     enterpriseReadiness: [],
+  };
+}
+
+export function createEventPatchFromDraft(
+  draft: EventFormDraft,
+  current: ChurchEvent,
+): Partial<Omit<ChurchEvent, "_firebaseKey">> {
+  const { start, end } = getEventWindow(draft.date || current.start);
+  const isCompleted = new Date(end).getTime() < Date.now();
+
+  return {
+    title: draft.title || current.title || "Untitled church event",
+    description:
+      draft.description ||
+      current.description ||
+      "A simple event created from the operations form.",
+    organizer: draft.organizer || current.organizer || "Church office",
+    speaker: draft.speaker || current.speaker || "To be assigned",
+    venue: draft.venue || current.venue || "Main sanctuary",
+    start,
+    end,
+    status: isCompleted
+      ? "Completed"
+      : current.status === "Completed"
+        ? "Approved"
+        : current.status,
+  };
+}
+
+export function eventToFormDraft(event: ChurchEvent): EventFormDraft {
+  return {
+    title: event.title,
+    description: event.description,
+    venue: event.venue,
+    date: toDateTimeLocalValue(event.start),
+    organizer: event.organizer ?? "",
+    speaker: event.speaker,
   };
 }

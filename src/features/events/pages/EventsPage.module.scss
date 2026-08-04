@@ -36,6 +36,27 @@
 
 .tableContainer {
   overflow-x: auto;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.selectionActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0 0.75rem;
+  color: var(--cds-text-secondary, #6f6f6f);
+  font-size: 0.8125rem;
+}
+
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 5rem;
 }
 
 .pagination {

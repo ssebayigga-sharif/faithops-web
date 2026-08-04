@@ -1,6 +1,7 @@
 import {
   Building,
   Calendar,
+  Chat,
   Dashboard,
   Email,
   Finance,
@@ -57,6 +58,12 @@ export const primaryNavigationItems: NavigationItem[] = [
     label: "Reports",
     description: "Operational reports and exports",
     icon: Report,
+  },
+  {
+    path: "/messages",
+    label: "Messages",
+    description: "Direct messages with church members",
+    icon: Chat,
   },
 ];
 
