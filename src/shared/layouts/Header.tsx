@@ -87,7 +87,7 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
 
       <Link
         aria-label="Go to dashboard"
-        className="app-header__brand"
+        className="app-header__brand app-header__desktop-only"
         to="/dashboard"
       >
         <ChurchIcon size={40} />
@@ -95,7 +95,7 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
       </Link>
 
       <Search
-        className="app-header__search"
+        className="app-header__search app-header__desktop-only"
         labelText="Search FaithOps"
         placeholder="Search members, events..."
         size="lg"
@@ -104,7 +104,7 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         onKeyDown={handleSearchKeyDown}
       />
 
-      <nav className="app-header__nav" aria-label="Header navigation">
+      <nav className="app-header__nav app-header__desktop-only" aria-label="Header navigation">
         {headerNavigationItems.map((item) => (
           <NavLink
             className={({ isActive }) =>
@@ -120,7 +120,7 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         ))}
       </nav>
 
-      <HeaderGlobalBar>
+      <HeaderGlobalBar className="app-header__desktop-only">
         <HeaderGlobalAction
           tooltipAlignment="end"
           aria-label="Messages"
@@ -167,6 +167,16 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
           </HeaderGlobalAction>
         )}
       </HeaderGlobalBar>
+
+      <button
+        type="button"
+        className="app-header__mobile-church-icon"
+        aria-label={user?.displayName ? `User profile (${user.displayName})` : "User profile"}
+        onClick={() => navigate("/profile")}
+        title="View user profile"
+      >
+        <ChurchIcon size={34} />
+      </button>
 
       {notifPanelOpen && (
         <HeaderNotifications

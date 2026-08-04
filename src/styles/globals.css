@@ -30,6 +30,18 @@ a {
   z-index: 8001;
 }
 
+.app-header__mobile-church-icon {
+  display: none;
+}
+
+/* Scroll locking when mobile sidebar is open */
+html.app-sidebar-open,
+body.app-sidebar-open {
+  overflow: hidden !important;
+  height: 100vh !important;
+  touch-action: none;
+}
+
 .app-header__brand {
   display: flex;
   align-items: center;
@@ -920,6 +932,42 @@ p {
 
   .admin-page__inner {
     padding: 1.25rem;
+  }
+}
+
+/* ── Responsive: Mobile Header & Navigation (≤ 65.98rem) ──────── */
+@media (max-width: 65.98rem) {
+  .app-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 0.5rem !important;
+  }
+
+  .app-header__desktop-only {
+    display: none !important;
+  }
+
+  .app-header__mobile-church-icon {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 150ms ease;
+  }
+
+  .app-header__mobile-church-icon:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .app-sidebar.cds--side-nav {
+    overscroll-behavior: contain !important;
+    touch-action: pan-y;
   }
 }
 

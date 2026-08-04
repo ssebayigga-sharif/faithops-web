@@ -26,6 +26,7 @@ export interface ChurchProfile {
   nationality: string;
   nationalId: string;
   profilePhotoUrl: string;
+  coverPhotoUrl?: string;
   email: string;
   phone: string;
   alternatePhone: string;
@@ -50,6 +51,7 @@ export interface ChurchProfile {
   occupation: string;
   employer: string;
   role: ChurchRole;
+  attendanceScore?: string | number;
   createdAt: string;
   updatedAt: string;
 }
@@ -77,4 +79,5 @@ export interface ProfileFormValues {
   dateJoined: string;
   emergencyContact: EmergencyContact;
   profilePhotoUrl: string;
+  coverPhotoUrl?: string;
 }

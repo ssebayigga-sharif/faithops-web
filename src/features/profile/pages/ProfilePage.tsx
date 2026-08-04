@@ -5,14 +5,16 @@ import {
   Button,
   InlineNotification,
   Loading,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Tile,
 } from "@carbon/react";
-import {
-  Save,
-  Edit,
-  Close,
-} from "@carbon/icons-react";
+import { Save, Edit, Close } from "@carbon/icons-react";
 
-import { ProfileAvatar } from "../components/ProfileAvatar";
+import { ProfileHeroHeader } from "../components/ProfileHeroHeader";
 import { PersonalInfoSection } from "../components/PersonalInfoSection";
 import { ContactInfoSection } from "../components/ContactInfoSection";
 import { FamilySection } from "../components/FamilySection";
@@ -41,11 +43,7 @@ export const ProfilePage: React.FC = () => {
   // If no profile exists yet in the database, default to edit mode
   useEffect(() => {
     if (!isLoading) {
-      if (!exists) {
-        setMode("edit");
-      } else {
-        setMode("view");
-      }
+      setMode(exists ? "view" : "edit");
     }
   }, [isLoading, exists]);
 
@@ -68,6 +66,7 @@ export const ProfilePage: React.FC = () => {
 
   const maritalStatusValue = watch("maritalStatus");
   const formPhotoUrl = watch("profilePhotoUrl") || "";
+  const formCoverPhotoUrl = watch("coverPhotoUrl") || "";
   const formFirstName = watch("firstName") || "";
   const formLastName = watch("lastName") || "";
 
@@ -123,71 +122,27 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <div className={styles.profilePage}>
-      
-      <div className={styles.profileHeader}>
-        <Grid>
-          <Column lg={16} md={8} sm={4}>
-            <div className={styles.profileHeader__inner}>
-              <ProfileAvatar
-                readOnly={mode === "view"}
-                photoUrl={mode === "view" ? (profile.profilePhotoUrl || "") : formPhotoUrl}
-                firstName={mode === "view" ? (profile.firstName || "") : formFirstName}
-                lastName={mode === "view" ? (profile.lastName || "") : formLastName}
-                onPhotoChange={handlePhotoChange}
-              />
+      <ProfileHeroHeader
+        mode={mode}
+        profile={profile}
+        formValues={{
+          firstName: formFirstName,
+          lastName: formLastName,
+          profilePhotoUrl: formPhotoUrl,
+          coverPhotoUrl: formCoverPhotoUrl,
+        }}
+        isSaving={isSaving}
+        isDirty={isDirty}
+        isOwner={true}
+        onStartEdit={handleStartEdit}
+        onCancel={handleCancel}
+        onSave={handleSubmit(onSubmit)}
+        onPhotoChange={handlePhotoChange}
+        onCoverChange={(dataUrl) =>
+          setValue("coverPhotoUrl", dataUrl, { shouldDirty: true })
+        }
+      />
 
-              <div className={styles.profileHeader__meta}>
-                <h1 className={styles.profileHeader__name}>
-                  {mode === "view" ? fullName : `${formFirstName} ${formLastName}`.trim() || "Create Profile"}
-                </h1>
-                <p className={styles.profileHeader__subtitle}>
-                  {profile.department
-                    ? `${profile.department} Department`
-                    : "Church Member"}
-                  {profile.cellGroup ? ` · ${profile.cellGroup}` : ""}
-                  {memberSince ? ` · Member since ${memberSince}` : ""}
-                </p>
-              </div>
-
-              <div className={styles.profileHeader__actions}>
-                {mode === "view" ? (
-                  <Button
-                    kind="primary"
-                    size="md"
-                    renderIcon={Edit}
-                    onClick={handleStartEdit}
-                  >
-                    Edit Profile
-                  </Button>
-                ) : (
-                  <div className={styles.profileHeader__editActions}>
-                    <Button
-                      kind="secondary"
-                      size="md"
-                      renderIcon={Close}
-                      onClick={handleCancel}
-                      disabled={isSaving}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      kind="primary"
-                      size="md"
-                      renderIcon={Save}
-                      onClick={handleSubmit(onSubmit)}
-                      disabled={isSaving || !isDirty}
-                    >
-                      {isSaving ? "Saving..." : "Save Profile"}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Column>
-        </Grid>
-      </div>
-
-      
       {(loadError || saveError) && (
         <Grid style={{ marginBottom: "1rem" }}>
           <Column lg={16} md={8} sm={4}>
@@ -201,43 +156,100 @@ export const ProfilePage: React.FC = () => {
         </Grid>
       )}
 
-      
       <Grid className={styles.profileGrid}>
         <Column lg={16} md={8} sm={4}>
           <div className={styles.profileSections}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <PersonalInfoSection
-                readOnly={mode === "view"}
-                profile={mode === "view" ? profile : {}}
-                register={register}
-                errors={errors}
-                control={control}
-              />
-
-              <ContactInfoSection
-                readOnly={mode === "view"}
-                profile={mode === "view" ? profile : {}}
-                register={register}
-                errors={errors}
-              />
-
-              <FamilySection
-                readOnly={mode === "view"}
-                profile={mode === "view" ? profile : {}}
-                register={register}
-                errors={errors}
-                control={control}
-                maritalStatusValue={maritalStatusValue}
-              />
-
-              <MembershipSection
-                readOnly={mode === "view"}
-                profile={mode === "view" ? profile : {}}
-                register={register}
-                errors={errors}
-                control={control}
-              />
-            </form>
+            <Tabs>
+              <TabList aria-label="Profile sections" contained>
+                <Tab>Overview</Tab>
+                <Tab>Church & Ministry</Tab>
+                <Tab>Family & Household</Tab>
+                <Tab>Activity & Milestones</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <PersonalInfoSection
+                      readOnly={mode === "view"}
+                      profile={mode === "view" ? profile : {}}
+                      register={register}
+                      errors={errors}
+                      control={control}
+                    />
+                    <ContactInfoSection
+                      readOnly={mode === "view"}
+                      profile={mode === "view" ? profile : {}}
+                      register={register}
+                      errors={errors}
+                    />
+                  </form>
+                </TabPanel>
+                <TabPanel>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <MembershipSection
+                      readOnly={mode === "view"}
+                      profile={mode === "view" ? profile : {}}
+                      register={register}
+                      errors={errors}
+                      control={control}
+                    />
+                  </form>
+                </TabPanel>
+                <TabPanel>
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <FamilySection
+                      readOnly={mode === "view"}
+                      profile={mode === "view" ? profile : {}}
+                      register={register}
+                      errors={errors}
+                      control={control}
+                      maritalStatusValue={maritalStatusValue}
+                    />
+                  </form>
+                </TabPanel>
+                <TabPanel>
+                  <Tile className="profile-section">
+                    <h2 className="profile-section__heading">
+                      Activity & Milestones
+                    </h2>
+                    <div className="profile-view-grid">
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Last Active</span>
+                        <span className="profile-view-value">
+                          {profile.updatedAt
+                            ? new Date(profile.updatedAt).toLocaleDateString()
+                            : "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Attendance Score
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.attendanceScore || "N/A"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Recent Milestone
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.baptismStatus === "baptised"
+                            ? "Baptised"
+                            : "New member"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Member Since</span>
+                        <span className="profile-view-value">
+                          {memberSince || "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </Tile>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </div>
         </Column>
       </Grid>

@@ -22,6 +22,21 @@ const AppLayout = () => {
     }
   }, [isMobileNav]);
 
+  // Lock background page scroll when mobile sidebar is open
+  useEffect(() => {
+    if (isMobileNav && isSideNavExpanded) {
+      document.body.classList.add("app-sidebar-open");
+      document.documentElement.classList.add("app-sidebar-open");
+    } else {
+      document.body.classList.remove("app-sidebar-open");
+      document.documentElement.classList.remove("app-sidebar-open");
+    }
+    return () => {
+      document.body.classList.remove("app-sidebar-open");
+      document.documentElement.classList.remove("app-sidebar-open");
+    };
+  }, [isMobileNav, isSideNavExpanded]);
+
   // Close sidebar on path change (navigation)
   useEffect(() => {
     if (isMobileNav) {

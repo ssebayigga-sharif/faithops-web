@@ -131,14 +131,20 @@ export const MembershipSection: React.FC<Props> = ({
           name="dateJoined"
           control={control}
           render={({ field: { onChange, value } }) => {
-            // Carbon DatePicker expects a Date object, not an ISO string
-            const dateValue = value ? new Date(value + "T00:00:00") : "";
+            // Carbon DatePicker expects a Date object, not an ISO string.
+            const parseDateValue = (input: string) => {
+              const parsed = input ? new Date(input) : null;
+              return parsed && !Number.isNaN(parsed.getTime()) ? parsed : "";
+            };
+
+            const dateValue = parseDateValue(value);
+
             return (
               <DatePicker
                 datePickerType="single"
                 value={dateValue}
                 onChange={([d]) => d && onChange(toIso(d))}
-                maxDate={new Date().toLocaleDateString("en-US")}
+                maxDate={new Date()}
               >
                 <DatePickerInput
                   id="m-joined"

@@ -4,8 +4,20 @@ import { ref, get, child } from "firebase/database";
 import { getFirebaseDatabase } from "../../../shared/services/firebase";
 import type { ChurchProfile } from "../types";
 import { ArrowLeft, Send } from "@carbon/icons-react";
-import { Grid, Column, Loading, Button } from "@carbon/react";
+import {
+  Grid,
+  Column,
+  Loading,
+  Button,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Tile,
+} from "@carbon/react";
 import { useAuth } from "../../auth/context/AuthContext";
+import { ProfileHeroHeader } from "../components/ProfileHeroHeader";
 import { SendMessageModal } from "../../notifications/components/SendMessageModal";
 
 const OtherProfilePage = () => {
@@ -42,7 +54,9 @@ const OtherProfilePage = () => {
                   phone: memberData.phone || "",
                   alternatePhone: "",
                   gender: memberData.gender || "",
-                  dateOfBirth: memberData.age ? `${new Date().getFullYear() - memberData.age}-01-01` : "",
+                  dateOfBirth: memberData.age
+                    ? `${new Date().getFullYear() - memberData.age}-01-01`
+                    : "",
                   nationality: "",
                   nationalId: "",
                   profilePhotoUrl: memberData.photo || "",
@@ -54,15 +68,27 @@ const OtherProfilePage = () => {
                   spouseName: "",
                   numberOfChildren: "",
                   emergencyContact: { name: "", relationship: "", phone: "" },
-                  membershipStatus: memberData.status === "active" ? "active" : memberData.status === "visitor" ? "visitor" : "inactive",
+                  membershipStatus:
+                    memberData.status === "active"
+                      ? "active"
+                      : memberData.status === "visitor"
+                        ? "visitor"
+                        : "inactive",
                   membershipNumber: memberData.id || "",
                   dateJoined: memberData.joinedAt || "",
-                  baptismStatus: memberData.baptized ? "baptised" : "not_baptised",
+                  baptismStatus: memberData.baptized
+                    ? "baptised"
+                    : "not_baptised",
                   baptismDate: "",
-                  department: memberData.ministries?.find((m: any) => m.active)?.ministry || "",
+                  department:
+                    memberData.ministries?.find((m: any) => m.active)
+                      ?.ministry || "",
                   cellGroup: memberData.cellGroup || "",
                   serviceUnit: "",
-                  ministryRoles: memberData.ministries?.filter((m: any) => m.active).map((m: any) => m.role) || [],
+                  ministryRoles:
+                    memberData.ministries
+                      ?.filter((m: any) => m.active)
+                      .map((m: any) => m.role) || [],
                   spiritualGifts: [],
                   occupation: "",
                   employer: "",
@@ -129,113 +155,166 @@ const OtherProfilePage = () => {
             Back to search
           </Link>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "1rem",
-              marginBottom: "2rem",
-              flexWrap: "wrap",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-              }}
-            >
-              <div
-                style={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: "50%",
-                  background: "var(--cds-layer-accent)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "1.5rem",
-                  fontWeight: 600,
-                  color: "var(--cds-text-primary)",
-                  overflow: "hidden",
-                }}
-              >
-                {profile.profilePhotoUrl ? (
-                  <img
-                    src={profile.profilePhotoUrl}
-                    alt={fullName}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                ) : (
-                  `${profile.firstName?.charAt(0) ?? ""}${profile.lastName?.charAt(0) ?? ""}`
-                )}
-              </div>
-              <div>
-                <h1 style={{ margin: 0 }}>{fullName}</h1>
-                <p style={{ margin: 0, color: "var(--cds-text-secondary)" }}>
-                  {profile.role ?? "member"}
-                  {profile.department ? ` · ${profile.department}` : ""}
-                  {profile.cellGroup ? ` · ${profile.cellGroup}` : ""}
-                </p>
-              </div>
-            </div>
+          <ProfileHeroHeader
+            mode="view"
+            profile={profile}
+            isOwner={false}
+            onSendMessage={() => setMsgModalOpen(true)}
+          />
 
-            {user && uid && user.uid !== uid && (
-              <Button
-                kind="primary"
-                size="md"
-                renderIcon={Send}
-                onClick={() => setMsgModalOpen(true)}
-              >
-                Send Message
-              </Button>
-            )}
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-              gap: "1rem",
-            }}
-          >
-            {profile.email && (
-              <div>
-                <strong>Email</strong>
-                <p>{profile.email}</p>
-              </div>
-            )}
-            {profile.phone && (
-              <div>
-                <strong>Phone</strong>
-                <p>{profile.phone}</p>
-              </div>
-            )}
-            {profile.membershipStatus && (
-              <div>
-                <strong>Status</strong>
-                <p>{profile.membershipStatus}</p>
-              </div>
-            )}
-            {profile.dateJoined && (
-              <div>
-                <strong>Joined</strong>
-                <p>{new Date(profile.dateJoined).toLocaleDateString()}</p>
-              </div>
-            )}
-            {profile.occupation && (
-              <div>
-                <strong>Occupation</strong>
-                <p>{profile.occupation}</p>
-              </div>
-            )}
-            {profile.employer && (
-              <div>
-                <strong>Employer</strong>
-                <p>{profile.employer}</p>
-              </div>
-            )}
+          <div style={{ marginTop: "1.5rem" }}>
+            <Tabs>
+              <TabList aria-label="Other profile sections" contained>
+                <Tab>Overview</Tab>
+                <Tab>Church & Ministry</Tab>
+                <Tab>Family & Household</Tab>
+                <Tab>Activity</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <Tile className="profile-section">
+                    <h2 className="profile-section__heading">Overview</h2>
+                    <div className="profile-view-grid">
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Email</span>
+                        <span className="profile-view-value">
+                          {profile.email || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Phone</span>
+                        <span className="profile-view-value">
+                          {profile.phone || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Department</span>
+                        <span className="profile-view-value">
+                          {profile.department || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Cell Group</span>
+                        <span className="profile-view-value">
+                          {profile.cellGroup || "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </Tile>
+                </TabPanel>
+                <TabPanel>
+                  <Tile className="profile-section">
+                    <h2 className="profile-section__heading">
+                      Church & Ministry
+                    </h2>
+                    <div className="profile-view-grid">
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Membership Status
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.membershipStatus || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Date Joined</span>
+                        <span className="profile-view-value">
+                          {profile.dateJoined
+                            ? new Date(profile.dateJoined).toLocaleDateString()
+                            : "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Baptism</span>
+                        <span className="profile-view-value">
+                          {profile.baptismStatus || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Ministry Roles
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.ministryRoles?.length
+                            ? profile.ministryRoles.join(", ")
+                            : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </Tile>
+                </TabPanel>
+                <TabPanel>
+                  <Tile className="profile-section">
+                    <h2 className="profile-section__heading">
+                      Family & Household
+                    </h2>
+                    <div className="profile-view-grid">
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Marital Status
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.maritalStatus || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Spouse Name</span>
+                        <span className="profile-view-value">
+                          {profile.spouseName || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Children</span>
+                        <span className="profile-view-value">
+                          {profile.numberOfChildren ?? "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Emergency Contact
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.emergencyContact?.name
+                            ? `${profile.emergencyContact.name} (${profile.emergencyContact.relationship}) • ${profile.emergencyContact.phone}`
+                            : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </Tile>
+                </TabPanel>
+                <TabPanel>
+                  <Tile className="profile-section">
+                    <h2 className="profile-section__heading">Activity</h2>
+                    <div className="profile-view-grid">
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">Last Updated</span>
+                        <span className="profile-view-value">
+                          {profile.updatedAt
+                            ? new Date(profile.updatedAt).toLocaleDateString()
+                            : "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Membership Number
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.membershipNumber || "—"}
+                        </span>
+                      </div>
+                      <div className="profile-view-item">
+                        <span className="profile-view-label">
+                          Profile Status
+                        </span>
+                        <span className="profile-view-value">
+                          {profile.membershipStatus || "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </Tile>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </div>
         </Column>
       </Grid>

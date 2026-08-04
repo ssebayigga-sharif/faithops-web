@@ -14,6 +14,7 @@ export const DEFAULT_PROFILE: ChurchProfile = {
   nationality: "",
   nationalId: "",
   profilePhotoUrl: "",
+  coverPhotoUrl: "",
   email: "",
   phone: "",
   alternatePhone: "",
