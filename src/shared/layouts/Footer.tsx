@@ -11,16 +11,15 @@ const Footer = () => (
     <div className="app-footer__brand">
       <div className="app-footer__brand-heading">
         <span className="app-footer__brand-mark" aria-hidden>
-          FO
+          KESDA
         </span>
         <span>
-          <strong>FaithOps</strong>
-          <small>Church Management System</small>
+          <strong>Kabulengwa SDA Church</strong>
         </span>
       </div>
       <p>
-        A focused workspace for membership, attendance, giving, events, and
-        ministry operations.
+        kabulengwa English speaking church welcomes everyone to join us in
+        worship every Sabbath.
       </p>
     </div>
 
@@ -49,7 +48,9 @@ const Footer = () => (
     </nav>
 
     <div className="app-footer__bottom">
-      <span>© {currentYear} FaithOps. Built for ministry operations.</span>
+      <span>
+        © {currentYear} Kabulengwa SDA Church. Built for ministry operations.
+      </span>
       <span className="app-footer__status">
         <span aria-hidden />
         Operational workspace
