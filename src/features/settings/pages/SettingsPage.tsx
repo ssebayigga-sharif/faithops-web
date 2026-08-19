@@ -15,7 +15,6 @@ import {
   Save,
   Settings,
   Workspace,
-  ColorPalette,
   Help,
 } from "@carbon/icons-react";
 import { useAppTheme, CarbonTheme } from "../../../shared/hooks/useTheme";
@@ -39,44 +38,30 @@ export default function SettingsPage() {
   };
 
   return (
-    <Stack className="admin-page settings-page" gap={5}>
-      <Stack className="admin-page__inner" gap={5}>
-        
-        <Stack as="header" className="admin-page__header" gap={2}>
-          <Stack
-            orientation="horizontal"
-            gap={5}
-            style={{
-              justifyContent: "space-between",
-              width: "100%",
-              flexWrap: "wrap",
-            }}
+    <div className="admin-page settings-page">
+      <div className="admin-page__inner">
+        {/* Responsive Header */}
+        <div className="settings-page__header">
+          <div className="settings-page__header-info">
+            <h1 className="admin-page__title settings-page__title">
+              <Settings size={24} /> Workspace Settings
+            </h1>
+            <p className="admin-page__subtitle">
+              Configure your FaithOps workspace preferences, localization
+              settings, and visual themes.
+            </p>
+          </div>
+          <Button
+            kind="primary"
+            renderIcon={Save}
+            size="md"
+            onClick={handleSave}
+            className="settings-page__save-btn"
           >
-            <Stack gap={1}>
-              <h1
-                className="admin-page__title"
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-              >
-                <Settings size={24} /> Workspace Settings
-              </h1>
-              <p className="admin-page__subtitle">
-                Configure your FaithOps workspace preferences, localization
-                settings, and visual themes.
-              </p>
-            </Stack>
-            <Button
-              kind="primary"
-              renderIcon={Save}
-              size="md"
-              onClick={handleSave}
-              style={{ alignSelf: "flex-end" }}
-            >
-              Save Settings
-            </Button>
-          </Stack>
-        </Stack>
+            Save Settings
+          </Button>
+        </div>
 
-        
         {showNotification && (
           <InlineNotification
             kind="success"
@@ -84,43 +69,29 @@ export default function SettingsPage() {
             subtitle="Your workspace preferences and theme options have been synced."
             lowContrast
             onCloseButtonClick={() => setShowNotification(false)}
+            className="settings-page__notification"
           />
         )}
 
-        <Grid fullWidth withRowGap>
-          
+        <Grid fullWidth withRowGap className="settings-page__grid">
+          {/* Visual Preferences */}
           <Column sm={4} md={8} lg={8}>
-            <Tile className="dashboard-section" style={{ height: "100%" }}>
+            <Tile className="dashboard-section settings-page__tile">
               <Stack gap={5}>
-                <Stack
-                  gap={5}
-                  className="dashboard-section__body"
-                  style={{ padding: 0 }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                      gap: "1rem",
-                    }}
-                  >
-                    <div>
-                      <strong
-                        style={{
-                          display: "block",
-                          color: "var(--cds-text-primary)",
-                        }}
-                      >
+                <div className="settings-page__tile-header">
+                  <h2 className="settings-page__tile-title">Visual Preferences</h2>
+                  <p className="settings-page__tile-subtitle">
+                    Customize your personal interface theme and accessibility options.
+                  </p>
+                </div>
+
+                <div className="dashboard-section__body settings-page__tile-body">
+                  <div className="settings-page__toggle-row">
+                    <div className="settings-page__toggle-info">
+                      <strong className="settings-page__toggle-label">
                         Dark Mode Toggle
                       </strong>
-                      <span
-                        style={{
-                          fontSize: "13px",
-                          color: "var(--cds-text-secondary)",
-                        }}
-                      >
+                      <span className="settings-page__toggle-desc">
                         Quickly switch between light and dark backgrounds.
                       </span>
                     </div>
@@ -140,6 +111,7 @@ export default function SettingsPage() {
                     helperText="Select one of Carbon's built-in themes for tailored contrast options."
                     value={theme}
                     onChange={handleThemeChange}
+                    className="settings-page__select"
                   >
                     <SelectItem
                       value="white"
@@ -159,60 +131,38 @@ export default function SettingsPage() {
                     />
                   </Select>
 
-                  <div
-                    style={{
-                      padding: "1rem",
-                      borderLeft: "4px solid var(--cds-link-primary)",
-                      background: "var(--cds-layer-02)",
-                      fontSize: "13px",
-                      color: "var(--cds-text-secondary)",
-                      lineHeight: "1.45",
-                    }}
-                  >
+                  <div className="settings-page__theme-note">
                     Carbon themes inject custom CSS properties into the layout
                     tree, updating colors for headers, tables, buttons, and form
                     components dynamically.
                   </div>
-                </Stack>
+                </div>
               </Stack>
             </Tile>
           </Column>
 
-          
+          {/* Church Identity */}
           <Column sm={4} md={8} lg={8}>
-            <Tile className="dashboard-section" style={{ height: "100%" }}>
+            <Tile className="dashboard-section settings-page__tile">
               <Stack gap={5}>
-                <Stack
-                  className="dashboard-section__header"
-                  gap={2}
-                  style={{ padding: "0 0 1rem 0" }}
-                >
-                  <h2
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                    }}
-                  >
+                <div className="settings-page__tile-header">
+                  <h2 className="settings-page__tile-title">
                     <Workspace size={20} /> Church Identity
                   </h2>
-                  <p>
+                  <p className="settings-page__tile-subtitle">
                     Set up standard values for localized reports, schedules, and
                     communication channels.
                   </p>
-                </Stack>
+                </div>
 
-                <Stack
-                  gap={4}
-                  className="dashboard-section__body"
-                  style={{ padding: 0 }}
-                >
+                <div className="dashboard-section__body settings-page__tile-body">
                   <TextInput
                     id="workspace-name-input"
                     labelText="Church Name"
                     placeholder="Enter congregation or organization name"
                     value={workspaceName}
                     onChange={(e) => setWorkspaceName(e.target.value)}
+                    className="settings-page__input"
                   />
 
                   <Select
@@ -220,6 +170,7 @@ export default function SettingsPage() {
                     labelText="Preferred Language"
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
+                    className="settings-page__select"
                   >
                     <SelectItem value="en" text="English (United States)" />
                     <SelectItem value="lg" text="Luganda" />
@@ -232,6 +183,7 @@ export default function SettingsPage() {
                     labelText="Timezone Offset"
                     value={timezone}
                     onChange={(e) => setTimezone(e.target.value)}
+                    className="settings-page__select"
                   >
                     <SelectItem value="EAT" text="East Africa Time (UTC+3)" />
                     <SelectItem
@@ -243,59 +195,34 @@ export default function SettingsPage() {
                       text="Eastern Standard Time (UTC-5)"
                     />
                   </Select>
-                </Stack>
+                </div>
               </Stack>
             </Tile>
           </Column>
         </Grid>
 
-        
-        <Tile
-          className="dashboard-section"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--cds-background) 0%, var(--cds-layer-02) 100%)",
-            border: "1px solid var(--cds-border-subtle)",
-          }}
-        >
-          <Stack gap={2} style={{ padding: "0.25rem" }}>
-            <h3
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                color: "var(--cds-text-primary)",
-                fontSize: "15px",
-                fontWeight: "600",
-              }}
-            >
-              <Help size={18} style={{ color: "var(--cds-link-primary)" }} />{" "}
+        {/* Help Banner */}
+        <Tile className="settings-page__help-card">
+          <div className="settings-page__help-content">
+            <h3 className="settings-page__help-title">
+              <Help size={18} className="settings-page__help-icon" />{" "}
               Looking for more preferences?
             </h3>
-            <p
-              style={{
-                color: "var(--cds-text-secondary)",
-                fontSize: "13px",
-                margin: 0,
-              }}
-            >
+            <p className="settings-page__help-text">
               Administrators can configure role-based access control, database
               backup intervals, and email SMTP server settings by editing the
               local config file or contacting support at{" "}
               <a
                 href="mailto:support@faithops.org"
-                style={{
-                  color: "var(--cds-link-primary)",
-                  textDecoration: "underline",
-                }}
+                className="settings-page__help-link"
               >
                 support@faithops.org
               </a>
               .
             </p>
-          </Stack>
+          </div>
         </Tile>
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 }

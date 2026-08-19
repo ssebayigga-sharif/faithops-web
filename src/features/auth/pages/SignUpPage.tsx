@@ -9,6 +9,10 @@ import {
   InlineNotification,
 } from "@carbon/react";
 import { useAuth } from "../context/AuthContext";
+import { getAuth } from "firebase/auth";
+import ChurchIcon from "../../../shared/layouts/ChurchIcon";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function SignUpPage() {
   const navigate = useNavigate();
@@ -36,13 +40,30 @@ export default function SignUpPage() {
     }
 
     if (password !== confirmPassword) {
-      setError("Wrong Password");
+      setError("Passwords do not match.");
       return;
     }
 
     setIsSubmitting(true);
     try {
       await register(email.trim(), password, displayName.trim());
+      try {
+        const idToken = await getAuth().currentUser?.getIdToken();
+        if (idToken && BACKEND_URL) {
+          await fetch(`${BACKEND_URL}/api/send-welcome-email`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${idToken}`,
+            },
+            body: JSON.stringify({
+              firstName: displayName.trim().split(/\s+/)[0],
+            }),
+          });
+        }
+      } catch (welcomeError) {
+        console.error("Welcome email failed (non-blocking):", welcomeError);
+      }
       navigate("/profile");
     } catch (err: any) {
       const code = err?.code ?? "";
@@ -61,18 +82,55 @@ export default function SignUpPage() {
   return (
     <div className="auth-page">
       <Grid className="auth-page__grid" fullWidth>
-        <Column sm={4} md={4} lg={6} xlg={6}>
-          <div className="auth-page__brand">
-            <p className="auth-page__tagline">Kabulengwa SDA Church</p>
+        {/* Left Brand Panel */}
+        <Column className="auth-page__brand-col" sm={0} md={4} lg={8} xlg={8}>
+          <div className="auth-page__brand-header">
+            <div className="auth-page__brand-logo">
+              <ChurchIcon size={32} />
+            </div>
+            <h1 className="auth-page__brand-title">
+              <span className="auth-page__brand-name-desktop">FaithOps</span>
+              <span className="auth-page__brand-name-mobile">
+                Kabulengwa SDA Church
+              </span>
+            </h1>
+          </div>
+
+          <div className="auth-page__brand-content">
+            <h2 className="auth-page__tagline">
+              Connecting our congregation, strengthening our{" "}
+              <strong>fellowship</strong>.
+            </h2>
+            <p className="auth-page__church-name">
+              Kabulengwa Seventh-day Adventist Church
+            </p>
+
+            <div className="auth-page__scripture">
+              <p className="auth-page__scripture-text">
+                "And let us consider one another to provoke unto love and to
+                good works: Not forsaking the assembling of ourselves
+                together..."
+              </p>
+              <span className="auth-page__scripture-ref">Hebrews 10:24-25</span>
+            </div>
+          </div>
+
+          <div className="auth-page__brand-footer">
+            <span>© {new Date().getFullYear()} Kabulengwa SDA Church.</span>
+            <span>All rights reserved.</span>
           </div>
         </Column>
 
-        <Column sm={4} md={4} lg={6} xlg={6}>
+        {/* Right Form Card Panel */}
+        <Column className="auth-page__card-col" sm={4} md={4} lg={8} xlg={8}>
           <div className="auth-page__card">
             <Stack gap={6}>
               <div>
                 <h2 className="auth-page__title">Create account</h2>
-                <p className="auth-page__subtitle">Sign up.</p>
+                <p className="auth-page__subtitle">
+                  Join the Kabulengwa SDA Church community. Create your account
+                  to get started.
+                </p>
               </div>
 
               {error && (

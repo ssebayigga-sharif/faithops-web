@@ -1,14 +1,13 @@
 /**
  * search.service.ts
  *
- * Searches across profiles in Firebase Realtime Database.
- * Since Firebase RTDB doesn't support full-text search natively,
- * we fetch all profiles and filter client-side (acceptable for
- * church-size datasets of hundreds to low thousands of records).
+ * Searches across profiles and events in Firebase Realtime Database.
+ * Runs fuzzy filtering client-side for profiles and events.
  */
 import { ref, get, child } from "firebase/database";
 import { getFirebaseDatabase } from "../../../shared/services/firebase";
 import type { ChurchProfile } from "../../profile/types";
+import type { ChurchEvent } from "../../events/types";
 
 export interface SearchResult {
   uid: string;
@@ -21,6 +20,22 @@ export interface SearchResult {
   profilePhotoUrl: string;
   department: string;
   cellGroup: string;
+}
+
+export interface EventSearchResult {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  department: string;
+  venue: string;
+  start: string;
+  speaker: string;
+}
+
+export interface CombinedSearchResult {
+  members: SearchResult[];
+  events: EventSearchResult[];
 }
 
 /**
@@ -38,7 +53,7 @@ function matchesQuery(query: string, fields: string[]): boolean {
   if (!q) return true; // empty query matches everything
   const tokens = q.split(/\s+/);
   return tokens.every((token) =>
-    fields.some((field) => normalise(field).includes(token)),
+    fields.some((field) => field && normalise(field).includes(token)),
   );
 }
 
@@ -53,7 +68,6 @@ export const SearchService = {
     if (!snapshot.exists()) return [];
 
     const data = snapshot.val() as Record<string, ChurchProfile>;
-
     const results: SearchResult[] = [];
 
     for (const [uid, profile] of Object.entries(data)) {
@@ -85,9 +99,62 @@ export const SearchService = {
       }
     }
 
-    // Sort by firstName alphabetically
     results.sort((a, b) => a.firstName.localeCompare(b.firstName));
-
     return results;
+  },
+
+  /**
+   * Search all events by title, description, category, department, speaker, or venue.
+   */
+  async searchEvents(query: string): Promise<EventSearchResult[]> {
+    const db = getFirebaseDatabase();
+    const snapshot = await get(child(ref(db), "events"));
+
+    if (!snapshot.exists()) return [];
+
+    const data = snapshot.val() as Record<string, ChurchEvent>;
+    const results: EventSearchResult[] = [];
+
+    for (const [id, event] of Object.entries(data)) {
+      if (
+        matchesQuery(query, [
+          event.title,
+          event.description,
+          event.category,
+          event.department,
+          event.speaker,
+          event.venue,
+        ])
+      ) {
+        results.push({
+          id: event.id || id,
+          title: event.title,
+          description: event.description ?? "",
+          category: event.category,
+          department: event.department,
+          venue: event.venue ?? "",
+          start: event.start,
+          speaker: event.speaker ?? "",
+        });
+      }
+    }
+
+    // Sort by date (newest/closest start first)
+    results.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    return results;
+  },
+
+  /**
+   * Combined search for both profiles and events.
+   */
+  async searchAll(query: string): Promise<CombinedSearchResult> {
+    if (!query.trim()) {
+      return { members: [], events: [] };
+    }
+    const [members, events] = await Promise.all([
+      this.searchProfiles(query),
+      this.searchEvents(query),
+    ]);
+    return { members, events };
   },
 };

@@ -1,15 +1,9 @@
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  type KeyboardEvent,
-} from "react";
+import React, { useState, useCallback } from "react";
 import {
   Header as CarbonHeader,
   HeaderGlobalAction,
   HeaderGlobalBar,
   HeaderMenuButton,
-  Search,
   HeaderPanel,
   SwitcherDivider,
 } from "@carbon/react";
@@ -27,6 +21,7 @@ import ChurchIcon from "./ChurchIcon";
 import { useAuth } from "../../features/auth/context/AuthContext";
 import { useNotifications } from "../../features/notifications/hooks/useNotifications";
 import { HeaderNotifications } from "./HeaderNotifications";
+import HeaderSearch from "./HeaderSearch";
 
 type HeaderProps = {
   isSideNavExpanded: boolean;
@@ -38,36 +33,7 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
   const { user, logout } = useAuth();
   const activeUid = user?.uid ?? "";
   const { unreadCount, markAllRead } = useNotifications(activeUid);
-  const [searchValue, setSearchValue] = useState("");
   const [notifPanelOpen, setNotifPanelOpen] = useState(false);
-  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  //  Search
-
-  const handleSearchChange = useCallback(
-    (e: { target: { value: string } }) => {
-      const value = e.target.value;
-      setSearchValue(value);
-
-      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-      searchTimeoutRef.current = setTimeout(() => {
-        if (value.trim()) {
-          navigate(`/search?q=${encodeURIComponent(value.trim())}`);
-        }
-      }, 400); // debounce
-    },
-    [navigate],
-  );
-
-  const handleSearchKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" && searchValue.trim()) {
-        if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-        navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
-      }
-    },
-    [navigate, searchValue],
-  );
 
   const toggleNotifPanel = useCallback(() => {
     setNotifPanelOpen((prev) => !prev);
@@ -94,17 +60,12 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
         <small>Kabulengwa SDA</small>
       </Link>
 
-      <Search
-        className="app-header__search app-header__desktop-only"
-        labelText="Search FaithOps"
-        placeholder="Search members, events..."
-        size="lg"
-        value={searchValue}
-        onChange={handleSearchChange}
-        onKeyDown={handleSearchKeyDown}
-      />
+      <HeaderSearch />
 
-      <nav className="app-header__nav app-header__desktop-only" aria-label="Header navigation">
+      <nav
+        className="app-header__nav app-header__desktop-only"
+        aria-label="Header navigation"
+      >
         {headerNavigationItems.map((item) => (
           <NavLink
             className={({ isActive }) =>
@@ -171,7 +132,11 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
       <button
         type="button"
         className="app-header__mobile-church-icon"
-        aria-label={user?.displayName ? `User profile (${user.displayName})` : "User profile"}
+        aria-label={
+          user?.displayName
+            ? `User profile (${user.displayName})`
+            : "User profile"
+        }
         onClick={() => navigate("/profile")}
         title="View user profile"
       >

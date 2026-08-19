@@ -4,18 +4,19 @@ import { ref, get, child } from "firebase/database";
 import { getFirebaseDatabase } from "../../../shared/services/firebase";
 import {
   Button,
-  TextArea,
+  TextInput,
   Search,
   Loading,
   InlineNotification,
 } from "@carbon/react";
-import { Send, ChatLaunch } from "@carbon/icons-react";
+import { Send, ChatLaunch, ArrowLeft } from "@carbon/icons-react";
 import { useAuth } from "../../auth/context/AuthContext";
 import { useProfile } from "../../profile/hooks/useProfile";
 import { SlideOver } from "../../../shared/components/ui/SlideOver";
 import { ConversationService } from "../services/conversation.services";
 import { useConversations } from "../hook/useConversations";
 import { useMessages } from "../hook/useMessages";
+import { useIsMobileNav } from "../../../shared/hooks/useIsMobileNav";
 import type { ChurchProfile } from "../../profile/types";
 import type { MemberListItem } from "../types/types";
 import styles from "./messagepage.module.scss";
@@ -29,6 +30,7 @@ const MessagesPage = () => {
   const navigate = useNavigate();
   const { conversations, isLoading: isLoadingConversations } =
     useConversations();
+  const isMobile = useIsMobileNav();
 
   const [activeConversationId, setActiveConversationId] = useState<
     string | null
@@ -44,6 +46,8 @@ const MessagesPage = () => {
   useEffect(() => {
     if (routeConversationId) {
       setActiveConversationId(routeConversationId);
+    } else {
+      setActiveConversationId(null);
     }
   }, [routeConversationId]);
 
@@ -71,8 +75,7 @@ const MessagesPage = () => {
     [user, senderProfile],
   );
 
-  // Load the member directory only when the "new message" picker opens —
-  // no reason to pull every profile on every page visit.
+  // Load the member directory only when the "new message" picker opens
   useEffect(() => {
     if (!isPickerOpen || allMembers.length > 0) return;
     const db = getFirebaseDatabase();
@@ -114,6 +117,11 @@ const MessagesPage = () => {
     },
     [user?.uid, navigate],
   );
+
+  const handleBackToList = useCallback(() => {
+    setActiveConversationId(null);
+    navigate(`/messages`, { replace: true });
+  }, [navigate]);
 
   const handleStartConversation = useCallback(
     async (member: MemberListItem) => {
@@ -169,167 +177,190 @@ const MessagesPage = () => {
       .join("")
       .toUpperCase();
 
+  // Determine panel visibility for mobile responsive master-detail view
+  const showListPanel = !isMobile || !activeConversationId;
+  const showThreadPanel = !isMobile || !!activeConversationId;
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Messages</h2>
-        <Button
-          kind="primary"
-          size="sm"
-          renderIcon={ChatLaunch}
-          onClick={() => setIsPickerOpen(true)}
-        >
-          New message
-        </Button>
-      </div>
-
-      <div className={styles.layout}>
-        {/* Conversation list */}
-        <div className={styles.listPanel}>
-          {isLoadingConversations ? (
-            <div className={styles.centered}>
-              <Loading
-                description="Loading conversations..."
-                withOverlay={false}
-              />
-            </div>
-          ) : conversations.length === 0 ? (
-            <div className={styles.emptyState}>
-              No conversations yet. Start one with the button above.
-            </div>
-          ) : (
-            <ul className={styles.conversationList}>
-              {conversations.map((conversation) => (
-                <li
-                  key={conversation.id}
-                  role="button"
-                  tabIndex={0}
-                  aria-current={conversation.id === activeConversationId}
-                  className={
-                    conversation.id === activeConversationId
-                      ? `${styles.conversationItem} ${styles.conversationItemActive}`
-                      : styles.conversationItem
-                  }
-                  onClick={() => handleSelectConversation(conversation.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      handleSelectConversation(conversation.id);
-                    }
-                  }}
-                >
-                  <div className={styles.avatar}>
-                    {conversation.otherParticipant.photoUrl ? (
-                      <img
-                        src={conversation.otherParticipant.photoUrl}
-                        alt=""
-                      />
-                    ) : (
-                      getInitials(conversation.otherParticipant.fullName)
-                    )}
-                  </div>
-                  <div className={styles.conversationMeta}>
-                    <div className={styles.conversationName}>
-                      {conversation.otherParticipant.fullName}
-                    </div>
-                    <div className={styles.conversationPreview}>
-                      {conversation.lastMessage?.text ?? "No messages yet"}
-                    </div>
-                  </div>
-                  {conversation.unreadCount > 0 && (
-                    <span
-                      className={styles.unreadBadge}
-                      aria-label={`${conversation.unreadCount} unread messages`}
-                    >
-                      {conversation.unreadCount}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+      {/* Hide header on mobile if thread is active to maximize chat viewport */}
+      {(!isMobile || !activeConversationId) && (
+        <div className={styles.header}>
+          <h2 className={styles.title}>Messages</h2>
+          <Button
+            kind="primary"
+            size="sm"
+            renderIcon={ChatLaunch}
+            onClick={() => setIsPickerOpen(true)}
+          >
+            New message
+          </Button>
         </div>
+      )}
+
+      <div className={`${styles.layout} ${isMobile ? styles.mobileLayout : ""}`}>
+        {/* Conversation list */}
+        {showListPanel && (
+          <div className={styles.listPanel}>
+            {isLoadingConversations ? (
+              <div className={styles.centered}>
+                <Loading
+                  description="Loading conversations..."
+                  withOverlay={false}
+                />
+              </div>
+            ) : conversations.length === 0 ? (
+              <div className={styles.emptyState}>
+                No conversations yet. Start one with the button above.
+              </div>
+            ) : (
+              <ul className={styles.conversationList}>
+                {conversations.map((conversation) => (
+                  <li
+                    key={conversation.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-current={conversation.id === activeConversationId}
+                    className={
+                      conversation.id === activeConversationId
+                        ? `${styles.conversationItem} ${styles.conversationItemActive}`
+                        : styles.conversationItem
+                    }
+                    onClick={() => handleSelectConversation(conversation.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleSelectConversation(conversation.id);
+                      }
+                    }}
+                  >
+                    <div className={styles.avatar}>
+                      {conversation.otherParticipant.photoUrl ? (
+                        <img
+                          src={conversation.otherParticipant.photoUrl}
+                          alt=""
+                        />
+                      ) : (
+                        getInitials(conversation.otherParticipant.fullName)
+                      )}
+                    </div>
+                    <div className={styles.conversationMeta}>
+                      <div className={styles.conversationName}>
+                        {conversation.otherParticipant.fullName}
+                      </div>
+                      <div className={styles.conversationPreview}>
+                        {conversation.lastMessage?.text ?? "No messages yet"}
+                      </div>
+                    </div>
+                    {conversation.unreadCount > 0 && (
+                      <span
+                        className={styles.unreadBadge}
+                        aria-label={`${conversation.unreadCount} unread messages`}
+                      >
+                        {conversation.unreadCount}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
 
         {/* Thread */}
-        <div className={styles.threadPanel}>
-          {!activeConversation ? (
-            <div className={styles.emptyThread}>
-              <Send size={32} />
-              <span>Select a conversation or start a new one.</span>
-            </div>
-          ) : (
-            <>
-              <div className={styles.threadHeader}>
-                {activeConversation.otherParticipant.fullName}
+        {showThreadPanel && (
+          <div className={styles.threadPanel}>
+            {!activeConversation ? (
+              <div className={styles.emptyThread}>
+                <Send size={32} />
+                <span>Select a conversation or start a new one.</span>
               </div>
-
-              {error && (
-                <InlineNotification
-                  kind="error"
-                  title="Error"
-                  subtitle={error}
-                  lowContrast
-                  onClose={() => setError(null)}
-                />
-              )}
-
-              <div className={styles.messageList} ref={messageListRef}>
-                {isLoadingMessages ? (
-                  <Loading
-                    description="Loading messages..."
-                    withOverlay={false}
-                  />
-                ) : (
-                  messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={
-                        message.senderUid === user?.uid
-                          ? `${styles.bubble} ${styles.bubbleOwn}`
-                          : styles.bubble
-                      }
+            ) : (
+              <>
+                <div className={styles.threadHeader}>
+                  {isMobile && (
+                    <button
+                      className={styles.backButton}
+                      onClick={handleBackToList}
+                      aria-label="Back to conversations"
                     >
-                      <p>{message.text}</p>
-                      <time>
-                        {new Date(message.timestamp).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </time>
-                    </div>
-                  ))
-                )}
-              </div>
+                      <ArrowLeft size={20} />
+                    </button>
+                  )}
+                  <span className={styles.threadHeaderTitle}>
+                    {activeConversation.otherParticipant.fullName}
+                  </span>
+                </div>
 
-              <div className={styles.composer}>
-                <TextArea
-                  id="message-draft"
-                  labelText="Message"
-                  hideLabel
-                  placeholder="Type a message..."
-                  rows={2}
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  disabled={isSending}
-                />
-                <Button
-                  kind="primary"
-                  renderIcon={Send}
-                  iconDescription="Send"
-                  hasIconOnly
-                  onClick={handleSend}
-                  disabled={isSending || !draft.trim()}
-                />
-              </div>
-            </>
-          )}
-        </div>
+                {error && (
+                  <InlineNotification
+                    kind="error"
+                    title="Error"
+                    subtitle={error}
+                    lowContrast
+                    onClose={() => setError(null)}
+                  />
+                )}
+
+                <div className={styles.messageList} ref={messageListRef}>
+                  {isLoadingMessages ? (
+                    <div className={styles.centered}>
+                      <Loading
+                        description="Loading messages..."
+                        withOverlay={false}
+                      />
+                    </div>
+                  ) : (
+                    messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={
+                          message.senderUid === user?.uid
+                            ? `${styles.bubble} ${styles.bubbleOwn}`
+                            : styles.bubble
+                        }
+                      >
+                        <p>{message.text}</p>
+                        <time>
+                          {new Date(message.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </time>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <div className={styles.composer}>
+                  <TextInput
+                    id="message-draft"
+                    labelText="Message"
+                    hideLabel
+                    placeholder="Type a message..."
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    disabled={isSending}
+                  />
+                  <Button
+                    kind="primary"
+                    renderIcon={Send}
+                    iconDescription="Send"
+                    hasIconOnly
+                    onClick={handleSend}
+                    disabled={isSending || !draft.trim()}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <SlideOver

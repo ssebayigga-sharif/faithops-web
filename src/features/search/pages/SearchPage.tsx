@@ -3,6 +3,7 @@ import { useSearchParams, Link } from "react-router-dom";
 import {
   SearchService,
   type SearchResult,
+  type EventSearchResult,
 } from "../services/search.service";
 
 const SearchPage = () => {
@@ -10,23 +11,31 @@ const SearchPage = () => {
   const query = searchParams.get("q") ?? "";
 
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [eventResults, setEventResults] = useState<EventSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
+      setEventResults([]);
       return;
     }
 
     let cancelled = false;
     setIsLoading(true);
 
-    SearchService.searchProfiles(query.trim())
+    SearchService.searchAll(query.trim())
       .then((data) => {
-        if (!cancelled) setResults(data);
+        if (!cancelled) {
+          setResults(data.members);
+          setEventResults(data.events);
+        }
       })
       .catch(() => {
-        if (!cancelled) setResults([]);
+        if (!cancelled) {
+          setResults([]);
+          setEventResults([]);
+        }
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -51,11 +60,14 @@ const SearchPage = () => {
 
       {isLoading && <p className="search-page__loading">Searching…</p>}
 
-      {!isLoading && query.trim() && results.length === 0 && (
-        <p className="search-page__empty">
-          No members found matching "{query}".
-        </p>
-      )}
+      {!isLoading &&
+        query.trim() &&
+        results.length === 0 &&
+        eventResults.length === 0 && (
+          <p className="search-page__empty">
+            No members found matching "{query}".
+          </p>
+        )}
 
       {!isLoading && results.length > 0 && (
         <div className="search-results">
@@ -102,6 +114,40 @@ const SearchPage = () => {
                       {member.department}
                     </span>
                   )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isLoading && eventResults.length > 0 && (
+        <div className="search-results search-results--events">
+          <p className="search-results__count">
+            {eventResults.length} event{eventResults.length !== 1 ? "s" : ""}{" "}
+            found
+          </p>
+          <div className="search-results__grid">
+            {eventResults.map((event) => (
+              <Link key={event.id} to="/events" className="search-result-card">
+                <div className="search-result-card__avatar search-result-card__avatar--event">
+                  <span>
+                    {new Date(event.start).toLocaleDateString([], {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="search-result-card__info">
+                  <strong className="search-result-card__name">
+                    {event.title}
+                  </strong>
+                  <span className="search-result-card__role">
+                    {event.category}
+                  </span>
+                  <span className="search-result-card__contact">
+                    {event.venue || "Church campus"}
+                  </span>
                 </div>
               </Link>
             ))}
