@@ -5,6 +5,7 @@ import { Add } from "@carbon/icons-react";
 import { formatUGX } from "../../members/utils/memberUtils";
 import { useDashboardSnapshot } from "../hooks/useDashboardSnapshots";
 import { MetricCard } from "../components/DashboardPrimitives";
+import { DashboardHero } from "../components/DashboardHero";
 import {
   AnalyticsPanel,
   CellGroupHealthPanel,
@@ -75,20 +76,8 @@ export default function Dashboard() {
     <Stack as="main" className="admin-page dashboard-page">
       <Stack className="admin-page__inner" gap={5}>
         
-        <Stack
-          as="header"
-          className="admin-page__header"
-          orientation="horizontal"
-          gap={5}
-        >
-          <Stack gap={2}>
-            <h1 className="admin-page__title">Operations Dashboard</h1>
-            <p className="admin-page__subtitle">
-              Kabulengwa SDA Church · Operations overview
-            </p>
-          </Stack>
-
-          <Stack className="admin-actions" orientation="horizontal" gap={3}>
+        <DashboardHero
+          actions={
             <Button
               kind="primary"
               renderIcon={Add}
@@ -97,8 +86,8 @@ export default function Dashboard() {
             >
               Create Account
             </Button>
-          </Stack>
-        </Stack>
+          }
+        />
 
         
         {isError && (
