@@ -1,0 +1,17 @@
+.pageShell {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--home-bg);
+}
+
+.pageEnter {
+  box-sizing: border-box;
+  flex: 1;
+  background: var(--home-bg);
+  padding: clamp(1.25rem, 4vw, 3rem);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import styles from "../homepage.module.scss";
+import styles from "./WelcomeBanner.module.scss";
 import { useAuth } from "../../auth/context/AuthContext";
 import { SITE_CONFIG } from "../data/site";
 
@@ -45,15 +45,15 @@ const WelcomeBanner = () => {
   const SITE = SITE_CONFIG.shortName;
 
   return (
-    <section className={styles.welcomeBanner} aria-label="Welcome banner">
-      <div className={styles.welcomeBanner__bg} aria-hidden="true">
-        <span className={styles.welcomeBanner__bgOverlay} aria-hidden="true" />
+    <section className={styles.banner} aria-label="Welcome banner">
+      <div className={styles.bg} aria-hidden="true">
+        <span className={styles.bgOverlay} aria-hidden="true" />
       </div>
 
-      <div className={styles.welcomeBanner__copy}>
-        <p className={styles.welcomeBanner__eyebrow}>
+      <div className={styles.copy}>
+        <p className={styles.eyebrow}>
           <span
-            className={styles.welcomeBanner__eyebrowDot}
+            className={styles.eyebrowDot}
             aria-hidden="true"
           />
           {SITE_CONFIG.churchName}
@@ -61,38 +61,38 @@ const WelcomeBanner = () => {
 
         {user ? (
           <>
-            <h1 className={styles.welcomeBanner__title}>
+            <h1 className={styles.title}>
               {greeting}, {firstName}.{" "}
-              <span className={styles.welcomeBanner__titleAccent}>
+              <span className={styles.titleAccent}>
                 Welcome back.
               </span>
             </h1>
-            <p className={styles.welcomeBanner__subtitle}>
+            <p className={styles.subtitle}>
               We&rsquo;re glad to see you at {SITE}. Here&rsquo;s what&rsquo;s
               happening across the congregation today.
             </p>
-            <div className={styles.welcomeBanner__actions}>
-              <Link className={styles.homeBtnPrimary} to="/dashboard">
+            <div className={styles.actions}>
+              <Link className={styles.btnPrimary} to="/dashboard">
                 Go to dashboard
               </Link>
             </div>
           </>
         ) : (
           <>
-            <h1 className={styles.welcomeBanner__title}>
+            <h1 className={styles.title}>
               Welcome to{" "}
-              <span className={styles.welcomeBanner__titleAccent}>
+              <span className={styles.titleAccent}>
                 {SITE_CONFIG.churchName}
               </span>
             </h1>
-            <p className={styles.welcomeBanner__subtitle}>
+            <p className={styles.subtitle}>
               {SITE_CONFIG.tagline}.
             </p>
-            <div className={styles.welcomeBanner__actions}>
-              <Link className={styles.homeBtnPrimary} to="/signup">
+            <div className={styles.actions}>
+              <Link className={styles.btnPrimary} to="/signup">
                 Sign up
               </Link>
-              <Link className={styles.homeBtnGhost} to="/login">
+              <Link className={styles.btnGhost} to="/login">
                 Sign in
               </Link>
             </div>
@@ -100,10 +100,10 @@ const WelcomeBanner = () => {
         )}
       </div>
 
-      <div className={styles.welcomeBanner__side}>
-        <div className={styles.welcomeBanner__clock} aria-hidden="true">
-          <span className={styles.welcomeBanner__time}>{clock}</span>
-          <span className={styles.welcomeBanner__date}>{formattedDate}</span>
+      <div className={styles.side}>
+        <div className={styles.clock} aria-hidden="true">
+          <span className={styles.time}>{clock}</span>
+          <span className={styles.date}>{formattedDate}</span>
         </div>
       </div>
     </section>

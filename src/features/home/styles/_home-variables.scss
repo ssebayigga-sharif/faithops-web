@@ -1,0 +1,53 @@
+:root {
+  --home-gold: #c8a84b;
+  --home-bg: #eef2f6;
+  --home-panel: #ffffff;
+  --home-border: #e0e0e0;
+  --home-text-primary: #161616;
+  --home-text-secondary: #4d4d4d;
+  --home-accent: rgba(200, 168, 75, 0.16);
+  --home-live: #1e8e3e;
+}
+
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* slow Ken Burns drift on the background photo */
+@keyframes home-kenburns {
+  from {
+    transform: scale(1.06) translateX(-0.6%);
+  }
+  to {
+    transform: scale(1.16) translateX(0.6%);
+  }
+}
+
+/* staggered rise for the copy/clock */
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(30, 142, 62, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(30, 142, 62, 0);
+  }
+}

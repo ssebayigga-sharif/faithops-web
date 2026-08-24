@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../homepage.module.scss";
+import styles from "./HomePage.module.scss";
 import HomeHeader from "../components/HomeHeader";
 import WelcomeBanner from "../components/WelcomeBanner";
 

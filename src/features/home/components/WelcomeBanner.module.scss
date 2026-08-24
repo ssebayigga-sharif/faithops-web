@@ -1,26 +1,6 @@
-:root {
-  --home-gold: #c8a84b;
-  --home-bg: #eef2f6;
-  --home-panel: #ffffff;
-  --home-border: #e0e0e0;
-  --home-text-primary: #161616;
-  --home-text-secondary: #4d4d4d;
-  --home-accent: rgba(200, 168, 75, 0.16);
-  --home-live: #1e8e3e;
-}
+@use "../styles/home-variables" as *;
 
-.pageEnter {
-  box-sizing: border-box;
-  min-height: 100vh;
-  background: var(--home-bg);
-  padding: clamp(1.25rem, 4vw, 3rem);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-
-.welcomeBanner {
+.banner {
   position: relative;
   box-sizing: border-box;
   display: grid;
@@ -38,8 +18,7 @@
   animation: home-fade-up 480ms cubic-bezier(0.2, 0, 0.38, 0.9) both;
 }
 
-
-.welcomeBanner__bg {
+.bg {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -49,7 +28,7 @@
   animation: home-kenburns 26s ease-in-out infinite alternate;
 }
 
-.welcomeBanner__bgOverlay {
+.bgOverlay {
   position: absolute;
   inset: 0;
   display: block;
@@ -62,7 +41,7 @@
 }
 
 /* subtle decorative left accent (sits above the image, below content) */
-.welcomeBanner::before {
+.banner::before {
   content: "";
   position: absolute;
   inset: 0 auto 0 0;
@@ -71,7 +50,7 @@
   background: linear-gradient(180deg, var(--home-gold), transparent);
 }
 
-.welcomeBanner__copy {
+.copy {
   position: relative;
   z-index: 2;
   display: flex;
@@ -81,7 +60,7 @@
   min-width: 0;
 }
 
-.welcomeBanner__eyebrow {
+.eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -94,7 +73,7 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-.welcomeBanner__eyebrowDot {
+.eyebrowDot {
   width: 0.625rem;
   height: 0.625rem;
   border-radius: 50%;
@@ -102,7 +81,7 @@
   animation: home-pulse 2s ease-in-out infinite;
 }
 
-.welcomeBanner__title {
+.title {
   margin: 0.25rem 0 0;
   color: #ffffff;
   font-size: clamp(1.375rem, 3vw, 1.875rem);
@@ -114,21 +93,64 @@
   animation: home-rise 700ms 120ms cubic-bezier(0.2, 0, 0.38, 0.9) both;
 }
 
-.welcomeBanner__titleAccent {
+.titleAccent {
   color: var(--home-gold);
 }
 
-.welcomeBanner__subtitle {
+.subtitle {
   margin: 0;
   color: rgba(255, 255, 255, 0.85);
   font-size: 0.9375rem;
   line-height: 1.6;
   max-width: 56ch;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  animation: home-rise 700ms 200ms cubic-bezier(0.2, 0, 0.38, 0.9) both;
 }
 
-.welcomeBanner__side {
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.btnPrimary {
+  color: #16233c;
+  background: var(--home-gold);
+  border: 1px solid var(--home-gold);
+}
+
+.btnPrimary:hover {
+  background: #b3953d;
+  border-color: #b3953d;
+}
+
+.btnGhost {
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+}
+
+.btnGhost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.side {
   position: relative;
   z-index: 2;
   display: flex;
@@ -136,7 +158,7 @@
   gap: 1.5rem;
 }
 
-.welcomeBanner__clock {
+.clock {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -147,7 +169,7 @@
   animation: home-rise 700ms 280ms cubic-bezier(0.2, 0, 0.38, 0.9) both;
 }
 
-.welcomeBanner__time {
+.time {
   margin: 0;
   color: #ffffff;
   font-size: 2rem;
@@ -158,62 +180,19 @@
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
 }
 
-.welcomeBanner__date {
+.date {
   margin: 0;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.8125rem;
   white-space: nowrap;
 }
 
-@keyframes home-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* slow Ken Burns drift on the background photo */
-@keyframes home-kenburns {
-  from {
-    transform: scale(1.06) translateX(-0.6%);
-  }
-  to {
-    transform: scale(1.16) translateX(0.6%);
-  }
-}
-
-/* staggered rise for the copy/clock */
-@keyframes home-rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes home-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(30, 142, 62, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(30, 142, 62, 0);
-  }
-}
-
 @media (max-width: 48rem) {
-  .welcomeBanner {
+  .banner {
     grid-template-columns: 1fr;
   }
 
-  .welcomeBanner__clock {
+  .clock {
     align-items: flex-start;
     border-left: 0;
     padding-left: 0;
@@ -222,15 +201,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .welcomeBanner,
-  .welcomeBanner__title,
-  .welcomeBanner__subtitle,
-  .welcomeBanner__clock,
-  .welcomeBanner__bg {
+  .banner,
+  .title,
+  .subtitle,
+  .clock,
+  .bg {
     animation: none;
   }
 
-  .welcomeBanner__eyebrowDot {
+  .eyebrowDot {
     animation: none;
   }
 }
