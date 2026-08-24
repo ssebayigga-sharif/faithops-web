@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16233c"/>
+      <stop offset="0.55" stop-color="#2b4a70"/>
+      <stop offset="1" stop-color="#4a73a8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.25" r="0.8">
+      <stop offset="0" stop-color="#e9d9a8" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#e9d9a8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+
+  <!-- congregation silhouettes (placeholder for baptized members) -->
+  <g fill="#0c1424" opacity="0.85">
+    <ellipse cx="900" cy="760" rx="300" ry="30" opacity="0.25"/>
+    <!-- row of members -->
+    <g transform="translate(760,520)">
+      <ellipse cx="-160" cy="80" rx="34" ry="78"/>
+      <circle cx="-160" cy="30" r="16"/>
+    </g>
+    <g transform="translate(760,0)">
+      <ellipse cx="-110" cy="80" rx="34" ry="78"/>
+      <circle cx="-110" cy="30" r="16"/>
+    </g>
+    <g transform="translate(800,10)">
+      <ellipse cx="-60" cy="80" rx="34" ry="78"/>
+      <circle cx="-60" cy="30" r="16"/>
+    </g>
+    <g transform="translate(840,30)">
+      <ellipse cx="-10" cy="80" rx="34" ry="78"/>
+      <circle cx="-10" cy="30" r="16"/>
+    </g>
+    <g transform="translate(880,60)">
+      <ellipse cx="40" cy="80" rx="34" ry="78"/>
+      <circle cx="40" cy="30" r="16"/>
+    </g>
+    <g transform="translate(920,40)">
+      <ellipse cx="90" cy="80" rx="34" ry="78"/>
+      <circle cx="90" cy="30" r="16"/>
+    </g>
+    <g transform="translate(960,100)">
+      <ellipse cx="140" cy="80" rx="34" ry="78"/>
+      <circle cx="140" cy="30" r="16"/>
+    </g>
+  </g>
+
+  <text x="800" y="820" text-anchor="middle" font-family="Georgia, serif" font-size="54" fill="#e9dcc0" opacity="0.9">Baptized Members — Kabulengwa SDA</text>
+  <text x="800" y="868" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#f4f4f4" opacity="0.7" letter-spacing="3">PLACEHOLDER · REPLACE THIS PHOTO</text>
+</svg>

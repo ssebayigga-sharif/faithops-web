@@ -26,8 +26,8 @@ export const primaryNavigationItems: NavigationItem[] = [
   {
     path: "/home",
     label: "Home",
-    description: "Overview, insights, and quick actions",
-    icon: Dashboard,
+    description: "Welcome, overview, and shortcuts",
+    icon: Building,
   },
   {
     path: "/members",

@@ -79,6 +79,9 @@ const App = () => (
             }
           />
 
+          <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
+
           <Route
             element={
               <ProtectedRoute>
@@ -86,9 +89,7 @@ const App = () => (
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate replace to="/dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="home" element={<HomePage />} />
             <Route path="contact" element={<ContactPage />} />
             <Route path="giving" element={<GivingPage />} />
             <Route path="profile" element={<ProfilePage />} />

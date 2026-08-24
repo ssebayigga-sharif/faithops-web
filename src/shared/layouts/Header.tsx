@@ -122,7 +122,10 @@ const Header = ({ isSideNavExpanded, onMenuClick }: HeaderProps) => {
           <HeaderGlobalAction
             tooltipAlignment="end"
             aria-label="Sign out"
-            onClick={() => logout()}
+            onClick={async () => {
+              await logout();
+              navigate("/home");
+            }}
           >
             <Logout size={20} />
           </HeaderGlobalAction>

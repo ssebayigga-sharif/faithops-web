@@ -2188,153 +2188,15 @@ p {
 
 .auth-page__grid {
   min-height: 0;
-  width: min(100%, 54rem);
+  width: min(100%, 40rem);
   padding: 0 !important;
   margin: 0 !important;
-  align-items: center;
   display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0;
 }
 
-/* Brand left side panel */
-.auth-page__brand-col {
-  box-sizing: border-box;
-  height: 100%;
-  background: linear-gradient(135deg, #0f2d52 0%, #1c4e85 100%);
-  position: relative;
-  overflow: hidden;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 3.5rem 3rem !important;
-  border-right: 4px solid #c8a84b; /* Church gold accent */
-}
-
-/* Golden glowing background decorations */
-.auth-page__brand-col::before {
-  content: "";
-  position: absolute;
-  top: -20%;
-  right: -20%;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(
-    circle,
-    rgba(200, 168, 75, 0.15) 0%,
-    rgba(200, 168, 75, 0) 70%
-  );
-  filter: blur(40px);
-  pointer-events: none;
-}
-
-.auth-page__brand-col::after {
-  content: "";
-  position: absolute;
-  bottom: -10%;
-  left: -10%;
-  width: 50%;
-  height: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(15, 98, 254, 0.2) 0%,
-    rgba(15, 98, 254, 0) 70%
-  );
-  filter: blur(30px);
-  pointer-events: none;
-}
-
-.auth-page__brand-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  z-index: 1;
-}
-
-.auth-page__brand-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c8a84b;
-}
-
-.auth-page__brand-title {
-  font-family: "Playfair Display", serif;
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.auth-page__brand-name-mobile {
-  display: none;
-}
-
-.auth-page__brand-content {
-  margin: auto 0;
-  z-index: 1;
-  padding: 3rem 0;
-}
-
-.auth-page__tagline {
-  font-size: 1.5rem;
-  line-height: 1.4;
-  color: #f4f4f4;
-  margin-bottom: 1.5rem;
-  font-weight: 400;
-}
-
-.auth-page__tagline strong {
-  color: #c8a84b; /* Gold highlights */
-  font-weight: 600;
-}
-
-.auth-page__church-name {
-  font-family: "EB Garamond", serif;
-  font-size: 1.25rem;
-  font-style: italic;
-  color: #c6c6c6;
-  border-left: 2px solid #c8a84b;
-  padding-left: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.auth-page__scripture {
-  background: rgba(255, 255, 255, 0.06);
-  border-left: 3px solid #c8a84b;
-  padding: 1.25rem;
-  border-radius: 0 8px 8px 0;
-  margin-top: 1rem;
-}
-
-.auth-page__scripture-text {
-  font-family: "EB Garamond", serif;
-  font-size: 1.15rem;
-  line-height: 1.6;
-  color: #e0e0e0;
-  font-style: italic;
-  margin-bottom: 0.5rem;
-}
-
-.auth-page__scripture-ref {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #c8a84b;
-  font-weight: 600;
-}
-
-.auth-page__brand-footer {
-  font-size: 0.8125rem;
-  color: #a8a8a8;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Card / Form right side panel */
+/* Card / Form panel */
 .auth-page__card-col {
   box-sizing: border-box;
   height: 100%;
@@ -2422,53 +2284,6 @@ p {
     width: 100%;
     display: flex !important;
     gap: 0;
-  }
-
-  .auth-page__brand-col {
-    box-sizing: border-box;
-    flex: 0 0 auto;
-    min-height: 0 !important;
-    height: auto;
-    width: 100%;
-    padding: 0.875rem 1rem !important;
-    background: transparent;
-    color: var(--cds-text-primary, #161616);
-    border-right: none;
-    border-bottom: none;
-    box-shadow: none;
-  }
-
-  .auth-page__brand-header {
-    gap: 0.625rem;
-  }
-
-  .auth-page__brand-logo img {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .auth-page__brand-title {
-    color: var(--cds-text-primary, #161616);
-    font-family: "IBM Plex Sans", sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0;
-  }
-
-  .auth-page__brand-name-desktop {
-    display: none;
-  }
-
-  .auth-page__brand-name-mobile {
-    display: inline;
-  }
-
-  .auth-page__brand-content {
-    display: none;
-  }
-
-  .auth-page__brand-footer {
-    display: none;
   }
 
   .auth-page__card-col {

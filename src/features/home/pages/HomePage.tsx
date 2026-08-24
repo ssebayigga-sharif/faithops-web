@@ -1,21 +1,15 @@
 import React from "react";
 import styles from "../homepage.module.scss";
-import Hero from "../components/Hero";
-import ServiceTimes from "../components/ServiceTimes";
-import StatsBanner from "../components/StatsBanner";
-import MinistriesPreview from "../components/MinistriesPreview";
-import EventsSection from "../components/EventsSection";
-import CTABanner from "../components/CTABanner";
+import HomeHeader from "../components/HomeHeader";
+import WelcomeBanner from "../components/WelcomeBanner";
 
 const HomePage: React.FC = () => (
-  <main className={styles.pageEnter}>
-    <Hero />
-    <ServiceTimes />
-    <StatsBanner />
-    <MinistriesPreview />
-    <EventsSection />
-    <CTABanner />
-  </main>
+  <div className={styles.pageShell}>
+    <HomeHeader />
+    <main className={styles.pageEnter}>
+      <WelcomeBanner />
+    </main>
+  </div>
 );
 
 export default HomePage;

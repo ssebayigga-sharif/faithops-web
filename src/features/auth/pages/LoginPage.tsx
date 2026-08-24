@@ -9,7 +9,6 @@ import {
   InlineNotification,
 } from "@carbon/react";
 import { useAuth } from "../context/AuthContext";
-import ChurchIcon from "../../../shared/layouts/ChurchIcon";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -52,45 +51,6 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <Grid className="auth-page__grid" fullWidth>
-        {/* Left Brand Panel */}
-        <Column className="auth-page__brand-col" sm={0} md={4} lg={8} xlg={8}>
-          <div className="auth-page__brand-header">
-            <div className="auth-page__brand-logo">
-              <ChurchIcon size={32} />
-            </div>
-            <h1 className="auth-page__brand-title">
-              <span className="auth-page__brand-name-desktop">FaithOps</span>
-              <span className="auth-page__brand-name-mobile">
-                Kabulengwa SDA Church
-              </span>
-            </h1>
-          </div>
-
-          <div className="auth-page__brand-content">
-            <h2 className="auth-page__tagline">
-              Worshiping Christ, keeping the Sabbath,{" "}
-              <strong>serving the community</strong>.
-            </h2>
-            <p className="auth-page__church-name">
-              Kabulengwa Seventh-day Adventist Church
-            </p>
-
-            <div className="auth-page__scripture">
-              <p className="auth-page__scripture-text">
-                "Here is the patience of the saints: here are they that keep the
-                commandments of God, and the faith of Jesus."
-              </p>
-              <span className="auth-page__scripture-ref">Revelation 14:12</span>
-            </div>
-          </div>
-
-          <div className="auth-page__brand-footer">
-            <span>© {new Date().getFullYear()} Kabulengwa SDA Church.</span>
-            <span>All rights reserved.</span>
-          </div>
-        </Column>
-
-        {/* Right Form Card Panel */}
         <Column className="auth-page__card-col" sm={4} md={4} lg={8} xlg={8}>
           <div className="auth-page__card">
             <Stack gap={6}>

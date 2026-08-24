@@ -10,7 +10,6 @@ import {
 } from "@carbon/react";
 import { useAuth } from "../context/AuthContext";
 import { getAuth } from "firebase/auth";
-import ChurchIcon from "../../../shared/layouts/ChurchIcon";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -82,46 +81,6 @@ export default function SignUpPage() {
   return (
     <div className="auth-page">
       <Grid className="auth-page__grid" fullWidth>
-        {/* Left Brand Panel */}
-        <Column className="auth-page__brand-col" sm={0} md={4} lg={8} xlg={8}>
-          <div className="auth-page__brand-header">
-            <div className="auth-page__brand-logo">
-              <ChurchIcon size={32} />
-            </div>
-            <h1 className="auth-page__brand-title">
-              <span className="auth-page__brand-name-desktop">FaithOps</span>
-              <span className="auth-page__brand-name-mobile">
-                Kabulengwa SDA Church
-              </span>
-            </h1>
-          </div>
-
-          <div className="auth-page__brand-content">
-            <h2 className="auth-page__tagline">
-              Connecting our congregation, strengthening our{" "}
-              <strong>fellowship</strong>.
-            </h2>
-            <p className="auth-page__church-name">
-              Kabulengwa Seventh-day Adventist Church
-            </p>
-
-            <div className="auth-page__scripture">
-              <p className="auth-page__scripture-text">
-                "And let us consider one another to provoke unto love and to
-                good works: Not forsaking the assembling of ourselves
-                together..."
-              </p>
-              <span className="auth-page__scripture-ref">Hebrews 10:24-25</span>
-            </div>
-          </div>
-
-          <div className="auth-page__brand-footer">
-            <span>© {new Date().getFullYear()} Kabulengwa SDA Church.</span>
-            <span>All rights reserved.</span>
-          </div>
-        </Column>
-
-        {/* Right Form Card Panel */}
         <Column className="auth-page__card-col" sm={4} md={4} lg={8} xlg={8}>
           <div className="auth-page__card">
             <Stack gap={6}>
